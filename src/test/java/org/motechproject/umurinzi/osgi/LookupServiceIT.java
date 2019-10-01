@@ -123,7 +123,7 @@ public class LookupServiceIT extends BasePaxIT {
         testVisits.add(VisitUtil.createVisit(secondSubject, VisitType.PRIME_VACCINATION_DAY,
                 new LocalDate(2014, 10, 19), new LocalDate(2014, 10, 21), "owner"));
 
-        testVisits.add(VisitUtil.createVisit(secondSubject, VisitType.D1_VISIT,
+        testVisits.add(VisitUtil.createVisit(secondSubject, VisitType.BOOST_VACCINATION_DAY,
                 new LocalDate(2014, 10, 21), new LocalDate(2014, 10, 23), "owner"));
 
         testVisits.add(VisitUtil.createVisit(firstSubject, VisitType.BOOST_VACCINATION_DAY,
