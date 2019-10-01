@@ -3,8 +3,8 @@ package org.motechproject.umurinzi.domain.enums;
 import lombok.Getter;
 
 public enum VisitType {
-    PRIME_VACCINATION_DAY("D0 Prime Vaccination"),
-    BOOST_VACCINATION_DAY("D56 Boost Vaccination");
+    PRIME_VACCINATION_DAY("Prime Vaccination"),
+    BOOST_VACCINATION_DAY("Boost Vaccination");
 
     @Getter
     private String displayValue;

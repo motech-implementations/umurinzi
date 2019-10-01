@@ -169,7 +169,7 @@ public final class UmurinziConstants {
             "Find By SMS Status And Sent Date", "Find By Message Id And Sent Date"));
 
     public static final List<String> AVAILABLE_LOOKUPS_FOR_SUBJECTS =
-        new ArrayList<>(Arrays.asList("Find By Primer Vaccination Date Range", "Find By Booster Vaccination Date Range",
+        new ArrayList<>(Arrays.asList("Find By Prime Vaccination Date Range", "Find By Boost Vaccination Date Range",
             "Find By Participant Id", "Find By exact Phone Number", "Find By Visit Type And Actual Date Range"));
 
     private UmurinziConstants() {

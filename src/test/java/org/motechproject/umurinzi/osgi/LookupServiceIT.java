@@ -87,14 +87,14 @@ public class LookupServiceIT extends BasePaxIT {
     public void shouldGetSubjectEntitiesFromLookup() {
         addTestVisitsToDB();
         String []fields = {
-                "{\"primerVaccinationDate\":\"2014-10-16\"}",
-                "{\"boosterVaccinationDate\":{\"min\":\"2014-10-15\",\"max\":\"2014-10-18\"}}",
-                "{\"boosterVaccinationDate\":\"2014-10-16\"}"
+                "{\"primeVaccinationDate\":\"2014-10-16\"}",
+                "{\"boostVaccinationDate\":{\"min\":\"2014-10-15\",\"max\":\"2014-10-18\"}}",
+                "{\"boostVaccinationDate\":\"2014-10-16\"}"
         };
         String []lookups = {
-                "Find By Primer Vaccination Date",
-                "Find By Booster Vaccination Date Range",
-                "Find By Booster Vaccination Date",
+                "Find By Prime Vaccination Date",
+                "Find By Boost Vaccination Date Range",
+                "Find By Boost Vaccination Date",
         };
         int []expectedResults = {1, 1, 1};
 
@@ -111,11 +111,11 @@ public class LookupServiceIT extends BasePaxIT {
 
         Subject secondSubject = createSubject("1000000162", "Rafal", "44443333222", Language.Runyankole);
 
-        firstSubject.setPrimerVaccinationDate(new LocalDate(2014, 10, 16));
-        firstSubject.setBoosterVaccinationDate(new LocalDate(2014, 10, 16));
+        firstSubject.setPrimeVaccinationDate(new LocalDate(2014, 10, 16));
+        firstSubject.setBoostVaccinationDate(new LocalDate(2014, 10, 16));
 
-        secondSubject.setPrimerVaccinationDate(new LocalDate(2014, 10, 17));
-        secondSubject.setBoosterVaccinationDate(new LocalDate(2014, 10, 17));
+        secondSubject.setPrimeVaccinationDate(new LocalDate(2014, 10, 17));
+        secondSubject.setBoostVaccinationDate(new LocalDate(2014, 10, 17));
 
         testVisits.add(VisitUtil.createVisit(firstSubject, VisitType.PRIME_VACCINATION_DAY,
                 new LocalDate(2014, 10, 17), new LocalDate(2014, 10, 21), "owner"));

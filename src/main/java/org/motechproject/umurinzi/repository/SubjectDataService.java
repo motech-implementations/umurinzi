@@ -22,21 +22,21 @@ public interface SubjectDataService extends MotechDataService<Subject> {
     @Lookup(name = "Find unique By Participant Id")
     Subject findBySubjectId(@LookupField(name = "subjectId") String subjectId);
 
-    @Lookup(name = "Find By Primer Vaccination Date Range")
-    List<Subject> findByPrimerVaccinationDateRange(@LookupField(name = "primerVaccinationDate")
+    @Lookup(name = "Find By Prime Vaccination Date Range")
+    List<Subject> findByPrimeVaccinationDateRange(@LookupField(name = "primeVaccinationDate")
                                                            Range<LocalDate> dateRange);
 
-    @Lookup(name = "Find By Booster Vaccination Date Range")
-    List<Subject> findByBoosterVaccinationDateRange(@LookupField(name = "boosterVaccinationDate")
+    @Lookup(name = "Find By Boost Vaccination Date Range")
+    List<Subject> findByBoostVaccinationDateRange(@LookupField(name = "boostVaccinationDate")
                                                             Range<LocalDate> dateRange);
 
-    @Lookup(name = "Find By Primer Vaccination Date")
-    List<Subject> findByPrimerVaccinationDate(
-            @LookupField(name = "primerVaccinationDate") LocalDate dateRange);
+    @Lookup(name = "Find By Prime Vaccination Date")
+    List<Subject> findByPrimeVaccinationDate(
+            @LookupField(name = "primeVaccinationDate") LocalDate dateRange);
 
-    @Lookup(name = "Find By Booster Vaccination Date")
-    List<Subject> findByBoosterVaccinationDate(
-            @LookupField(name = "boosterVaccinationDate") LocalDate dateRange);
+    @Lookup(name = "Find By Boost Vaccination Date")
+    List<Subject> findByBoostVaccinationDate(
+            @LookupField(name = "boostVaccinationDate") LocalDate dateRange);
 
     @Lookup(name = "Find By Participant Id")
     List<Subject> findByMatchesCaseInsensitiveSubjectId(@LookupField(name = "subjectId",

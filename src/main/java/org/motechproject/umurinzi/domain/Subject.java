@@ -64,7 +64,7 @@ public class Subject {
     @Field
     @Getter
     @Setter
-    private LocalDate primerVaccinationDate;
+    private LocalDate primeVaccinationDate;
 
     @UIDisplayable(position = 4)
     @JsonSerialize(using = CustomDateSerializer.class)
@@ -72,7 +72,7 @@ public class Subject {
     @Field
     @Getter
     @Setter
-    private LocalDate boosterVaccinationDate;
+    private LocalDate boostVaccinationDate;
 
     /**
      * Other fields
@@ -124,8 +124,8 @@ public class Subject {
         subjectId = subject.getSubjectId();
         phoneNumber = subject.getPhoneNumber();
         language = subject.getLanguage();
-        primerVaccinationDate = subject.getPrimerVaccinationDate();
-        boosterVaccinationDate = subject.getBoosterVaccinationDate();
+        primeVaccinationDate = subject.getPrimeVaccinationDate();
+        boostVaccinationDate = subject.getBoostVaccinationDate();
         name = subject.getName();
     }
 

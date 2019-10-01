@@ -50,17 +50,17 @@ public class SubjectServiceImpl implements SubjectService {
         Subject oldSubject = findSubjectBySubjectId(subject.getSubjectId());
 
         if (oldSubject != null) {
-            if (oldSubject.getPrimerVaccinationDate() != null && subject.getPrimerVaccinationDate() == null) {
-                oldSubject.setPrimerVaccinationDate(subject.getPrimerVaccinationDate());
+            if (oldSubject.getPrimeVaccinationDate() != null && subject.getPrimeVaccinationDate() == null) {
+                oldSubject.setPrimeVaccinationDate(subject.getPrimeVaccinationDate());
                 visitService.removeVisitsPlannedDates(oldSubject);
-            } else if (!Objects.equals(oldSubject.getPrimerVaccinationDate(), subject.getPrimerVaccinationDate())) {
-                oldSubject.setPrimerVaccinationDate(subject.getPrimerVaccinationDate());
+            } else if (!Objects.equals(oldSubject.getPrimeVaccinationDate(), subject.getPrimeVaccinationDate())) {
+                oldSubject.setPrimeVaccinationDate(subject.getPrimeVaccinationDate());
                 visitService.calculateVisitsPlannedDates(oldSubject);
             }
 
-            if (!Objects.equals(oldSubject.getBoosterVaccinationDate(), subject.getBoosterVaccinationDate())) {
-                oldSubject.setPrimerVaccinationDate(subject.getPrimerVaccinationDate());
-                oldSubject.setBoosterVaccinationDate(subject.getBoosterVaccinationDate());
+            if (!Objects.equals(oldSubject.getBoostVaccinationDate(), subject.getBoostVaccinationDate())) {
+                oldSubject.setPrimeVaccinationDate(subject.getPrimeVaccinationDate());
+                oldSubject.setBoostVaccinationDate(subject.getBoostVaccinationDate());
                 visitService.recalculateBoostRelatedVisitsPlannedDates(oldSubject);
             }
         }

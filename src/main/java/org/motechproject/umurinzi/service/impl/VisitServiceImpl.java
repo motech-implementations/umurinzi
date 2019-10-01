@@ -63,8 +63,8 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public void calculateVisitsPlannedDates(Subject subject) {
-        LocalDate primeVacDate = subject.getPrimerVaccinationDate();
-        LocalDate boostVacDate = subject.getBoosterVaccinationDate();
+        LocalDate primeVacDate = subject.getPrimeVaccinationDate();
+        LocalDate boostVacDate = subject.getBoostVaccinationDate();
 
         if (primeVacDate != null) {
             Map<VisitType, VisitScheduleOffset> offsetMap = visitScheduleOffsetService.getAllAsMap();
@@ -79,7 +79,7 @@ public class VisitServiceImpl implements VisitService {
                 if (VisitType.PRIME_VACCINATION_DAY.equals(visit.getType())) {
                     visit.setDate(primeVacDate);
                 } else if (VisitType.BOOST_VACCINATION_DAY.equals(visit.getType())
-                    && subject.getBoosterVaccinationDate() != null) {
+                    && subject.getBoostVaccinationDate() != null) {
                     visit.setDate(boostVacDate);
 
                     umurinziEnrollmentService.completeCampaign(visit);
@@ -98,8 +98,8 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public void recalculateBoostRelatedVisitsPlannedDates(Subject subject) {
-        LocalDate boostVacDate = subject.getBoosterVaccinationDate();
-        LocalDate primeVacDate = subject.getPrimerVaccinationDate();
+        LocalDate boostVacDate = subject.getBoostVaccinationDate();
+        LocalDate primeVacDate = subject.getPrimeVaccinationDate();
 
         if (primeVacDate != null) {
             Map<VisitType, VisitScheduleOffset> offsetMap = visitScheduleOffsetService.getAllAsMap();
@@ -111,7 +111,7 @@ public class VisitServiceImpl implements VisitService {
 
             for (Visit visit : subject.getVisits()) {
                 if (VisitType.BOOST_VACCINATION_DAY.equals(visit.getType())
-                    && subject.getBoosterVaccinationDate() != null) {
+                    && subject.getBoostVaccinationDate() != null) {
                     visit.setDate(boostVacDate);
 
                     umurinziEnrollmentService.completeCampaign(visit);
