@@ -11,7 +11,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <motech.version>0.27.7</motech.version>
-    <spring.version>3.1.0.RELEASE</spring.version>
+    <spring.version>5.2.0.RELEASE</spring.version>
     <mysql.version>5.1.32</mysql.version>
     <scm.connection>scm:git:https://github.com/motech-implementations/umurinzi</scm.connection>
     <scm.developerConnection>scm:git:https://github.com/motech-implementations/umurinzi
