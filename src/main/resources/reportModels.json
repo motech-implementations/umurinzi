@@ -1,0 +1,197 @@
+{
+    "dailyClinicVisitScheduleReport": {
+    "colNames": ["umurinzi.reports.rowId",
+      "umurinzi.reports.dailyClinicVisitScheduleReport.visitPlannedDate",
+      "umurinzi.reports.dailyClinicVisitScheduleReport.subjectId",
+      "umurinzi.reports.dailyClinicVisitScheduleReport.subjectPhoneNumber",
+      "umurinzi.reports.dailyClinicVisitScheduleReport.visitType"],
+    "colModel": [{
+      "name": "rowId",
+      "index": "rowId",
+      "hidden": true,
+      "key": true
+    }, {
+      "name": "dateProjected",
+      "index": "dateProjected",
+      "align": "center",
+      "formatter":"date", "formatoptions": {"srcformat": "Y-m-d", "newformat":"Y-m-d"}
+    }, {
+      "name": "subject",
+      "jsonmap": "subject",
+      "index": "subject.subjectId",
+      "align": "center",
+      "formatter": "function(cellValue, options, rowObject) { if (!cellValue){ return ''; } return cellValue.subjectId; }"
+    }, {
+      "name": "subjectPhoneNumber",
+      "jsonmap": "subject",
+      "index": "subject.phoneNumber",
+      "align": "center",
+      "formatter": "function(cellValue, options, rowObject) { if (!cellValue || !cellValue.phoneNumber){ return ''; } return cellValue.phoneNumber; }"
+    }, {
+      "name": "type",
+      "index": "type",
+      "align": "center"
+    }]
+  },
+    "followupsMissedClinicVisitsReport" : {
+    "colNames": ["umurinzi.reports.rowId",
+      "umurinzi.reports.followupsMissedClinicVisitsReport.subjectId",
+      "umurinzi.reports.followupsMissedClinicVisitsReport.visitType",
+      "umurinzi.reports.followupsMissedClinicVisitsReport.planedVisitDate",
+      "umurinzi.reports.followupsMissedClinicVisitsReport.noOfDaysExceededVisit"],
+    "colModel": [{
+      "name": "rowId",
+      "index": "rowId",
+      "hidden": true,
+      "key": true
+    },{
+      "name": "subject",
+      "jsonmap": "subject",
+      "index": "subject.subjectId",
+      "align": "center",
+      "formatter": "function(cellValue, options, rowObject) { if (!cellValue){ return ''; } return cellValue.subjectId; }"
+    }, {
+      "name": "type",
+      "index": "type",
+      "align": "center"
+    }, {
+      "name": "planedVisitDate",
+      "index": "dateProjected",
+      "align": "center",
+      "formatter":"planedVisitDate", "formatoptions": {"srcformat": "Y-m-d", "newformat":"Y-m-d"}
+    }, {
+      "name": "noOfDaysExceededVisit",
+      "index": "noOfDaysExceededVisit",
+      "align": "center"
+    }]
+  },
+  "MandEMissedClinicVisitsReport" : {
+    "colNames": ["umurinzi.reports.rowId",
+      "umurinzi.reports.MandEMissedClinicVisitsReport.subjectId",
+      "umurinzi.reports.MandEMissedClinicVisitsReport.phoneNumber",
+      "umurinzi.reports.MandEMissedClinicVisitsReport.visitType",
+      "umurinzi.reports.MandEMissedClinicVisitsReport.planedVisitDate",
+      "umurinzi.reports.MandEMissedClinicVisitsReport.noOfDaysExceededVisit"],
+    "colModel": [{
+      "name": "rowId",
+      "index": "rowId",
+      "hidden": true,
+      "key": true
+    },{
+      "name": "subjectId",
+      "jsonmap": "subject",
+      "index": "subject.subjectId",
+      "align": "center",
+      "formatter": "function(cellValue, options, rowObject) { if (!cellValue || !cellValue.subjectId){ return ''; } return cellValue.subjectId; }"
+    },{
+      "name": "subjectPhoneNumber",
+      "jsonmap": "subject",
+      "index": "subject.phoneNumber",
+      "align": "center",
+      "formatter": "function(cellValue, options, rowObject) { if (!cellValue || !cellValue.phoneNumber){ return ''; } return cellValue.phoneNumber; }"
+    }, {
+      "name": "type",
+      "index": "type",
+      "align": "center"
+    }, {
+      "name": "planedVisitDate",
+      "index": "dateProjected",
+      "align": "center",
+      "formatter":"planedVisitDate", "formatoptions": {"srcformat": "Y-m-d", "newformat":"Y-m-d"}
+    }, {
+      "name": "noOfDaysExceededVisit",
+      "index": "noOfDaysExceededVisit",
+      "align": "center"
+    }]
+  },
+  "optsOutOfMotechMessagesReport" : {
+    "colNames": ["umurinzi.reports.rowId",
+      "umurinzi.reports.optsOutOfMotechMessagesReport.subjectId",
+      "umurinzi.reports.optsOutOfMotechMessagesReport.dateOfUnenrollment"],
+    "colModel": [{
+      "name": "rowId",
+      "index": "rowId",
+      "hidden": true,
+      "key": true
+    },{
+      "name": "subjectId",
+      "jsonmap": "subject",
+      "index": "subject.subjectId",
+      "align": "center",
+      "formatter": "function(cellValue, options, rowObject) { if (!cellValue || !cellValue.subjectId){ return ''; } return cellValue.subjectId; }"
+    }, {
+      "name": "dateOfUnenrollment",
+      "index": "dateOfUnenrollment",
+      "align": "center",
+      "formatter":"dateOfUnenrollment", "formatoptions": {"srcformat": "Y-m-d", "newformat":"Y-m-d"}
+    }]
+  },
+  "ivrAndSmsStatisticReport" : {
+    "colNames": ["umurinzi.reports.rowId",
+      "umurinzi.reports.IvrAndSmsStatisticReport.subjectId",
+      "umurinzi.reports.IvrAndSmsStatisticReport.phone",
+      "umurinzi.reports.IvrAndSmsStatisticReport.messageId",
+      "umurinzi.reports.IvrAndSmsStatisticReport.sendDate",
+      "umurinzi.reports.IvrAndSmsStatisticReport.expectedDuration",
+      "umurinzi.reports.IvrAndSmsStatisticReport.timeListenedTo",
+      "umurinzi.reports.IvrAndSmsStatisticReport.messagePercentListened",
+      "umurinzi.reports.IvrAndSmsStatisticReport.receivedDate",
+      "umurinzi.reports.IvrAndSmsStatisticReport.noOfAttempts",
+      "umurinzi.reports.IvrAndSmsStatisticReport.sms",
+      "umurinzi.reports.IvrAndSmsStatisticReport.smsReceivedDate"],
+    "colModel": [{
+      "name": "rowId",
+      "index": "rowId",
+      "hidden": true,
+      "key": true
+    },{
+      "name": "subjectId",
+      "jsonmap": "subject",
+      "index": "subject.subjectId",
+      "align": "center",
+      "formatter": "function(cellValue, options, rowObject) { if (!cellValue || !cellValue.subjectId){ return ''; } return cellValue.subjectId; }"
+    },{
+      "name": "phone",
+      "jsonmap": "subject",
+      "index": "subject.phoneNumber",
+      "align": "center",
+      "formatter": "function(cellValue, options, rowObject) { if (!cellValue || !cellValue.phoneNumber){ return ''; } return cellValue.phoneNumber; }"
+    }, {
+      "name": "messageId",
+      "index": "messageId",
+      "align": "center"
+    }, {
+      "name": "sendDate",
+      "index": "sendDate",
+      "align": "center"
+    }, {
+      "name": "expectedDuration",
+      "index": "expectedDuration",
+      "align": "center"
+    }, {
+      "name": "timeListenedTo",
+      "index": "timeListenedTo",
+      "align": "center"
+    }, {
+      "name": "messagePercentListened",
+      "index": "messagePercentListened",
+      "align": "center"
+    }, {
+      "name": "receivedDate",
+      "index": "receivedDate",
+      "align": "center"
+    }, {
+      "name": "numberOfAttempts",
+      "index": "numberOfAttempts",
+      "align": "center"
+    }, {
+      "name": "sms",
+      "index": "smsStatus",
+      "align": "center"
+    }, {
+      "name": "smsReceivedDate",
+      "index": "smsReceivedDate",
+      "align": "center"
+    }]
+  }
+}

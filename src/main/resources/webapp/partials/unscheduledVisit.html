@@ -1,0 +1,86 @@
+<div class="umurinzi">
+    <div class="row inside form-inline">
+        <button id="addUnscheduledBtn" type="button" class="btn btn-success ng-binding" ng-click="addUnscheduled()">
+            <i class="fa fa-fw fa-plus"></i> {{msg('umurinzi.uncheduledVisit.addUnscheduled')}}
+        </button>
+
+        <button id="lookupDialogButton" ng-click="showLookupDialog()" type="button" class="btn btn-default">
+            <i class="fa fa-lg fa-caret-down"></i>
+            {{msg('umurinzi.btn.lookup')}}
+        </button>
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-default">{{selectedFilter.name}}</button>
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" range-setter ng-click="hideLookupDialog()">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li ng-repeat="filter in filters"><a ng-click="selectFilter($index)">{{filter.name}}</a></li>
+            </ul>
+        </div>
+        <div class="form-group" ng-if="selectedFilter === filters[5]">
+            <div class="input-group">
+                <span class="left input-group-addon">{{msg('umurinzi.from')}}</span>
+                <input type="text" class="form-control" mds-date-picker grid-reload-trigger placeholder="{{msg('umurinzi.datePlaceholder')}}" ng-model="selectedFilter.startDate" ng-click="hideLookupDialog()">
+                <span class="middle input-group-addon">{{msg('umurinzi.to')}}</span>
+                <input type="text" class="form-control" mds-date-picker grid-reload-trigger placeholder="{{msg('umurinzi.datePlaceholder')}}" ng-model="selectedFilter.endDate" ng-click="hideLookupDialog()">
+            </div>
+        </div>
+
+        <button ng-click="exportEntityInstances()" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-export"></span>
+            {{msg('umurinzi.btn.exportData')}}
+        </button>
+    </div>
+
+    <div id="lookup-dialog" class="popover bottom inside lookup-dialog" ng-style="lookupDialogStyle()">
+        <div class="arrow" style="left:110px"></div>
+        <div class="popover-content form-horizontal margin-after2">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">{{msg('umurinzi.form.label.lookup')}}</label>
+                <div class="col-sm-7">
+                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        {{selectedLookup.lookupName || msg('umurinzi.form.select')}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="lookup in lookups">
+                            <a ng-click="selectLookup(lookup)">{{lookup.lookupName}}</a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+
+            <div class="form-group" ng-repeat="field in lookupFields">
+                <label class="col-sm-4 control-label">
+                    {{field.displayName}}
+                    <span ng-if="field.relatedName">
+                        <i class="fa fa-long-arrow-right fa-2"></i>
+                        {{field.relatedFieldDisplayName}}
+                    </span>
+                </label>
+                <div class="col-sm-7 form-inline" ng-include="loadInputForLookupField(field)"></div>
+            </div>
+
+            <div class="form-group margin-before3">
+                <div class="col-sm-offset-4 col-sm-7">
+                    <button type="button" class="btn btn-danger" ng-click="removeLookup()">
+                        {{msg('umurinzi.btn.clear')}}
+                    </button>
+                    <button type="button" class="btn btn-primary" ng-click="filterInstancesByLookup()">
+                        {{msg('umurinzi.btn.find')}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="unscheduledVisitTable" class="row inside umurinzi overrideJqgridTable">
+        <table id="unscheduledVisit" class="umurinzi-grid" unscheduled-visit-grid><tr><td></td></tr></table>
+        <div id="pager"></div>
+    </div>
+    <div ng-include="'../umurinzi/resources/partials/modals/unscheduledVisitModal.html'"></div>
+    <div ng-include="'../umurinzi/resources/partials/modals/export-entity.html'"></div>
+</div>

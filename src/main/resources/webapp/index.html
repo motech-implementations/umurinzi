@@ -1,0 +1,29 @@
+<div ng-controller="UmurinziBaseCtrl" id="inner-center" class="inner-center ui-layout-center ui-layout-pane ui-layout-pane-center">
+    <div class="header-footer-breadcrumb">
+        <ul class="breadcrumb" role="navigation">
+            <li><a role="menu" href=".">{{msg('server.home')}}</a></li>
+            <li><a role="menu" href="#/umurinzi/">{{msg('umurinzi')}}</a></li>
+            <li ng-show="active('#/mds/dataBrowser')" ng-class="active('#/mds/dataBrowser')">{{msg('umurinzi.' + selectedTab)}}</li>
+            <li ng-show="active('#/umurinzi/reschedule')" ng-class="active('#/umurinzi/reschedule')">{{msg('umurinzi.reschedule')}}</li>
+            <li ng-show="active('#/umurinzi/enrollment')" ng-class="active('#/umurinzi/enrollment')">{{msg('umurinzi.enrollment.title')}}</li>
+            <li ng-show="active('#/umurinzi/reports')" ng-class="active('#/umurinzi/reports')">{{msg('umurinzi.reports')}}</li>
+            <li ng-show="active('#/umurinzi/unscheduledVisit')" ng-class="active('#/umurinzi/unscheduledVisit')">{{msg('umurinzi.unscheduledVisit')}}</li>
+            <li ng-show="active('#/umurinzi/settings')" ng-class="active('#/umurinzi/settings')">{{msg('umurinzi.settings.title')}}</li>
+        </ul>
+    </div>
+    <div class="header-footer" style="overflow:auto;">
+        <ul id="content-tabs" class="nav nav-tabs">
+            <li ng-hide="active('#/umurinzi/settings')" ng-class="active('#/umurinzi/' + tab) || active(tab === selectedTab ? '#/mds/dataBrowser' : ('#/umurinzi/' + tab))" ng-repeat="tab in UMURINZI_AVAILABLE_TABS">
+                <a id="{{tab + '-tab'}}" href="#/umurinzi/{{tab}}">{{msg('umurinzi.' + tab)}}</a>
+            </li>
+            <li ng-show="active('#/umurinzi/settings')" ng-class="active('#/umurinzi/settings')"><a href="#/umurinzi/settings">{{msg('umurinzi.settings.title')}}</a></li>
+        </ul>
+    </div>
+    <div class="ui-layout-content">
+        <div class="tab-content" id="tab-content">
+            <div id="main-content" class="active">
+                <div ng-view></div>
+            </div>
+        </div>
+    </div>
+</div>

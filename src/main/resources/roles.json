@@ -1,0 +1,31 @@
+[
+  {
+    "roleName": "Umurinzi Send Subject via API",
+    "permissionNames": [
+      "participantRegistration"
+    ]
+  },
+  {
+    "roleName": "Umurinzi Administrator",
+    "permissionNames": [
+      "manageUmurinzi",
+      "umurinziSubjectsTab",
+      "umurinziVisitRescheduleBookingTab",
+      "umurinziUnscheduledVisitsTab",
+      "umurinziReportsTab",
+      "viewUI"
+    ]
+  },
+  {
+    "roleName": "Umurinzi User",
+    "permissionNames": [
+      "manageUmurinzi",
+      "umurinziSubjectsTab",
+      "umurinziVisitRescheduleBookingTab",
+      "umurinziUnscheduledVisitsTab",
+      "umurinziReportsTab",
+      "viewUI"
+    ]
+  }
+]
+

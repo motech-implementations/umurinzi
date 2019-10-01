@@ -1,0 +1,14 @@
+<div class="row">
+    <h4 class="frame-title">{{ msg('umurinzi.enrollmentAdvanced.header')}}</h4>
+
+    <div class="clearfix toolbox form-horizontal">
+        <button ng-click="backToEnrolments()" type="button" class="btn btn-primary">
+            <i class="fa fa-lg fa-level-up"></i>
+            {{msg('umurinzi.btn.backToEnrolments')}}
+        </button>
+    </div>
+
+    <div id="enrollmentAdvanced" class="overrideJqgridTable">
+        <table id="enrollmentAdvancedTable" enrollment-advanced-grid></table>
+    </div>
+</div>
