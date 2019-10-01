@@ -1,7 +1,5 @@
 package org.motechproject.umurinzi.service.impl;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import org.joda.time.LocalDate;
 import org.motechproject.umurinzi.domain.Subject;
@@ -57,9 +55,7 @@ public class VisitServiceImpl implements VisitService {
     @Override
     public void createVisitsForSubject(Subject subject) {
         for (VisitType visitType : VisitType.values()) {
-            if ((subject.getSubStudy() != null && subject.getSubStudy()) || !subStudyVisit(visitType)) {
-                subject.addVisit(visitDataService.create(new Visit(subject, visitType)));
-            }
+            subject.addVisit(visitDataService.create(new Visit(subject, visitType)));
         }
 
         calculateVisitsPlannedDates(subject);
@@ -90,11 +86,7 @@ public class VisitServiceImpl implements VisitService {
                 } else if (visit.getDate() == null) {
                     VisitScheduleOffset offset = offsetMap.get(visit.getType());
 
-                    if (boostRelatedVisit(visit.getType())) {
-                        visit.setDateProjected(boostVacDate.plusDays(offset.getTimeOffset()));
-                    } else {
-                        visit.setDateProjected(primeVacDate.plusDays(offset.getTimeOffset()));
-                    }
+                    visit.setDateProjected(primeVacDate.plusDays(offset.getTimeOffset()));
                 }
 
                 visitDataService.update(visit);
@@ -123,9 +115,6 @@ public class VisitServiceImpl implements VisitService {
                     visit.setDate(boostVacDate);
 
                     umurinziEnrollmentService.completeCampaign(visit);
-                } else if (boostRelatedVisit(visit.getType()) && visit.getDate() == null) {
-                    VisitScheduleOffset offset = offsetMap.get(visit.getType());
-                    visit.setDateProjected(boostVacDate.plusDays(offset.getTimeOffset()));
                 }
 
                 visitDataService.update(visit);
@@ -133,27 +122,6 @@ public class VisitServiceImpl implements VisitService {
 
             umurinziEnrollmentService.enrollOrReenrollSubject(subject);
         }
-    }
-
-    @Override
-    public void removeSubStudyVisits(Subject subject) {
-        Iterator<Visit> visitIterator = subject.getVisits().iterator();
-
-        while (visitIterator.hasNext()) {
-            Visit visit = visitIterator.next();
-
-            if (visit.getDate() == null) {
-                umurinziEnrollmentService.unenrollAndRemoveEnrollment(visit);
-
-                subject.removeVisit(visit);
-
-                visitDataService.delete(visit);
-            }
-        }
-    }
-
-    @Override
-    public void createSubStudyVisits(Subject subject) {
     }
 
     public void removeVisitsPlannedDates(Subject subject) {
@@ -167,25 +135,5 @@ public class VisitServiceImpl implements VisitService {
             umurinziEnrollmentService.unenrollAndRemoveEnrollment(visit);
             visitDataService.update(visit);
         }
-    }
-
-    private boolean subStudyVisit(VisitType visitType) {
-        List<String> subStudyVisits = configService.getConfig().getSubStudyVisits();
-
-        if (subStudyVisits == null || subStudyVisits.isEmpty()) {
-            return false;
-        }
-
-        return subStudyVisits.contains(visitType.getDisplayValue());
-    }
-
-    private boolean boostRelatedVisit(VisitType visitType) {
-        List<String> boostRelatedVisits = configService.getConfig().getBoosterRelatedVisits();
-
-        if (boostRelatedVisits == null || boostRelatedVisits.isEmpty()) {
-            return false;
-        }
-
-        return boostRelatedVisits.contains(visitType.getDisplayValue());
     }
 }

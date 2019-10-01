@@ -63,10 +63,6 @@ public class VisitRescheduleDto {
 
     @Getter
     @Setter
-    private Boolean boosterRelated;
-
-    @Getter
-    @Setter
     private Boolean notVaccinated;
 
     public VisitRescheduleDto(Visit visit) {
@@ -82,10 +78,8 @@ public class VisitRescheduleDto {
         }
     }
 
-    public VisitRescheduleDto(Visit visit, Range<LocalDate> dateRange,
-                              Boolean boosterRelated, Boolean notVaccinated) {
+    public VisitRescheduleDto(Visit visit, Range<LocalDate> dateRange, Boolean notVaccinated) {
         this(visit);
-        this.boosterRelated = boosterRelated;
         this.notVaccinated = notVaccinated;
         calculateEarliestAndLatestDate(dateRange);
     }

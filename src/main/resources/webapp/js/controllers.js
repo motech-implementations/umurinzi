@@ -427,50 +427,11 @@
         $scope.errors = [];
         $scope.messages = [];
 
-        $scope.availableVisits = [];
-
-        $scope.boostRelVisitsChanged = function(change) {
-            var value;
-
-            if (change.added) {
-                value = change.added.text;
-                $scope.config.boosterRelatedVisits.push(value);
-            } else if (change.removed) {
-                value = change.removed.text;
-                $scope.config.boosterRelatedVisits.removeObject(value);
-            }
-        };
-
-        $scope.subStudyVisitsChanged = function(change) {
-            var value;
-
-            if (change.added) {
-                value = change.added.text;
-                $scope.config.subStudyVisits.push(value);
-            } else if (change.removed) {
-                value = change.removed.text;
-                $scope.config.subStudyVisits.removeObject(value);
-            }
-        };
-
         $http.get('../umurinzi/umurinzi-config')
             .success(function(response){
                 var i;
                 $scope.config = response;
                 $scope.originalConfig = angular.copy($scope.config);
-
-                $http.get('../umurinzi/availableVisits')
-                    .success(function(response){
-                        $scope.availableVisits = response;
-                        $timeout(function() {
-                            $('#boostRelVisits').select2('val', $scope.config.boosterRelatedVisits);
-                            $('#subStudyVisits').select2('val', $scope.config.subStudyVisits);
-                        }, 50);
-
-                    })
-                    .error(function(response) {
-                        $scope.errors.push($scope.msg('umurinzi.settings.enroll.disconVacCampaigns.error', response));
-                    });
             })
             .error(function(response) {
                 $scope.errors.push($scope.msg('umurinzi.settings.noConfig', response));
@@ -478,9 +439,6 @@
 
         $scope.reset = function () {
             $scope.config = angular.copy($scope.originalConfig);
-
-            $('#boostRelVisits').select2('val', $scope.config.boosterRelatedVisits);
-            $('#subStudyVisits').select2('val', $scope.config.subStudyVisits);
         };
 
         function hideMsgLater(index) {

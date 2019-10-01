@@ -13,26 +13,6 @@
 
         <form name="form" class="form-horizontal inside" novalidate>
 
-            <h5 class="margin-before2">{{msg('umurinzi.settings.visitSchedule')}}</h5>
-
-            <div class="form-group">
-                <label class="col-md-2 control-label">{{msg('umurinzi.settings.visitSchedule.boosterRelatedVisits.label')}}</label>
-                <div class="col-md-4" data-toggle="tooltip" data-placement="top" data-trigger="hover" bs-popover="{{msg('umurinzi.settings.visitSchedule.boosterRelatedVisits.tooltip')}}">
-                    <select id="boostRelVisits" class="form-control" ui-select2 multiple select2-ng-change="boostRelVisitsChanged">
-                        <option ng-repeat="visit in availableVisits" value="{{visit}}">{{visit}}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-md-2 control-label">{{msg('umurinzi.settings.visitSchedule.subStudyVisits.label')}}</label>
-                <div class="col-md-4" data-toggle="tooltip" data-placement="top" data-trigger="hover" bs-popover="{{msg('umurinzi.settings.visitSchedule.subStudyVisits.tooltip')}}">
-                    <select id="subStudyVisits" class="form-control" ui-select2 multiple select2-ng-change="subStudyVisitsChanged">
-                        <option ng-repeat="visit in availableVisits" value="{{visit}}">{{visit}}</option>
-                    </select>
-                </div>
-            </div>
-
             <h5 class="margin-before2">{{msg('umurinzi.settings.report')}}</h5>
 
             <div class="form-group">

@@ -20,9 +20,5 @@ public interface VisitService {
 
     void recalculateBoostRelatedVisitsPlannedDates(Subject subject);
 
-    void removeSubStudyVisits(Subject subject);
-
-    void createSubStudyVisits(Subject subject);
-
     void removeVisitsPlannedDates(Subject subject);
 }

@@ -74,13 +74,6 @@ public class Subject {
     @Setter
     private LocalDate boosterVaccinationDate;
 
-    @UIDisplayable(position = 5)
-    @Column
-    @Field
-    @Getter
-    @Setter
-    private Boolean subStudy;
-
     /**
      * Other fields
      */
@@ -133,7 +126,6 @@ public class Subject {
         language = subject.getLanguage();
         primerVaccinationDate = subject.getPrimerVaccinationDate();
         boosterVaccinationDate = subject.getBoosterVaccinationDate();
-        subStudy = subject.subStudy;
         name = subject.getName();
     }
 

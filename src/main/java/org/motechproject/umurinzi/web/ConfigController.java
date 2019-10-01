@@ -1,13 +1,10 @@
 package org.motechproject.umurinzi.web;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.motechproject.commons.date.model.Time;
 import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.umurinzi.domain.Config;
-import org.motechproject.umurinzi.domain.enums.VisitType;
 import org.motechproject.umurinzi.scheduler.UmurinziScheduler;
 import org.motechproject.umurinzi.service.ConfigService;
 import org.slf4j.Logger;
@@ -15,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,20 +47,6 @@ public class ConfigController {
         scheduleJobs();
 
         return configService.getConfig();
-    }
-
-    @PreAuthorize("hasRole('manageUmurinzi')")
-    @RequestMapping(value = "/availableVisits", method = RequestMethod.GET)
-    @ResponseBody
-    public List<String> getAvailableVisits() {
-        List<String> availableValues = new ArrayList<>();
-        for (VisitType visitType : VisitType.values()) {
-            if (!VisitType.PRIME_VACCINATION_DAY.equals(visitType)
-                && !VisitType.BOOST_VACCINATION_DAY.equals(visitType)) {
-                availableValues.add(visitType.getDisplayValue());
-            }
-        }
-        return availableValues;
     }
 
     @ExceptionHandler

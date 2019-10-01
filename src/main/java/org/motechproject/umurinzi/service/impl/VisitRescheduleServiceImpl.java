@@ -61,8 +61,7 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
 
         for (Visit visit : detailsRecords.getRows()) {
 
-            Boolean boosterRelated = isBoosterRelated(visit.getType());
-            LocalDate vaccinationDate = getVaccinationDate(visit, boosterRelated);
+            LocalDate vaccinationDate = getVaccinationDate(visit);
 
             Boolean notVaccinated = true;
             Range<LocalDate> dateRange = null;
@@ -72,7 +71,7 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
                 notVaccinated = false;
             }
 
-            dtos.add(new VisitRescheduleDto(visit, dateRange, boosterRelated, notVaccinated));
+            dtos.add(new VisitRescheduleDto(visit, dateRange,  notVaccinated));
         }
 
         return new Records<>(detailsRecords.getPage(), detailsRecords.getTotal(), detailsRecords.getRecords(), dtos);
@@ -165,8 +164,7 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
     }
 
     private Range<LocalDate> calculateEarliestAndLatestDate(Visit visit) {
-        Boolean boosterRelated = isBoosterRelated(visit.getType());
-        LocalDate vaccinationDate = getVaccinationDate(visit, boosterRelated);
+        LocalDate vaccinationDate = getVaccinationDate(visit);
 
         if (vaccinationDate == null) {
             return null;
@@ -206,17 +204,7 @@ public class VisitRescheduleServiceImpl implements VisitRescheduleService {
         return new Range<>(minDate, maxDate);
     }
 
-    private LocalDate getVaccinationDate(Visit visit, Boolean boosterRelated) {
-        if (boosterRelated) {
-            return visit.getSubject().getBoosterVaccinationDate();
-        } else {
-            return visit.getSubject().getPrimerVaccinationDate();
-        }
-    }
-
-    private Boolean isBoosterRelated(VisitType visitType) {
-        List<String> boosterRelatedVisits = configService.getConfig().getBoosterRelatedVisits();
-
-        return boosterRelatedVisits.contains(visitType.getDisplayValue());
+    private LocalDate getVaccinationDate(Visit visit) {
+        return visit.getSubject().getPrimerVaccinationDate();
     }
 }

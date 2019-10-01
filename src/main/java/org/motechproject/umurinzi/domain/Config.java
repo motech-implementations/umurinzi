@@ -1,22 +1,12 @@
 package org.motechproject.umurinzi.domain;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 
 public class Config {
-
-    @Getter
-    @Setter
-    private List<String> boosterRelatedVisits = new ArrayList<>();
-
-    @Getter
-    @Setter
-    private List<String> subStudyVisits = new ArrayList<>();
 
     @Getter
     @Setter

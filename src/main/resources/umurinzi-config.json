@@ -1,6 +1,4 @@
 {
-  "boosterRelatedVisits" :["D57 Sub-study visit", "D59 Sub-study visit", "D63 Phone call"],
-  "subStudyVisits": ["D1 Sub-study visit", "D3 Sub-study visit", "D57 Sub-study visit", "D59 Sub-study visit"],
   "enableReportJob": false,
   "reportCalculationStartTime": "00:01",
   "lastCalculationDateForIvrReports": null,

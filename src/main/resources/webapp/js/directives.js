@@ -411,7 +411,6 @@
             rowExtraData.earliestDate = rowObject.earliestDate;
             rowExtraData.latestDate = rowObject.latestDate;
             rowExtraData.ignoreDateLimitation = rowObject.ignoreDateLimitation;
-            rowExtraData.boosterRelated = rowObject.boosterRelated;
             rowExtraData.notVaccinated = rowObject.notVaccinated;
 
             gridDataExtension[options.rowId] = rowExtraData;

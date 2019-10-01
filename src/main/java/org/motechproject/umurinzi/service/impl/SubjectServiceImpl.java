@@ -45,21 +45,11 @@ public class SubjectServiceImpl implements SubjectService {
         return subjectDataService.update(subject);
     }
 
-    //CHECKSTYLE:OFF: checkstyle:cyclomaticcomplexity
-    @SuppressWarnings("checkstyle:CyclomaticComplexity")
     @Override
     public void subjectDataChanged(Subject subject) {
         Subject oldSubject = findSubjectBySubjectId(subject.getSubjectId());
 
         if (oldSubject != null) {
-            if ((oldSubject.getSubStudy() == null || !oldSubject.getSubStudy())
-                && subject.getSubStudy() != null && subject.getSubStudy()) {
-                visitService.createSubStudyVisits(oldSubject);
-            } else if ((subject.getSubStudy() == null || !subject.getSubStudy())
-                && oldSubject.getSubStudy() != null && oldSubject.getSubStudy()) {
-                visitService.removeSubStudyVisits(oldSubject);
-            }
-
             if (oldSubject.getPrimerVaccinationDate() != null && subject.getPrimerVaccinationDate() == null) {
                 oldSubject.setPrimerVaccinationDate(subject.getPrimerVaccinationDate());
                 visitService.removeVisitsPlannedDates(oldSubject);
@@ -75,5 +65,4 @@ public class SubjectServiceImpl implements SubjectService {
             }
         }
     }
-    //CHECKSTYLE:ON: checkstyle:cyclomaticcomplexity
 }
