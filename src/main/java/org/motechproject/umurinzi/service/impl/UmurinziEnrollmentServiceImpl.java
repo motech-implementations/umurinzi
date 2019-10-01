@@ -124,46 +124,6 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
     }
 
     @Override
-    public void createEnrollmentOrReenrollCampaign(Visit visit, boolean rollbackCompleted) {
-        Subject subject = visit.getSubject();
-        SubjectEnrollments subjectEnrollments = subjectEnrollmentsDataService.findBySubjectId(subject.getSubjectId());
-
-        if (subjectEnrollments == null) {
-            subjectEnrollments = new SubjectEnrollments(subject);
-        }
-
-        String campaignName = visit.getType().getDisplayValue();
-        LocalDate referenceDate = visit.getDateProjected();
-        if (VisitType.PRIME_VACCINATION_DAY.equals(visit.getType())) {
-            referenceDate = visit.getDate();
-        }
-
-        Enrollment enrollment = subjectEnrollments.findEnrolmentByCampaignName(campaignName);
-
-        try {
-            if (enrollment == null) {
-                enrollment = new Enrollment(subject.getSubjectId(), campaignName, referenceDate, EnrollmentStatus.ENROLLED);
-                subjectEnrollments.addEnrolment(enrollment);
-
-                scheduleJobsForEnrollment(enrollment, false);
-            } else if (EnrollmentStatus.ENROLLED.equals(enrollment.getStatus())) {
-                reenrollSubjectWithNewDate(subject.getSubjectId(), enrollment.getCampaignName(), referenceDate);
-            } else if (!EnrollmentStatus.COMPLETED.equals(enrollment.getStatus())) {
-                updateReferenceDateIfUnenrolled(enrollment, referenceDate);
-            } else if (rollbackCompleted && EnrollmentStatus.COMPLETED.equals(enrollment.getStatus())) {
-                enrollment.setStatus(EnrollmentStatus.ENROLLED);
-                enrollment.setReferenceDate(referenceDate);
-
-                scheduleJobsForEnrollment(enrollment, false);
-            }
-
-            updateSubjectEnrollments(subjectEnrollments);
-        } catch (UmurinziEnrollmentException e) {
-            LOGGER.debug(e.getMessage(), e);
-        }
-    }
-
-    @Override
     public void unenrollAndRemoveEnrollment(Visit visit) {
         unenrollAndRemoveEnrollment(visit.getSubject().getSubjectId(), visit.getType().getDisplayValue());
     }

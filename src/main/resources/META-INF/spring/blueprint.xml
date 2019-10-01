@@ -53,8 +53,6 @@
 
     <osgi:service ref="unscheduledVisitService" interface="org.motechproject.umurinzi.service.UnscheduledVisitService" />
 
-    <osgi:service ref="visitRescheduleService" interface="org.motechproject.umurinzi.service.VisitRescheduleService" />
-
     <osgi:service ref="visitScheduleOffsetService" interface="org.motechproject.umurinzi.service.VisitScheduleOffsetService" />
 
     <osgi:service ref="umurinziEnrollmentService" interface="org.motechproject.umurinzi.service.UmurinziEnrollmentService" />

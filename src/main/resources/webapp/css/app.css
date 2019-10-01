@@ -24,16 +24,6 @@
     text-align: left;
 }
 
-.prime-vaccination-schedule-modal-body > div > span.left {
-    width: 250px;
-    text-align: left;
-}
-
-.visit-reschedule-modal-body > div > span.left {
-    width: 250px;
-    text-align: left;
-}
-
 .select2-choice {
     border-radius: 0px !important;
 }
@@ -41,10 +31,6 @@
 .umurinzi.input-group {
     width: 100%;
     margin-bottom: 10px !important;
-}
-
-.prime-vaccination-schedule-modal.input-group {
-    width: 100%;
 }
 
 .validator {

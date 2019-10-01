@@ -14,6 +14,7 @@ import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.motechproject.mds.query.QueryParams;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.domain.IvrAndSmsStatisticReport;
 import org.motechproject.umurinzi.domain.SubjectEnrollments;
@@ -23,7 +24,6 @@ import org.motechproject.umurinzi.dto.IvrAndSmsStatisticReportDto;
 import org.motechproject.umurinzi.dto.MissedVisitsReportDto;
 import org.motechproject.umurinzi.dto.OptsOutOfMotechMessagesReportDto;
 import org.motechproject.umurinzi.dto.UnscheduledVisitDto;
-import org.motechproject.umurinzi.dto.VisitRescheduleDto;
 import org.motechproject.umurinzi.exception.UmurinziExportException;
 import org.motechproject.umurinzi.exception.UmurinziLookupException;
 import org.motechproject.umurinzi.helper.DtoLookupHelper;
@@ -34,7 +34,6 @@ import org.motechproject.umurinzi.template.XlsBasicTemplate;
 import org.motechproject.umurinzi.template.XlsExportTemplate;
 import org.motechproject.umurinzi.util.QueryParamsBuilder;
 import org.motechproject.umurinzi.web.domain.GridSettings;
-import org.motechproject.mds.query.QueryParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,16 +59,6 @@ public class ExportController {
     private ExportService exportService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
-
-    @RequestMapping(value = "/exportInstances/visitReschedule", method = RequestMethod.GET)
-    public void exportVisitReschedule(GridSettings settings, @RequestParam String exportRecords,
-                                      @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
-
-        GridSettings newSettings = DtoLookupHelper.changeLookupForVisitReschedule(settings);
-
-        exportEntity(newSettings, exportRecords, outputFormat, response, UmurinziConstants.VISIT_RESCHEDULE_NAME,
-                VisitRescheduleDto.class, Visit.class, UmurinziConstants.VISIT_RESCHEDULE_FIELDS_MAP);
-    }
 
     @RequestMapping(value = "/exportInstances/unscheduledVisits", method = RequestMethod.GET)
     public void exportUnscheduledVisits(GridSettings settings, @RequestParam String exportRecords,

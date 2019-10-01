@@ -68,7 +68,6 @@ public final class UmurinziConstants {
     public static final String HAS_SUBJECTS_TAB_ROLE = "hasRole('" + SUBJECTS_TAB_PERMISSION + "')";
 
     public static final String UNSCHEDULED_VISITS_NAME = "Unscheduled_Visits";
-    public static final String VISIT_RESCHEDULE_NAME = "VisitReschedule";
 
     public static final String DAILY_CLINIC_VISIT_SCHEDULE_REPORT_NAME = "DailyClinicVisitScheduleReport";
     public static final String FOLLOW_UPS_MISSED_CLINIC_VISITS_REPORT_NAME = "FollowupsMissedClinicVisitsReport";
@@ -76,15 +75,6 @@ public final class UmurinziConstants {
     public static final String OPTS_OUT_OF_MOTECH_MESSAGES_REPORT_NAME = "ParticipantsWhoOptOutOfReceivingMotechMessagesReport";
     public static final String IVR_AND_SMS_STATISTIC_REPORT_NAME = "NumberOfTimesParticipantsListenedToEachMessageReport";
     public static final String SUBJECT_ENROLLMENTS_NAME = "ParticipantEnrollments";
-
-    public static final Map<String, String> VISIT_RESCHEDULE_FIELDS_MAP = new LinkedHashMap<String, String>() {
-        {
-            put("Participant Id", "participantId");
-            put("Visit Type", "visitType");
-            put("Actual Date", "actualDate");
-            put("Planned Date", "plannedDate");
-        }
-    };
 
     public static final Map<String, String> UNSCHEDULED_VISIT_FIELDS_MAP = new LinkedHashMap<String, String>() {
         {
@@ -155,13 +145,6 @@ public final class UmurinziConstants {
 
     public static final List<String> AVAILABLE_LOOKUPS_FOR_SUBJECT_ENROLLMENTS =
         new ArrayList<>(Arrays.asList("Find By Participant Id", "Find By Status"));
-
-    public static final List<String> AVAILABLE_LOOKUPS_FOR_VISIT_RESCHEDULE = new ArrayList<>(Arrays.asList(
-            "Find By Visit Planned Date",
-            "Find By Visit Type And Planned Date",
-            "Find By Visit Actual Date",
-            "Find By Visit Type And Actual Date",
-            "Find By Participant Id"));
 
     public static final List<String> AVAILABLE_LOOKUPS_FOR_UNSCHEDULED = new ArrayList<>(
         Collections.singletonList("Find By Participant Id"));
