@@ -1,0 +1,71 @@
+.umurinzi > .ui-corner-all {
+    border-radius: 0px;
+}
+
+.umurinzi > .ui-jqgrid-titlebar {
+    display: none;
+}
+
+.middle.input-group-addon {
+    border-left: 0px;
+    border-right: 0px;
+}
+
+.inline-table {
+    display: inline-table;
+}
+
+#ui-datepicker-div {
+    z-index: 2000 !important;
+}
+
+.left.input-group-addon {
+    width: 100px;
+    text-align: left;
+}
+
+.prime-vaccination-schedule-modal-body > div > span.left {
+    width: 250px;
+    text-align: left;
+}
+
+.visit-reschedule-modal-body > div > span.left {
+    width: 250px;
+    text-align: left;
+}
+
+.select2-choice {
+    border-radius: 0px !important;
+}
+
+.umurinzi.input-group {
+    width: 100%;
+    margin-bottom: 10px !important;
+}
+
+.prime-vaccination-schedule-modal.input-group {
+    width: 100%;
+}
+
+.validator {
+    width: 15px;
+}
+
+.invalid {
+    color: #a94442;
+}
+
+.valid {
+    color: #3c763d;
+    color: #3c763d;
+}
+
+.table-centered tbody tr td, .table-centered thead tr th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.datepicker[readonly] {
+    background-color: white;
+    cursor: auto;
+}

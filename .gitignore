@@ -1,0 +1,7 @@
+*~
+target/
+.idea/
+*.iml
+felix-cache/
+velocity.log
+*.orig

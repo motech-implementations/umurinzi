@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+    <mvc:annotation-driven/>
+    <context:annotation-config/>
+    <context:component-scan base-package="org.motechproject.umurinzi"/>
+
+    <bean class="org.motechproject.osgi.web.ModuleRegistrationData" id="moduleRegistrationData">
+        <constructor-arg name="moduleName" value="umurinzi"/>
+        <constructor-arg name="url" value="../umurinzi/resources/index.html"/>
+        <constructor-arg name="angularModules">
+            <list>
+                <value>umurinzi</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg name="i18n">
+            <map>
+                <entry key="messages" value="../umurinzi/resources/messages/"/>
+            </map>
+        </constructor-arg>
+        <property name="settingsURL" value="/umurinzi/settings"/>
+        <property name="defaultURL" value="/umurinzi/welcomeTab"/>
+        <property name="roleForAccess">
+            <list>
+                <value>manageUmurinzi</value>
+                <value>umurinziSubjectsTab</value>
+                <value>umurinziVisitRescheduleBookingTab</value>
+                <value>umurinziUnscheduledVisitsTab</value>
+                <value>umurinziReportsTab</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean autowire="byType" class="org.motechproject.server.config.SettingsFacade"
+          id="umurinziSettings">
+        <property name="configFiles">
+            <list>
+                <value>classpath:umurinzi.properties</value>
+            </list>
+        </property>
+        <property name="rawConfigFiles">
+            <list>
+                <value>classpath:umurinzi-config.json</value>
+                <value>classpath:custom-ui.js</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+          id="multipartResolver">
+        <property name="maxUploadSize" value="10000000"/>
+    </bean>
+
+</beans>

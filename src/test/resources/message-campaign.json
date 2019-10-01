@@ -1,0 +1,21 @@
+[
+  {
+    "name": "TestScreening",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Screening message",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "screening-message",
+        "timeOffset": "15 Minutes",
+        "startTime": "9:00"
+      }
+    ]
+  }
+]

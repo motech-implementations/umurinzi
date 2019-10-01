@@ -1,0 +1,489 @@
+[
+  {
+    "name": "D0 Prime Vaccination",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Welcome message",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "welcome-message",
+        "timeOffset": "1 Day",
+        "startTime": "4:00"
+      }
+    ]
+  },
+  {
+    "name": "D1 Sub-study visit",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Clinic Visit Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "clinic-visit-reminder-today",
+        "timeOffset": "0 Day",
+        "startTime": "4:30"
+      }
+    ]
+  },
+  {
+    "name": "D3 Sub-study visit",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Clinic Visit Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "clinic-visit-reminder-1-day",
+        "timeOffset": "-1 Day",
+        "startTime": "4:30"
+      },
+      {
+        "name": "Clinic Visit Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "clinic-visit-reminder-today",
+        "timeOffset": "0 Day",
+        "startTime": "4:30"
+      }
+    ]
+  },
+  {
+    "name": "D7 Phone call",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Phone Appt Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-1-day",
+        "timeOffset": "-1 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Phone Appt Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-today",
+        "timeOffset": "0 Day",
+        "startTime": "4:00"
+      }
+    ]
+  },
+  {
+    "name": "D28 Phone call",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Phone Appt Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-1-day",
+        "timeOffset": "-1 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Phone Appt Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-today",
+        "timeOffset": "0 Day",
+        "startTime": "4:00"
+      }
+    ]
+  },
+  {
+    "name": "D56 Boost Vaccination",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Booster Reminder: 1 week",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "booster-reminder-1-week",
+        "timeOffset": "-7 Days",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Booster Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "booster-reminder-1-day",
+        "timeOffset": "-1 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Booster Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "booster-reminder-today",
+        "timeOffset": "0 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Missed Dose Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "missed-dose-reminder-1-day",
+        "timeOffset": "1 Day",
+        "startTime": "4:00"
+      }
+    ]
+  },
+  {
+    "name": "D57 Sub-study visit",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Clinic Visit Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "clinic-visit-reminder-today-booster",
+        "timeOffset": "0 Day",
+        "startTime": "4:30"
+      }
+    ]
+  },
+  {
+    "name": "D59 Sub-study visit",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Clinic Visit Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "clinic-visit-reminder-1-day-booster",
+        "timeOffset": "-1 Day",
+        "startTime": "4:30"
+      },
+      {
+        "name": "Clinic Visit Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "clinic-visit-reminder-today-booster",
+        "timeOffset": "0 Day",
+        "startTime": "4:30"
+      }
+    ]
+  },
+  {
+    "name": "D63 Phone call",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Phone Appt Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-1-day",
+        "timeOffset": "-1 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Phone Appt Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-today",
+        "timeOffset": "0 Day",
+        "startTime": "4:00"
+      }
+    ]
+  },
+  {
+    "name": "D77 Physical visit",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Physical Visit Reminder: 1 week",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "physical-visit-reminder-1-week",
+        "timeOffset": "-7 Days",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Physical Visit Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "physical-visit-reminder-1-day",
+        "timeOffset": "-1 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Physical Visit Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "physical-visit-reminder-today",
+        "timeOffset": "0 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Physical Visit Missed appointment: 3 days",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "physical-visit-missed-appointment-3-days",
+        "timeOffset": "3 Days",
+        "startTime": "4:00"
+      }
+    ]
+  },
+  {
+    "name": "D84 Phone call",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Phone Appt Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-1-day",
+        "timeOffset": "-1 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Phone Appt Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-today",
+        "timeOffset": "0 Day",
+        "startTime": "4:00"
+      }
+    ]
+  },
+  {
+    "name": "D180 Phone call",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Phone Appt Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-1-day",
+        "timeOffset": "-1 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Phone Appt Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-today",
+        "timeOffset": "0 Day",
+        "startTime": "4:00"
+      }
+    ]
+  },
+  {
+    "name": "D365 Physical visit",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Physical Visit Reminder: 1 week",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "physical-visit-reminder-1-week",
+        "timeOffset": "-7 Days",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Physical Visit Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "physical-visit-reminder-1-day",
+        "timeOffset": "-1 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Physical Visit Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "physical-visit-reminder-today",
+        "timeOffset": "0 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Physical Visit Missed appointment: 3 days",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "physical-visit-missed-appointment-3-days",
+        "timeOffset": "3 Days",
+        "startTime": "4:00"
+      }
+    ]
+  },
+  {
+    "name": "D720 Phone call",
+    "type": "OFFSET",
+    "messages": [
+      {
+        "name": "Phone Appt Reminder: 1 day",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-1-day",
+        "timeOffset": "-1 Day",
+        "startTime": "4:00"
+      },
+      {
+        "name": "Phone Appt Reminder: today",
+        "formats": [
+          "IVR",
+          "SMS"
+        ],
+        "languages": [
+          "en"
+        ],
+        "messageKey": "phone-appt-reminder-today",
+        "timeOffset": "0 Day",
+        "startTime": "4:00"
+      }
+    ]
+  }
+]

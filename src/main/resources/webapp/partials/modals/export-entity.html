@@ -1,0 +1,70 @@
+<div id="exportUmurinziInstanceModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exportUmurinziInstanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="closeExportUmurinziInstanceModal()">&times;</button>
+                <h4 class="modal-title" id="exportUmurinziInstanceModalLabel">{{msg('umurinzi.form.exportData')}}</h4>
+            </div>
+            <div class="modal-body">
+                <form id="exportUmurinziInstanceForm" name="exportUmurinziInstanceForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label" for="records">
+                            {{msg('umurinzi.form.exportRecords')}}
+                        </label>
+                        <div class="form-inline col-md-4 col-sm-4">
+                            <div class="btn-group" id="records">
+                                <a class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    {{actualExportRecords}}
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li ng-repeat="records in availableExportRecords" ng-click="changeExportRecords(records)"><a>{{records}}</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label" for="exportFormat">
+                            {{msg('umurinzi.form.exportFormat')}}
+                        </label>
+                        <div class="form-inline col-md-4 col-sm-4">
+                            <div class="btn-group" id="exportFormat">
+                                <a class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    {{msg('umurinzi.form.exportFormat.' + exportFormat)}}
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li ng-repeat="format in availableExportFormats" ng-click="changeExportFormat(format)"><a>{{ msg('umurinzi.form.exportFormat.' + format) }}</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label" for="exportWithOrder">
+                            {{msg('umurinzi.form.exportWithOrder')}}
+                        </label>
+                        <div class="form-inline col-md-4 col-sm-4">
+                            <div class="btn-group" id="exportWithOrder">
+                                <input type="checkbox" ng-model="checkboxModel.exportWithOrder" ng-checked="checkboxModel.exportWithOrder">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="selectedLookup !== undefined || (selectedFilter !== undefined && selectedFilter.dateFilter !== undefined)">
+                        <label class="col-sm-6 control-label" for="exportWithFilter">
+                            {{msg('umurinzi.form.exportWithFilter')}}
+                        </label>
+                        <div class="form-inline col-md-4 col-sm-4">
+                            <div class="btn-group" id="exportWithFilter">
+                                <input type="checkbox" ng-model="checkboxModel.exportWithFilter" ng-checked="checkboxModel.exportWithFilter">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="confExportBtn" class="btn btn-primary" ng-click="exportInstance()">{{msg('umurinzi.btn.export')}}</button>
+                <button class="btn btn-default" ng-click="closeExportUmurinziInstanceModal()">{{msg('umurinzi.btn.cancel')}}</button>
+            </div>
+        </div>
+    </div>
+</div>
