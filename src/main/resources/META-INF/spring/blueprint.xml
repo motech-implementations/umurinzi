@@ -14,9 +14,6 @@
     <osgi:reference id="subjectDataService"
                     interface="org.motechproject.umurinzi.repository.SubjectDataService" />
 
-    <osgi:reference id="unscheduledVisitDataService"
-                    interface="org.motechproject.umurinzi.repository.UnscheduledVisitDataService" />
-
     <osgi:reference id="visitDataService"
                     interface="org.motechproject.umurinzi.repository.VisitDataService" />
 
@@ -50,8 +47,6 @@
     <osgi:service ref="reportService" interface="org.motechproject.umurinzi.service.ReportService" />
 
     <osgi:service ref="subjectService" interface="org.motechproject.umurinzi.service.SubjectService" />
-
-    <osgi:service ref="unscheduledVisitService" interface="org.motechproject.umurinzi.service.UnscheduledVisitService" />
 
     <osgi:service ref="visitScheduleOffsetService" interface="org.motechproject.umurinzi.service.VisitScheduleOffsetService" />
 

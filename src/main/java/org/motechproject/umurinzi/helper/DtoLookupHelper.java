@@ -12,7 +12,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.commons.api.Range;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.domain.SubjectEnrollments;
-import org.motechproject.umurinzi.domain.UnscheduledVisit;
 import org.motechproject.umurinzi.domain.Visit;
 import org.motechproject.umurinzi.domain.enums.DateFilter;
 import org.motechproject.umurinzi.domain.enums.EnrollmentStatus;
@@ -24,32 +23,6 @@ public final class DtoLookupHelper {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private DtoLookupHelper() {
-    }
-
-    public static GridSettings changeLookupForUnscheduled(GridSettings settings) throws IOException {
-        Map<String, Object> fieldsMap = new HashMap<>();
-        DateFilter dateFilter = settings.getDateFilter();
-
-        if (dateFilter != null) {
-
-            if (StringUtils.isBlank(settings.getFields())) {
-                settings.setFields("{}");
-            }
-
-            String lookup = settings.getLookup();
-            if (StringUtils.isBlank(lookup)) {
-                settings.setLookup("Find By Date");
-            } else {
-                fieldsMap = getFields(settings.getFields());
-                settings.setLookup(lookup + " And Date");
-            }
-
-            Map<String, String> rangeMap = getDateRangeFromFilter(settings);
-
-            fieldsMap.put(UnscheduledVisit.DATE_PROPERTY_NAME, rangeMap);
-            settings.setFields(OBJECT_MAPPER.writeValueAsString(fieldsMap));
-        }
-        return settings;
     }
 
     public static GridSettings changeLookupAndOrderForFollowupsMissedClinicVisitsReport(GridSettings settings) throws IOException { //NO CHECKSTYLE CyclomaticComplexity

@@ -18,12 +18,10 @@ import org.motechproject.mds.query.QueryParams;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.domain.IvrAndSmsStatisticReport;
 import org.motechproject.umurinzi.domain.SubjectEnrollments;
-import org.motechproject.umurinzi.domain.UnscheduledVisit;
 import org.motechproject.umurinzi.domain.Visit;
 import org.motechproject.umurinzi.dto.IvrAndSmsStatisticReportDto;
 import org.motechproject.umurinzi.dto.MissedVisitsReportDto;
 import org.motechproject.umurinzi.dto.OptsOutOfMotechMessagesReportDto;
-import org.motechproject.umurinzi.dto.UnscheduledVisitDto;
 import org.motechproject.umurinzi.exception.UmurinziExportException;
 import org.motechproject.umurinzi.exception.UmurinziLookupException;
 import org.motechproject.umurinzi.helper.DtoLookupHelper;
@@ -59,16 +57,6 @@ public class ExportController {
     private ExportService exportService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
-
-    @RequestMapping(value = "/exportInstances/unscheduledVisits", method = RequestMethod.GET)
-    public void exportUnscheduledVisits(GridSettings settings, @RequestParam String exportRecords,
-                                        @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
-
-        GridSettings newSettings = DtoLookupHelper.changeLookupForUnscheduled(settings);
-
-        exportEntity(newSettings, exportRecords, outputFormat, response, UmurinziConstants.UNSCHEDULED_VISITS_NAME,
-                UnscheduledVisitDto.class, UnscheduledVisit.class, UmurinziConstants.UNSCHEDULED_VISIT_FIELDS_MAP);
-    }
 
     @RequestMapping(value = "/exportDailyClinicVisitScheduleReport", method = RequestMethod.GET)
     public void exportDailyClinicVisitScheduleReport(GridSettings settings, @RequestParam String exportRecords,

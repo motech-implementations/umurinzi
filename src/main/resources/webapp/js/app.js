@@ -2,9 +2,8 @@
     'use strict';
 
     /* App Module */
-    var umurinzi = angular.module('umurinzi', ['umurinzi.controllers', 'umurinzi.services',
-          'umurinzi.directives', 'motech-dashboard', 'data-services', 'ui.directives']), subjectId,
-      callDetailRecordId, smsRecordId;
+    var umurinzi = angular.module('umurinzi', ['umurinzi.controllers', 'umurinzi.directives',
+          'motech-dashboard', 'data-services', 'ui.directives']), subjectId, callDetailRecordId, smsRecordId;
 
     $.ajax({
         url: '../mds/entities/getEntity/Umurinzi/Participant',
@@ -43,7 +42,6 @@
         });
 
     umurinzi.config(function ($routeProvider, UMURINZI_AVAILABLE_TABS) {
-
         var i, tab;
 
         for (i = 0; i < UMURINZI_AVAILABLE_TABS.length; i = i + 1) {

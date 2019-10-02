@@ -2,7 +2,6 @@ package org.motechproject.umurinzi.constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,16 +57,12 @@ public final class UmurinziConstants {
     public static final String VOTO_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public static final String VISIT_RESCHEDULE_TAB_PERMISSION = "umurinziVisitRescheduleBookingTab";
-    public static final String UNSCHEDULED_VISITS_TAB_PERMISSION = "umurinziUnscheduledVisitsTab";
     public static final String REPORTS_TAB_PERMISSION = "umurinziReportsTab";
     public static final String SUBJECTS_TAB_PERMISSION = "umurinziSubjectsTab";
 
     public static final String HAS_VISIT_RESCHEDULE_TAB_ROLE = "hasRole('" + VISIT_RESCHEDULE_TAB_PERMISSION + "')";
-    public static final String HAS_UNSCHEDULED_VISITS_TAB_ROLE = "hasRole('" + UNSCHEDULED_VISITS_TAB_PERMISSION + "')";
     public static final String HAS_REPORTS_TAB_ROLE = "hasRole('" + REPORTS_TAB_PERMISSION + "')";
     public static final String HAS_SUBJECTS_TAB_ROLE = "hasRole('" + SUBJECTS_TAB_PERMISSION + "')";
-
-    public static final String UNSCHEDULED_VISITS_NAME = "Unscheduled_Visits";
 
     public static final String DAILY_CLINIC_VISIT_SCHEDULE_REPORT_NAME = "DailyClinicVisitScheduleReport";
     public static final String FOLLOW_UPS_MISSED_CLINIC_VISITS_REPORT_NAME = "FollowupsMissedClinicVisitsReport";
@@ -75,14 +70,6 @@ public final class UmurinziConstants {
     public static final String OPTS_OUT_OF_MOTECH_MESSAGES_REPORT_NAME = "ParticipantsWhoOptOutOfReceivingMotechMessagesReport";
     public static final String IVR_AND_SMS_STATISTIC_REPORT_NAME = "NumberOfTimesParticipantsListenedToEachMessageReport";
     public static final String SUBJECT_ENROLLMENTS_NAME = "ParticipantEnrollments";
-
-    public static final Map<String, String> UNSCHEDULED_VISIT_FIELDS_MAP = new LinkedHashMap<String, String>() {
-        {
-            put("Participant Id", "participantId");
-            put("Date", "date");
-            put("Purpose of the visit", "purpose");
-        }
-    };
 
     public static final Map<String, String> DAILY_CLINIC_VISIT_SCHEDULE_REPORT_MAP = new LinkedHashMap<String, String>() {
         {
@@ -145,9 +132,6 @@ public final class UmurinziConstants {
 
     public static final List<String> AVAILABLE_LOOKUPS_FOR_SUBJECT_ENROLLMENTS =
         new ArrayList<>(Arrays.asList("Find By Participant Id", "Find By Status"));
-
-    public static final List<String> AVAILABLE_LOOKUPS_FOR_UNSCHEDULED = new ArrayList<>(
-        Collections.singletonList("Find By Participant Id"));
 
     public static final List<String> AVAILABLE_LOOKUPS_FOR_DAILY_CLINIC_VISIT_SCHEDULE_REPORT =
         new ArrayList<>(Arrays.asList("Find By Planned Visit Date Range",

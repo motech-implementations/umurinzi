@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.motechproject.umurinzi.repository.SubjectDataService;
-import org.motechproject.umurinzi.repository.UnscheduledVisitDataService;
 import org.motechproject.umurinzi.repository.VisitDataService;
 import org.motechproject.umurinzi.service.impl.SubjectServiceImpl;
 
@@ -20,9 +19,6 @@ public class SubjectServiceTest {
 
     @Mock
     private VisitDataService visitDataService;
-
-    @Mock
-    private UnscheduledVisitDataService unscheduledVisitDataService;
 
     @Before
     public void setUp() {
