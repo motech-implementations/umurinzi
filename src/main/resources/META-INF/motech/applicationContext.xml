@@ -30,7 +30,7 @@
             <list>
                 <value>manageUmurinzi</value>
                 <value>umurinziSubjectsTab</value>
-                <value>umurinziVisitRescheduleBookingTab</value>
+                <value>umurinziEnrollmentsTab</value>
                 <value>umurinziReportsTab</value>
             </list>
         </property>

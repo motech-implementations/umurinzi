@@ -10,7 +10,8 @@
     "permissionNames": [
       "manageUmurinzi",
       "umurinziSubjectsTab",
-      "umurinziVisitRescheduleBookingTab",
+      "umurinziEnrollmentsTab",
+      "umurinziManageEnrollments",
       "umurinziReportsTab",
       "viewUI"
     ]
@@ -20,7 +21,8 @@
     "permissionNames": [
       "manageUmurinzi",
       "umurinziSubjectsTab",
-      "umurinziVisitRescheduleBookingTab",
+      "umurinziEnrollmentsTab",
+      "umurinziManageEnrollments",
       "umurinziReportsTab",
       "viewUI"
     ]

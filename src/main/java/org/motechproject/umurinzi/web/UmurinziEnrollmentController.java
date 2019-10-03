@@ -5,19 +5,20 @@ import static org.motechproject.umurinzi.constants.UmurinziConstants.AVAILABLE_L
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
+import org.motechproject.mds.dto.LookupDto;
+import org.motechproject.mds.query.QueryParams;
+import org.motechproject.mds.util.Order;
+import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.domain.Enrollment;
 import org.motechproject.umurinzi.domain.SubjectEnrollments;
 import org.motechproject.umurinzi.exception.UmurinziEnrollmentException;
 import org.motechproject.umurinzi.exception.UmurinziException;
 import org.motechproject.umurinzi.exception.UmurinziLookupException;
 import org.motechproject.umurinzi.repository.EnrollmentDataService;
-import org.motechproject.umurinzi.service.UmurinziEnrollmentService;
 import org.motechproject.umurinzi.service.LookupService;
+import org.motechproject.umurinzi.service.UmurinziEnrollmentService;
 import org.motechproject.umurinzi.web.domain.GridSettings;
 import org.motechproject.umurinzi.web.domain.Records;
-import org.motechproject.mds.dto.LookupDto;
-import org.motechproject.mds.query.QueryParams;
-import org.motechproject.mds.util.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
+@PreAuthorize(UmurinziConstants.HAS_ENROLLMENTS_TAB_ROLE)
 public class UmurinziEnrollmentController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UmurinziEnrollmentController.class);
@@ -45,7 +47,6 @@ public class UmurinziEnrollmentController {
     @Autowired
     private LookupService lookupService;
 
-    @PreAuthorize("hasRole('manageUmurinzi')")
     @RequestMapping(value = "/getEnrollments", method = RequestMethod.POST)
     @ResponseBody
     public Records<?> getEnrollments(GridSettings settings) {
@@ -64,7 +65,6 @@ public class UmurinziEnrollmentController {
         }
     }
 
-    @PreAuthorize("hasRole('manageUmurinzi')")
     @RequestMapping(value = "/getLookupsForEnrollments", method = RequestMethod.GET)
     @ResponseBody
     public List<LookupDto> getLookupsForEnrollments() {
@@ -86,14 +86,14 @@ public class UmurinziEnrollmentController {
         return ret;
     }
 
-    @PreAuthorize("hasRole('manageEnrollments')")
+    @PreAuthorize(UmurinziConstants.HAS_MANAGE_ENROLLMENTS_ROLE)
     @RequestMapping(value = "/checkAdvancedPermissions", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> checkAdvancedPermissions() {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('manageEnrollments')")
+    @PreAuthorize(UmurinziConstants.HAS_MANAGE_ENROLLMENTS_ROLE)
     @RequestMapping(value = "/getEnrollmentAdvanced/{subjectId}", method = RequestMethod.POST)
     @ResponseBody
     public Records<?> getEnrollmentAdvanced(@PathVariable String subjectId, GridSettings settings) {
@@ -115,7 +115,6 @@ public class UmurinziEnrollmentController {
         return new Records<>(settings.getPage(), rowCount, (int) recordCount, enrollments);
     }
 
-    @PreAuthorize("hasRole('manageUmurinzi')")
     @RequestMapping(value = "/enrollSubject", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> enrollSubject(@RequestBody String subjectId) {
@@ -133,7 +132,6 @@ public class UmurinziEnrollmentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('manageUmurinzi')")
     @RequestMapping(value = "/unenrollSubject", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> unenrollSubject(@RequestBody String subjectId) {
@@ -151,7 +149,7 @@ public class UmurinziEnrollmentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('manageEnrollments')")
+    @PreAuthorize(UmurinziConstants.HAS_MANAGE_ENROLLMENTS_ROLE)
     @RequestMapping(value = "/enrollCampaign/{subjectId}/{campaignName}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> enrollCampaign(@PathVariable String subjectId, @PathVariable String campaignName) {
@@ -174,7 +172,7 @@ public class UmurinziEnrollmentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('manageEnrollments')")
+    @PreAuthorize(UmurinziConstants.HAS_MANAGE_ENROLLMENTS_ROLE)
     @RequestMapping(value = "/unenrollCampaign/{subjectId}/{campaignName}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> unenrollCampaign(@PathVariable String subjectId, @PathVariable String campaignName) {

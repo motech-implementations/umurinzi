@@ -2,7 +2,7 @@ package org.motechproject.umurinzi.web;
 
 import static org.motechproject.umurinzi.constants.UmurinziConstants.REPORTS_TAB_PERMISSION;
 import static org.motechproject.umurinzi.constants.UmurinziConstants.SUBJECTS_TAB_PERMISSION;
-import static org.motechproject.umurinzi.constants.UmurinziConstants.VISIT_RESCHEDULE_TAB_PERMISSION;
+import static org.motechproject.umurinzi.constants.UmurinziConstants.ENROLLMENTS_TAB_PERMISSION;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class TabAccessController {
             availableTabs.add("subjects");
         }
 
-        if (auth.getAuthorities().contains(new SimpleGrantedAuthority(VISIT_RESCHEDULE_TAB_PERMISSION))) {
+        if (auth.getAuthorities().contains(new SimpleGrantedAuthority(ENROLLMENTS_TAB_PERMISSION))) {
             availableTabs.add("enrollment");
         }
 
