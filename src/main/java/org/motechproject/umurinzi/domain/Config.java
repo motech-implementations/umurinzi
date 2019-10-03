@@ -55,4 +55,8 @@ public class Config {
     @Getter
     @Setter
     private Integer retryDelay;
+
+    @Getter
+    @Setter
+    private String ivrLanguageId;
 }

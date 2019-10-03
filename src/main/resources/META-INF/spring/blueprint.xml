@@ -29,9 +29,6 @@
     <osgi:reference id="votoMessageDataService"
       interface="org.motechproject.umurinzi.repository.VotoMessageDataService" />
 
-    <osgi:reference id="votoLanguageDataService"
-      interface="org.motechproject.umurinzi.repository.VotoLanguageDataService" />
-
     <osgi:reference id="visitScheduleOffsetDataService"
                     interface="org.motechproject.umurinzi.repository.VisitScheduleOffsetDataService" />
 

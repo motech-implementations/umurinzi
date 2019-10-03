@@ -9,14 +9,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.motechproject.testing.osgi.BasePaxIT;
+import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
 import org.motechproject.umurinzi.domain.Subject;
-import org.motechproject.umurinzi.domain.enums.Language;
 import org.motechproject.umurinzi.repository.SubjectDataService;
 import org.motechproject.umurinzi.repository.VisitDataService;
 import org.motechproject.umurinzi.service.SubjectService;
 import org.motechproject.umurinzi.utils.SubjectUtil;
-import org.motechproject.testing.osgi.BasePaxIT;
-import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
 import org.ops4j.pax.exam.ExamFactory;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
@@ -54,9 +53,9 @@ public class SubjectServiceIT extends BasePaxIT {
     }
 
     private void resetSubjects() {
-        firstSubject = SubjectUtil.createSubject("1000000161", "Michal", "729402018364", Language.English);
+        firstSubject = SubjectUtil.createSubject("1000000161", "Michal", "729402018364");
 
-        secondSubject = SubjectUtil.createSubject("1000000162", "Rafal", "44443333222", Language.Runyankole);
+        secondSubject = SubjectUtil.createSubject("1000000162", "Rafal", "44443333222");
     }
 
     @Test

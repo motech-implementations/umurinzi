@@ -10,18 +10,17 @@ import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.motechproject.mds.query.QueryParams;
+import org.motechproject.testing.osgi.BasePaxIT;
+import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.domain.Visit;
-import org.motechproject.umurinzi.domain.enums.Language;
 import org.motechproject.umurinzi.domain.enums.VisitType;
 import org.motechproject.umurinzi.repository.SubjectDataService;
 import org.motechproject.umurinzi.repository.VisitDataService;
 import org.motechproject.umurinzi.service.LookupService;
 import org.motechproject.umurinzi.utils.VisitUtil;
 import org.motechproject.umurinzi.web.domain.Records;
-import org.motechproject.mds.query.QueryParams;
-import org.motechproject.testing.osgi.BasePaxIT;
-import org.motechproject.testing.osgi.container.MotechNativeTestContainerFactory;
 import org.ops4j.pax.exam.ExamFactory;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
@@ -107,9 +106,9 @@ public class LookupServiceIT extends BasePaxIT {
     }
 
     private void resetTestFields() {
-        Subject firstSubject = createSubject("1000000161", "Michal", "729402018364", Language.English);
+        Subject firstSubject = createSubject("1000000161", "Michal", "729402018364");
 
-        Subject secondSubject = createSubject("1000000162", "Rafal", "44443333222", Language.Runyankole);
+        Subject secondSubject = createSubject("1000000162", "Rafal", "44443333222");
 
         firstSubject.setPrimeVaccinationDate(new LocalDate(2014, 10, 16));
         firstSubject.setBoostVaccinationDate(new LocalDate(2014, 10, 16));

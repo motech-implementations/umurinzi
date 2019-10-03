@@ -7,18 +7,15 @@ import com.google.gson.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
+import org.motechproject.ivr.service.OutboundCallService;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.domain.Config;
 import org.motechproject.umurinzi.domain.Subject;
-import org.motechproject.umurinzi.domain.VotoLanguage;
 import org.motechproject.umurinzi.domain.VotoMessage;
-import org.motechproject.umurinzi.domain.enums.Language;
 import org.motechproject.umurinzi.exception.UmurinziInitiateCallException;
-import org.motechproject.umurinzi.repository.VotoLanguageDataService;
 import org.motechproject.umurinzi.repository.VotoMessageDataService;
 import org.motechproject.umurinzi.service.ConfigService;
 import org.motechproject.umurinzi.service.SubjectService;
-import org.motechproject.ivr.service.OutboundCallService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +33,6 @@ public class IvrCallHelper {
     private VotoMessageDataService votoMessageDataService;
 
     @Autowired
-    private VotoLanguageDataService votoLanguageDataService;
-
-    @Autowired
     private SubjectService subjectService;
 
     private OutboundCallService outboundCallService;
@@ -49,14 +43,14 @@ public class IvrCallHelper {
         Subject subject = getSubject(externalId);
 
         if (config.getSendIvrCalls() != null && config.getSendIvrCalls()
-            && subject.getLanguage() != null && StringUtils.isNotBlank(subject.getPhoneNumber())) {
+            && StringUtils.isNotBlank(config.getIvrLanguageId())
+            && StringUtils.isNotBlank(subject.getPhoneNumber())) {
 
-            String votoLanguageId = getVotoLanguageId(subject.getLanguage(), externalId);
             String votoMessageId = getVotoMessageId(messageKey, externalId);
 
             JsonObject subscriber = new JsonObject();
             subscriber.addProperty(UmurinziConstants.PHONE, subject.getPhoneNumber());
-            subscriber.addProperty(UmurinziConstants.LANGUAGE, votoLanguageId);
+            subscriber.addProperty(UmurinziConstants.LANGUAGE, config.getIvrLanguageId());
 
             JsonArray subscriberArray = new JsonArray();
             subscriberArray.add(subscriber);
@@ -93,17 +87,6 @@ public class IvrCallHelper {
         }
 
         return subject;
-    }
-
-    private String getVotoLanguageId(Language language, String subjectId) {
-        VotoLanguage votoLanguage = votoLanguageDataService.findByLanguage(language);
-
-        if (votoLanguage == null) {
-            throw new UmurinziInitiateCallException("Cannot initiate call for Provider with id: %s, because Voto Language for language: %s not found",
-                    subjectId, language.toString());
-        }
-
-        return votoLanguage.getVotoId();
     }
 
     private String getVotoMessageId(String messageKey, String subjectId) {
