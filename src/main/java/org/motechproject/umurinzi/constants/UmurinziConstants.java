@@ -53,6 +53,7 @@ public final class UmurinziConstants {
     public static final String IVR_CALL_DETAIL_RECORD_END_TIMESTAMP = "end_timestamp";
     public static final String IVR_CALL_DETAIL_RECORD_START_TIMESTAMP = "start_timestamp";
     public static final String IVR_CALL_DETAIL_RECORD_MESSAGE_SECOND_COMPLETED = "message_seconds_completed";
+    public static final String IVR_DELIVERY_LOG_ID = "delivery_log_id";
 
     public static final String VOTO_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 

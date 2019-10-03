@@ -7,7 +7,7 @@
   "ivrSettingsName": "Voto",
   "apiKey": null,
   "statusCallbackUrl": null,
-  "sendSmsIfVoiceFails": true,
+  "sendSmsIfVoiceFails": false,
   "detectVoiceMail": true,
   "retryAttempts": 3,
   "retryDelay": 15

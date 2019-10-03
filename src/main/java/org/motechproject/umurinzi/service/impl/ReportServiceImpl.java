@@ -139,8 +139,8 @@ public class ReportServiceImpl implements ReportService {
         List<CallDetailRecord> callDetailRecords = callDetailRecordDataService.findByExactProviderCallId(providerCallId,
             QueryParams.ascOrder(UmurinziConstants.IVR_CALL_DETAIL_RECORD_MOTECH_TIMESTAMP_FIELD));
 
-        List<CallDetailRecord> failed = new ArrayList<>();
-        List<CallDetailRecord> finished = new ArrayList<>();
+        List<CallDetailRecord> endRecords = new ArrayList<>();
+
         boolean sms = false;
         boolean smsFailed = false;
         String messageId = providerExtraData.get(UmurinziConstants.MESSAGE_ID);
@@ -152,89 +152,107 @@ public class ReportServiceImpl implements ReportService {
         double timeListenedTo = 0;
         double messagePercentListened = 0;
 
+        String smsDeliveryLogId = null;
+        CallDetailRecord callRecord = null;
+        CallDetailRecord smsRecord = null;
+
         for (CallDetailRecord callDetailRecord : callDetailRecords) {
             if (callDetailRecord.getCallStatus() == null) {
                 continue;
             }
+
             if (callDetailRecord.getCallStatus().contains(UmurinziConstants.IVR_CALL_DETAIL_RECORD_STATUS_SUBMITTED)) {
                 sms = true;
-            } else if (callDetailRecord.getCallStatus().contains(UmurinziConstants.IVR_CALL_DETAIL_RECORD_STATUS_FINISHED)) {
-                finished.add(callDetailRecord);
-            } else if (callDetailRecord.getCallStatus().contains(UmurinziConstants.IVR_CALL_DETAIL_RECORD_STATUS_FAILED)) {
-                failed.add(callDetailRecord);
+                smsDeliveryLogId = callDetailRecord.getProviderExtraData().get(UmurinziConstants.IVR_DELIVERY_LOG_ID);
+            } else if (callDetailRecord.getCallStatus().contains(UmurinziConstants.IVR_CALL_DETAIL_RECORD_STATUS_FINISHED)
+                || callDetailRecord.getCallStatus().contains(UmurinziConstants.IVR_CALL_DETAIL_RECORD_STATUS_FAILED)) {
+                endRecords.add(callDetailRecord);
             }
         }
 
-        Integer recordsCount = failed.size() + finished.size();
-        CallDetailRecord callRecord;
+        if (endRecords.isEmpty()) {
+            throw new UmurinziReportException("Cannot generate report for Call Detail Record with Provider Call Id: %s for Providers with Ids %s, because there is no finished/failed record",
+                providerCallId, subjectId);
+        }
 
         if (sms) {
-            if (failed.isEmpty()) {
-                throw new UmurinziReportException("Cannot generate report for Call Detail Record with Provider Call Id: %s for Providers with Ids %s, because SMS was sent but no failed record found for the Call",
+            if (StringUtils.isBlank(smsDeliveryLogId)) {
+                throw new UmurinziReportException("Cannot generate report for Call Detail Record with Provider Call Id: %s for Providers with Ids %s, because SMS delivery log is empty",
                     providerCallId, subjectId);
             }
-            if (recordsCount > 2) {
-                throw new UmurinziReportException("Cannot generate report for Call Detail Record with Provider Call Id: %s for Providers with Ids %s, because there is too much records with failed/finished status (%s)",
-                    providerCallId, subjectId, recordsCount.toString());
+
+            for (CallDetailRecord callDetailRecord : endRecords) {
+                if (smsDeliveryLogId.equals(callDetailRecord.getProviderExtraData().get(UmurinziConstants.IVR_DELIVERY_LOG_ID))) {
+                    smsRecord = callDetailRecord;
+                } else {
+                    callRecord = callDetailRecord;
+                }
             }
-            if (failed.size() == 2) {
+        } else if (endRecords.size() < 2) {
+            callRecord = endRecords.get(0);
+        } else {
+            LOGGER.warn("SMS was not send for Call Detail Record with Provider Call Id: {} for Providers with Ids {}", providerCallId, subjectId);
+
+            for (CallDetailRecord callDetailRecord : endRecords) {
+                if (callDetailRecord.getCallStatus().contains(UmurinziConstants.IVR_CALL_DETAIL_RECORD_STATUS_FAILED) && smsRecord == null) {
+                    smsRecord = callDetailRecord;
+                } else {
+                    callRecord = callDetailRecord;
+                }
+            }
+        }
+
+        if (smsRecord != null) {
+            if (smsRecord.getCallStatus().contains(UmurinziConstants.IVR_CALL_DETAIL_RECORD_STATUS_FAILED)) {
                 smsFailed = true;
-                LOGGER.warn("Failed to sent SMS for Call Detail Record with Provider Call Id: {} for Providers with Ids {}", providerCallId, subjectId);
-            } else if (finished.isEmpty()) {
-                LOGGER.warn("SMS is sent but not yet received for Call Detail Record with Provider Call Id: {} for Providers with Ids {}", providerCallId, subjectId);
-                Config config = configService.getConfig();
-                config.getIvrAndSmsStatisticReportsToUpdate().add(initialRecord.getMotechCallId());
-                configService.updateConfig(config);
             } else {
-                String providerTimestamp = finished.get(0).getProviderExtraData().get(
-                    UmurinziConstants.IVR_CALL_DETAIL_RECORD_END_TIMESTAMP);
+                String providerTimestamp = smsRecord.getProviderExtraData().get(UmurinziConstants.IVR_CALL_DETAIL_RECORD_END_TIMESTAMP);
+
                 if (StringUtils.isBlank(providerTimestamp)) {
                     throw new UmurinziReportException("Cannot generate report for Call Detail Record with Provider Call Id: %s for Providers with Ids %s, because end_timestamp for SMS Record not found",
                         providerCallId, subjectId);
                 }
+
                 smsReceivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter);
             }
+        } else if (sms) {
+            LOGGER.warn("SMS is sent but not yet received for Call Detail Record with Provider Call Id: {} for Providers with Ids {}", providerCallId, subjectId);
 
-            callRecord = failed.get(0);
-        } else if (recordsCount == 2 && failed.size() == 2) {
-            callRecord = failed.get(0);
-            smsFailed = true;
-            LOGGER.warn("Failed to sent SMS for Call Detail Record with Provider Call Id: {} for Providers with Ids {}", providerCallId, subjectId);
-        } else {
-            if (recordsCount > 1) {
-                throw new UmurinziReportException("Cannot generate report for Call Detail Record with Provider Call Id: %s for Providers with Ids %s, because there is too much records with failed/finished status (%s)",
-                    providerCallId, subjectId, recordsCount.toString());
-            }
-            if (finished.isEmpty()) {
-                throw new UmurinziReportException("Cannot generate report for Call Detail Record with Provider Call Id: %s for Providers with Ids %s, because no SMS was sent but there is no record with finished status",
-                    providerCallId, subjectId);
-            }
+            Config config = configService.getConfig();
+            config.getIvrAndSmsStatisticReportsToUpdate().add(initialRecord.getMotechCallId());
+            configService.updateConfig(config);
+        }
 
-            callRecord = finished.get(0);
-            String providerTimestamp = callRecord.getProviderExtraData().get(
-                UmurinziConstants.IVR_CALL_DETAIL_RECORD_START_TIMESTAMP);
-            if (StringUtils.isBlank(providerTimestamp)) {
-                throw new UmurinziReportException("Cannot generate report for Call Detail Record with Provider Call Id: %s for Providers with Ids %s, because start_timestamp for Call Record not found",
-                    providerCallId, subjectId);
-            }
-            receivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter);
+        if (callRecord != null) {
+            if (callRecord.getCallStatus().contains(UmurinziConstants.IVR_CALL_DETAIL_RECORD_STATUS_FINISHED)) {
+                String providerTimestamp = callRecord.getProviderExtraData().get(UmurinziConstants.IVR_CALL_DETAIL_RECORD_START_TIMESTAMP);
 
-            if (StringUtils.isNotBlank(callRecord.getCallDuration())) {
-                timeListenedTo = Double.parseDouble(callRecord.getCallDuration());
-                if (StringUtils.isNotBlank(callRecord.getMessagePercentListened())) {
-                    messagePercentListened = Double.parseDouble(callRecord.getMessagePercentListened());
-                    String messageSecondsCompleted = callRecord.getProviderExtraData().get(
-                        UmurinziConstants.IVR_CALL_DETAIL_RECORD_MESSAGE_SECOND_COMPLETED);
-                    if (StringUtils.isNotBlank(messageSecondsCompleted)) {
-                        expectedDuration = Double.parseDouble(messageSecondsCompleted) * HUNDRED_PERCENT / messagePercentListened;
+                if (StringUtils.isBlank(providerTimestamp)) {
+                    throw new UmurinziReportException("Cannot generate report for Call Detail Record with Provider Call Id: %s for Providers with Ids %s, because start_timestamp for Call Record not found",
+                        providerCallId, subjectId);
+                }
+
+                receivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter);
+
+                if (StringUtils.isNotBlank(callRecord.getCallDuration())) {
+                    timeListenedTo = Double.parseDouble(callRecord.getCallDuration());
+
+                    if (StringUtils.isNotBlank(callRecord.getMessagePercentListened())) {
+                        messagePercentListened = Double.parseDouble(callRecord.getMessagePercentListened());
+                        String messageSecondsCompleted = callRecord.getProviderExtraData().get(
+                            UmurinziConstants.IVR_CALL_DETAIL_RECORD_MESSAGE_SECOND_COMPLETED);
+
+                        if (StringUtils.isNotBlank(messageSecondsCompleted)) {
+                            expectedDuration = Double.parseDouble(messageSecondsCompleted) * HUNDRED_PERCENT / messagePercentListened;
+                        }
                     }
                 }
             }
-        }
 
-        String attemptsString = callRecord.getProviderExtraData().get(UmurinziConstants.IVR_CALL_DETAIL_RECORD_NUMBER_OF_ATTEMPTS);
-        if (StringUtils.isNotBlank(attemptsString)) {
-            attempts = Integer.parseInt(attemptsString);
+            String attemptsString = callRecord.getProviderExtraData().get(UmurinziConstants.IVR_CALL_DETAIL_RECORD_NUMBER_OF_ATTEMPTS);
+            if (StringUtils.isNotBlank(attemptsString)) {
+                attempts = Integer.parseInt(attemptsString);
+            }
         }
 
         IvrAndSmsStatisticReport ivrAndSmsStatisticReport = ivrAndSmsStatisticReportDataService.findByProviderCallIdAndSubjectId(providerCallId, subject.getSubjectId());
