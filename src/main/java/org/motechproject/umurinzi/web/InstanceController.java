@@ -74,7 +74,7 @@ public class InstanceController {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @PreAuthorize(UmurinziConstants.HAS_SUBJECTS_TAB_ROLE)
+    @PreAuthorize(UmurinziConstants.HAS_IMPORT_SUBJECTS_ROLE)
     @RequestMapping(value = "/instances/{entityId}/Participantcsvimport", method = RequestMethod.POST)
     @ResponseBody
     public long subjectImportCsv(@PathVariable long entityId, @RequestParam(required = true) MultipartFile csvFile) {
