@@ -6,10 +6,14 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.commons.date.util.DateUtil;
+import org.motechproject.ivr.domain.CallDetailRecord;
+import org.motechproject.ivr.repository.CallDetailRecordDataService;
+import org.motechproject.mds.query.QueryParams;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.domain.Config;
 import org.motechproject.umurinzi.domain.IvrAndSmsStatisticReport;
@@ -19,9 +23,6 @@ import org.motechproject.umurinzi.repository.IvrAndSmsStatisticReportDataService
 import org.motechproject.umurinzi.service.ConfigService;
 import org.motechproject.umurinzi.service.ReportService;
 import org.motechproject.umurinzi.service.SubjectService;
-import org.motechproject.ivr.domain.CallDetailRecord;
-import org.motechproject.ivr.repository.CallDetailRecordDataService;
-import org.motechproject.mds.query.QueryParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +109,7 @@ public class ReportServiceImpl implements ReportService {
         DateTimeFormatter motechTimestampFormatter = DateTimeFormat.forPattern(
             UmurinziConstants.IVR_CALL_DETAIL_RECORD_TIME_FORMAT);
         DateTimeFormatter votoTimestampFormatter = DateTimeFormat.forPattern(
-            UmurinziConstants.VOTO_TIMESTAMP_FORMAT);
+            UmurinziConstants.VOTO_TIMESTAMP_FORMAT).withZoneUTC();
 
         String providerCallId = initialRecord.getProviderCallId();
         Map<String, String> providerExtraData = initialRecord.getProviderExtraData();
@@ -213,7 +214,8 @@ public class ReportServiceImpl implements ReportService {
                         providerCallId, subjectId);
                 }
 
-                smsReceivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter);
+                smsReceivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter)
+                    .toDateTime(DateTimeZone.getDefault());
             }
         } else if (sms) {
             LOGGER.warn("SMS is sent but not yet received for Call Detail Record with Provider Call Id: {} for Providers with Ids {}", providerCallId, subjectId);
@@ -232,7 +234,8 @@ public class ReportServiceImpl implements ReportService {
                         providerCallId, subjectId);
                 }
 
-                receivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter);
+                receivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter)
+                    .toDateTime(DateTimeZone.getDefault());
 
                 if (StringUtils.isNotBlank(callRecord.getCallDuration())) {
                     timeListenedTo = Double.parseDouble(callRecord.getCallDuration());
