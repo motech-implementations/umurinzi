@@ -9,9 +9,11 @@ public interface SubjectService {
 
     Subject findSubjectBySubjectId(String subjectId);
 
-    Subject create(Subject record);
+    Subject create(Subject subject);
 
-    Subject update(Subject record);
+    Subject update(Subject subject);
+
+    Subject update(Subject subject, Subject oldSubject);
 
     void subjectDataChanged(Subject subject);
 }

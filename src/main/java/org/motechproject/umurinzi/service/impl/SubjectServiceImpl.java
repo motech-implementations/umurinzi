@@ -46,22 +46,32 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public Subject update(Subject subject, Subject oldSubject) {
+        subjectDataChanged(subject, oldSubject, subject);
+
+        return subjectDataService.update(subject);
+    }
+
+    @Override
     public void subjectDataChanged(Subject subject) {
         Subject oldSubject = findSubjectBySubjectId(subject.getSubjectId());
+        subjectDataChanged(subject, oldSubject, oldSubject);
+    }
 
+    private void subjectDataChanged(Subject newSubject, Subject oldSubject, Subject subject) {
         if (oldSubject != null) {
-            if (oldSubject.getPrimeVaccinationDate() != null && subject.getPrimeVaccinationDate() == null) {
-                oldSubject.setPrimeVaccinationDate(subject.getPrimeVaccinationDate());
-                visitService.removeVisitsPlannedDates(oldSubject);
-            } else if (!Objects.equals(oldSubject.getPrimeVaccinationDate(), subject.getPrimeVaccinationDate())) {
-                oldSubject.setPrimeVaccinationDate(subject.getPrimeVaccinationDate());
-                visitService.calculateVisitsPlannedDates(oldSubject);
+            if (oldSubject.getPrimeVaccinationDate() != null && newSubject.getPrimeVaccinationDate() == null) {
+                subject.setPrimeVaccinationDate(newSubject.getPrimeVaccinationDate());
+                visitService.removeVisitsPlannedDates(subject);
+            } else if (!Objects.equals(oldSubject.getPrimeVaccinationDate(), newSubject.getPrimeVaccinationDate())) {
+                subject.setPrimeVaccinationDate(newSubject.getPrimeVaccinationDate());
+                visitService.calculateVisitsPlannedDates(subject);
             }
 
-            if (!Objects.equals(oldSubject.getBoostVaccinationDate(), subject.getBoostVaccinationDate())) {
-                oldSubject.setPrimeVaccinationDate(subject.getPrimeVaccinationDate());
-                oldSubject.setBoostVaccinationDate(subject.getBoostVaccinationDate());
-                visitService.recalculateBoostRelatedVisitsPlannedDates(oldSubject);
+            if (!Objects.equals(oldSubject.getBoostVaccinationDate(), newSubject.getBoostVaccinationDate())) {
+                subject.setPrimeVaccinationDate(newSubject.getPrimeVaccinationDate());
+                subject.setBoostVaccinationDate(newSubject.getBoostVaccinationDate());
+                visitService.recalculateBoostRelatedVisitsPlannedDates(subject);
             }
         }
     }
