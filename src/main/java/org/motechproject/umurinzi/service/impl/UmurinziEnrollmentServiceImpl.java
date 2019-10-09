@@ -245,10 +245,6 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
         checkIfUnenrolled(enrollment, subjectId, campaignName);
 
         if (referenceDate != null) {
-            if (VisitType.PRIME_VACCINATION_DAY.getDisplayValue().equals(campaignName) && !referenceDate.equals(enrollment.getReferenceDate())) {
-                throw new UmurinziEnrollmentException("Cannot enroll Participant with id: %s to Campaign with name: %s, because reference date cannot be changed for Prime Vaccination Day Campaign",
-                        subjectId, enrollment.getCampaignName());
-            }
             enrollment.setReferenceDate(referenceDate);
         } else if (enrollment.getReferenceDate() == null) {
             throw new UmurinziEnrollmentException("Cannot enroll Participant with id: %s to Campaign with name: %s, because reference date is empty",
@@ -256,7 +252,7 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
         }
 
         enrollment.setStatus(EnrollmentStatus.ENROLLED);
-        scheduleJobsForEnrollment(enrollment, false);
+        scheduleJobsForEnrollment(enrollment, true);
 
         updateSubjectEnrollments(subjectEnrollments);
     }

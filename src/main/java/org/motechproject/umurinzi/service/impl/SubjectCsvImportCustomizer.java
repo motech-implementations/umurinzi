@@ -14,18 +14,29 @@ public class SubjectCsvImportCustomizer extends DefaultCsvImportCustomizer {
 
     private SubjectService subjectService;
 
+    private Subject oldSubject;
+
     @Override
     public Object findExistingInstance(Map<String, String> row, MotechDataService motechDataService) {
+        oldSubject = null;
         String subjectId = row.get(Subject.SUBJECT_ID_FIELD_NAME);
 
         if (StringUtils.isNotBlank(subjectId)) {
-            return subjectService.findSubjectBySubjectId(subjectId);
+            Subject subject = subjectService.findSubjectBySubjectId(subjectId);
+            if (subject != null) {
+                oldSubject = new Subject(subject);
+            }
+            return subject;
         }
 
         subjectId = row.get(Subject.SUBJECT_ID_FIELD_DISPLAY_NAME);
 
         if (StringUtils.isNotBlank(subjectId)) {
-            return subjectService.findSubjectBySubjectId(subjectId);
+            Subject subject = subjectService.findSubjectBySubjectId(subjectId);
+            if (subject != null) {
+                oldSubject = new Subject(subject);
+            }
+            return subject;
         }
 
         return null;
@@ -38,6 +49,9 @@ public class SubjectCsvImportCustomizer extends DefaultCsvImportCustomizer {
 
     @Override
     public Object doUpdate(Object instance, MotechDataService motechDataService) {
+        if (oldSubject != null && oldSubject.getSubjectId().equals(((Subject) instance).getSubjectId())) {
+            return subjectService.update((Subject) instance, oldSubject);
+        }
         return subjectService.update((Subject) instance);
     }
 
