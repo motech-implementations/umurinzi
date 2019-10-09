@@ -17,12 +17,19 @@ if(!$('#inputMaskJs').length) {
 $scope.showAddInstanceButton = false;
 $scope.showDeleteInstanceButton = false;
 $scope.showLookupButton = true;
+$scope.showImportButton = false;
 
 if ($scope.selectedEntity.name === "Participant") {
     $scope.showBackToEntityListButton = false;
+    $.ajax({
+        url: '../umurinzi/checkSubjectImportPermissions',
+        success:  function() {
+            $scope.showImportButton = true;
+        },
+        async: false
+    });
 } else {
     $scope.showViewTrashButton = false;
-    $scope.showImportButton = false;
     $scope.backToEntityList = function() {
         $scope.dataRetrievalError = false;
         $scope.selectedEntity = undefined;
