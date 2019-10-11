@@ -109,15 +109,18 @@ public class VisitServiceImpl implements VisitService {
                 boostVacDate = primeVacDate.plusDays(offset.getTimeOffset());
             }
 
-            for (Visit visit : subject.getVisits()) {
-                if (VisitType.BOOST_VACCINATION_DAY.equals(visit.getType())
-                    && subject.getBoostVaccinationDate() != null) {
-                    visit.setDate(boostVacDate);
+            if (subject.getBoostVaccinationDate() != null) {
+                for (Visit visit : subject.getVisits()) {
+                    if (VisitType.BOOST_VACCINATION_DAY.equals(visit.getType())) {
+                        visit.setDate(boostVacDate);
 
-                    umurinziEnrollmentService.completeCampaign(visit);
+                        umurinziEnrollmentService.completeCampaign(visit);
+                        visitDataService.update(visit);
+                    }
                 }
-
-                visitDataService.update(visit);
+                umurinziEnrollmentService.enrollOrReenrollCampaignCompletedCampaign(subject);
+            } else {
+                umurinziEnrollmentService.removeCampaignCompletedCampaign(subject.getSubjectId());
             }
 
             umurinziEnrollmentService.enrollOrReenrollSubject(subject);

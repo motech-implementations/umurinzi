@@ -24,6 +24,8 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UmurinziEnrollmentServiceImpl.class);
 
+    private static final String VACCINATION_RECEIVED_CAMPAIGN = "Campaign completed";
+
     private SubjectEnrollmentsDataService subjectEnrollmentsDataService;
 
     private EnrollmentDataService enrollmentDataService;
@@ -126,6 +128,16 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
     @Override
     public void unenrollAndRemoveEnrollment(Visit visit) {
         unenrollAndRemoveEnrollment(visit.getSubject().getSubjectId(), visit.getType().getDisplayValue());
+    }
+
+    @Override
+    public void enrollOrReenrollCampaignCompletedCampaign(Subject subject) {
+        enrollOrReenrollSubject(subject, VACCINATION_RECEIVED_CAMPAIGN, subject.getBoostVaccinationDate());
+    }
+
+    @Override
+    public void removeCampaignCompletedCampaign(String subjectId) {
+        unenrollAndRemoveEnrollment(subjectId, VACCINATION_RECEIVED_CAMPAIGN);
     }
 
     private void reenrollSubjectWithNewDate(String subjectId, String campaignName, LocalDate date) {

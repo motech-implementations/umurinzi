@@ -255,7 +255,7 @@
         };
     }]);
 
-    directives.directive('reportGrid', function($http) {
+    directives.directive('umurinziReportGrid', function($http) {
         return {
             restrict: 'A',
             link: function(scope, element, attrs) {
@@ -288,7 +288,7 @@
                             },
                             colNames: jsonColNames,
                             colModel: jsonColModel,
-                            pager: '#' + attrs.reportGrid,
+                            pager: '#' + attrs.umurinziReportGrid,
                             rowNum: 50,
                             rowList: [10, 20, 50, 100],
                             viewrecords: true,
@@ -466,7 +466,7 @@
         };
     });
 
-  directives.directive('enrollmentGrid', function($http, $compile) {
+  directives.directive('umurinziEnrollmentGrid', function($http, $compile) {
     return {
       restrict: 'A',
       link: function(scope, element, attrs) {
@@ -537,7 +537,7 @@
               scope.goToAdvanced(rowValue.subject);
             }
           },
-          pager: '#' + attrs.enrollmentGrid,
+          pager: '#' + attrs.umurinziEnrollmentGrid,
           rowNum: 50,
           rowList: [10, 20, 50, 100],
           viewrecords: true,
@@ -575,7 +575,7 @@
     };
   });
 
-  directives.directive('enrollmentAdvancedGrid', function($http, $compile) {
+  directives.directive('umurinziEnrollmentAdvancedGrid', function($http, $compile) {
     return {
       restrict: 'A',
       link: function(scope, element, attrs) {
