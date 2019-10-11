@@ -1,5 +1,7 @@
 package org.motechproject.umurinzi.service.impl;
 
+import static org.motechproject.umurinzi.constants.UmurinziConstants.SIMPLE_DATE_FORMATTER;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +34,6 @@ import org.springframework.stereotype.Service;
 public class ReportServiceImpl implements ReportService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportServiceImpl.class);
-
-    private static final DateTimeFormatter SIMPLE_DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     private static final int HUNDRED_PERCENT = 100;
 
