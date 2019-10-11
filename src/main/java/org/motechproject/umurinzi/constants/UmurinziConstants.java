@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public final class UmurinziConstants {
 
@@ -15,12 +17,18 @@ public final class UmurinziConstants {
     public static final String TEXT_CSV_CONTENT = "text/csv";
     public static final String APPLICATION_PDF_CONTENT = "application/pdf";
 
+    public static final DateTimeFormatter SIMPLE_DATE_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd");
+
     public static final Map<String, Float> REPORT_COLUMN_WIDTHS = new LinkedHashMap<String, Float>() {
         {
             put("Participant Id", 64f); //NO CHECKSTYLE MagicNumber
             put("SMS", 32f);
         }
     };
+
+    public static final String ZETES_IMPORT_EVENT = "zetes_import_event";
+    public static final String ZETES_IMPORT_EVENT_START_DATE = "zetes_import_event_start_date";
+    public static final String ZETES_IMPORT_EVENT_START_TIME = "00:01";
 
     public static final String REPORT_DATE_FORMAT = "yyyy-MM-dd";
     public static final String DAILY_REPORT_EVENT = "daily_report_event";
@@ -62,12 +70,14 @@ public final class UmurinziConstants {
     public static final String SUBJECTS_TAB_PERMISSION = "umurinziSubjectsTab";
     public static final String MANAGE_ENROLLMENTS_PERMISSION = "umurinziManageEnrollments";
     public static final String IMPORT_SUBJECTS_PERMISSION = "umurinziImportSubjects";
+    public static final String MANAGE_MODULE = "manageUmurinzi";
 
     public static final String HAS_ENROLLMENTS_TAB_ROLE = "hasRole('" + ENROLLMENTS_TAB_PERMISSION + "')";
     public static final String HAS_REPORTS_TAB_ROLE = "hasRole('" + REPORTS_TAB_PERMISSION + "')";
     public static final String HAS_SUBJECTS_TAB_ROLE = "hasRole('" + SUBJECTS_TAB_PERMISSION + "')";
     public static final String HAS_MANAGE_ENROLLMENTS_ROLE = "hasRole('" + MANAGE_ENROLLMENTS_PERMISSION + "')";
     public static final String HAS_IMPORT_SUBJECTS_ROLE = "hasRole('" + IMPORT_SUBJECTS_PERMISSION + "')";
+    public static final String HAS_MANAGE_MODULE_ROLE = "hasRole('" + MANAGE_MODULE + "')";
 
     public static final String DAILY_CLINIC_VISIT_SCHEDULE_REPORT_NAME = "DailyClinicVisitScheduleReport";
     public static final String FOLLOW_UPS_MISSED_CLINIC_VISITS_REPORT_NAME = "FollowupsMissedClinicVisitsReport";

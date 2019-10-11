@@ -44,6 +44,7 @@ public class ConfigController {
         configService.updateConfig(config);
 
         umurinziScheduler.unscheduleDailyReportJob();
+        umurinziScheduler.unscheduleZetesImportJob();
         scheduleJobs();
 
         return configService.getConfig();
@@ -65,6 +66,15 @@ public class ConfigController {
                 reportStartDate = reportStartDate.plusDays(1);
             }
             umurinziScheduler.scheduleDailyReportJob(reportStartDate);
+        }
+
+        if (configService.getConfig().getEnableZetesImportJob()) {
+            DateTime importStartDate = DateUtil.newDateTime(LocalDate.now(),
+                Time.parseTime(configService.getConfig().getZetesImportStartTime(), ":"));
+            if (importStartDate.isBeforeNow()) {
+                importStartDate = importStartDate.plusDays(1);
+            }
+            umurinziScheduler.scheduleZetesImportJob(importStartDate);
         }
     }
 }

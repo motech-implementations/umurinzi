@@ -65,6 +65,12 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>${mysql.version}</version>
+    </dependency>
+
     <!-- OSGi IT -->
     <dependency>
       <groupId>org.motechproject</groupId>
@@ -335,7 +341,6 @@
             <Context-Path>umurinzi</Context-Path>
             <Export-Package>
               org.motechproject.umurinzi.constants;version=${project.version},
-              org.motechproject.umurinzi.client;version=${project.version},
               org.motechproject.umurinzi.domain;version=${project.version},
               org.motechproject.umurinzi.domain.enums;version=${project.version},
               org.motechproject.umurinzi.dto;version=${project.version},
@@ -345,7 +350,6 @@
               org.motechproject.umurinzi.service.impl;version=${project.version},
               org.motechproject.umurinzi.template;version=${project.version},
               org.motechproject.umurinzi.util;version=${project.version},
-              org.motechproject.umurinzi.validation;version=${project.version},
               org.motechproject.umurinzi.web;version=${project.version},
               org.motechproject.umurinzi.web.domain;version=${project.version}
             </Export-Package>
