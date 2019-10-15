@@ -69,8 +69,8 @@ public class Subject {
     /**
      * Other fields
      */
-    @UIDisplayable(position = 4)
     @JsonDeserialize(using = CustomVisitListDeserializer.class)
+    @NonEditable(display = false)
     @Field
     @Persistent(mappedBy = "subject")
     @Cascade(delete = true)
