@@ -66,6 +66,13 @@ public class Subject {
     @Setter
     private LocalDate boostVaccinationDate;
 
+    @UIDisplayable(position = 4)
+    @Column
+    @Field
+    @Getter
+    @Setter
+    private String helpLine;
+
     /**
      * Other fields
      */

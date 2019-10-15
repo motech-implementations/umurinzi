@@ -47,8 +47,10 @@ public final class UmurinziConstants {
     public static final String RETRY_DELAY_SHORT = "retry_delay_short";
     public static final String RETRY_ATTEMPTS_LONG = "retry_attempts_long";
     public static final String RETRY_ATTEMPTS_LONG_DEFAULT = "1";
-    public static final String SUBJECT_ID = "subject_id";
+    public static final String SUBJECT_ID = "participant_id";
     public static final String SUBJECT_PHONE_NUMBER = "subscriber_phone";
+    public static final String PROPERTY = "property";
+    public static final String HELP_LINE = "help_line";
 
     public static final String IVR_CALL_DETAIL_RECORD_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSS";
     public static final String IVR_CALL_DETAIL_RECORD_MOTECH_TIMESTAMP_FIELD = "motechTimestamp";
