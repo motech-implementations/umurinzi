@@ -9,7 +9,7 @@
   "reportCalculationStartTime": "00:01",
   "lastCalculationDateForIvrReports": null,
   "ivrAndSmsStatisticReportsToUpdate": [],
-  "sendIvrCalls": true,
+  "sendIvrCalls": false,
   "ivrSettingsName": "Voto",
   "apiKey": null,
   "statusCallbackUrl": null,

@@ -52,6 +52,15 @@ public class IvrCallHelper {
             subscriber.addProperty(UmurinziConstants.PHONE, subject.getPhoneNumber());
             subscriber.addProperty(UmurinziConstants.LANGUAGE, config.getIvrLanguageId());
 
+            JsonObject subscriberProperties = new JsonObject();
+
+            subscriberProperties.addProperty(UmurinziConstants.SUBJECT_ID, subject.getSubjectId());
+            if (StringUtils.isNotBlank(subject.getHelpLine())) {
+                subscriberProperties.addProperty(UmurinziConstants.HELP_LINE, subject.getHelpLine());
+            }
+
+            subscriber.add(UmurinziConstants.PROPERTY, subscriberProperties);
+
             JsonArray subscriberArray = new JsonArray();
             subscriberArray.add(subscriber);
 
