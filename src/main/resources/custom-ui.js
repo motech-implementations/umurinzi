@@ -47,6 +47,12 @@ var importCsvModal = '../umurinzi/resources/partials/modals/import-csv.html';
 
 $scope.customModals.push(importCsvModal);
 
+$scope.removeIdFromUrl = function () {
+    $location.path("mds/dataBrowser");
+    $location.replace();
+    window.history.pushState({}, "", $location.absUrl());
+};
+
 $scope.importEntityInstances = function() {
     $('#importSubjectModal').modal('show');
 };
