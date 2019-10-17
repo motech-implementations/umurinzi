@@ -37,10 +37,8 @@ public final class UmurinziConstants {
 
     public static final String API_KEY = "api_key";
     public static final String MESSAGE_ID = "message_id";
-    public static final String STATUS_CALLBACK_URL = "status_callback_url";
-    public static final String SUBSCRIBERS = "subscribers";
-    public static final String PHONE = "phone";
-    public static final String LANGUAGE = "language";
+    public static final String WEBHOOK_URL = "webhook_url";
+    public static final String SEND_TO_PHONES = "send_to_phones";
     public static final String SEND_SMS_IF_VOICE_FAILS = "send_sms_if_voice_fails";
     public static final String DETECT_VOICEMAIL = "detect_voicemail_action";
     public static final String RETRY_ATTEMPTS_SHORT = "retry_attempts_short";
@@ -49,7 +47,11 @@ public final class UmurinziConstants {
     public static final String RETRY_ATTEMPTS_LONG_DEFAULT = "1";
     public static final String SUBJECT_ID = "participant_id";
     public static final String SUBJECT_PHONE_NUMBER = "subscriber_phone";
+    public static final String SUBSCRIBER_DATA = "subscriber_data";
+    public static final String PREFERRED_LANGUAGE = "preferred_language";
     public static final String PROPERTY = "property";
+    public static final String RECEIVE_VOICE = "receive_voice";
+    public static final String RECEIVE_SMS = "receive_sms";
     public static final String HELP_LINE = "help_line";
 
     public static final String IVR_CALL_DETAIL_RECORD_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSS";

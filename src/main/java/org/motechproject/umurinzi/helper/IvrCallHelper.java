@@ -2,7 +2,6 @@ package org.motechproject.umurinzi.helper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,9 +47,10 @@ public class IvrCallHelper {
 
             String votoMessageId = getVotoMessageId(messageKey, externalId);
 
-            JsonObject subscriber = new JsonObject();
-            subscriber.addProperty(UmurinziConstants.PHONE, subject.getPhoneNumber());
-            subscriber.addProperty(UmurinziConstants.LANGUAGE, config.getIvrLanguageId());
+            JsonObject subscriberData = new JsonObject();
+            subscriberData.addProperty(UmurinziConstants.PREFERRED_LANGUAGE, config.getIvrLanguageId());
+            subscriberData.addProperty(UmurinziConstants.RECEIVE_VOICE, "1");
+            subscriberData.addProperty(UmurinziConstants.RECEIVE_SMS, "1");
 
             JsonObject subscriberProperties = new JsonObject();
 
@@ -59,19 +59,17 @@ public class IvrCallHelper {
                 subscriberProperties.addProperty(UmurinziConstants.HELP_LINE, subject.getHelpLine());
             }
 
-            subscriber.add(UmurinziConstants.PROPERTY, subscriberProperties);
-
-            JsonArray subscriberArray = new JsonArray();
-            subscriberArray.add(subscriber);
+            subscriberData.add(UmurinziConstants.PROPERTY, subscriberProperties);
 
             Gson gson = new GsonBuilder().serializeNulls().create();
-            String subscribers = gson.toJson(subscriberArray);
+            String subscriber = gson.toJson(subscriberData);
 
             Map<String, String> callParams = new HashMap<>();
             callParams.put(UmurinziConstants.API_KEY, config.getApiKey());
             callParams.put(UmurinziConstants.MESSAGE_ID, votoMessageId);
-            callParams.put(UmurinziConstants.STATUS_CALLBACK_URL, config.getStatusCallbackUrl());
-            callParams.put(UmurinziConstants.SUBSCRIBERS, subscribers);
+            callParams.put(UmurinziConstants.SEND_TO_PHONES, subject.getPhoneNumber());
+            callParams.put(UmurinziConstants.WEBHOOK_URL, config.getStatusCallbackUrl());
+            callParams.put(UmurinziConstants.SUBSCRIBER_DATA, subscriber);
             callParams.put(
                 UmurinziConstants.SEND_SMS_IF_VOICE_FAILS, config.getSendSmsIfVoiceFails() ? "1" : "0");
             callParams.put(

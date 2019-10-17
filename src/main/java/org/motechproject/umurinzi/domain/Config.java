@@ -50,7 +50,7 @@ public class Config {
 
     @Getter
     @Setter
-    private Boolean sendIvrCalls = true;
+    private Boolean sendIvrCalls = false;
 
     @Getter
     @Setter
@@ -66,7 +66,7 @@ public class Config {
 
     @Getter
     @Setter
-    private Boolean sendSmsIfVoiceFails = true;
+    private Boolean sendSmsIfVoiceFails = false;
 
     @Getter
     @Setter
