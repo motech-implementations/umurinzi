@@ -45,7 +45,8 @@ public class IvrCallHelper {
             && StringUtils.isNotBlank(config.getIvrLanguageId())
             && StringUtils.isNotBlank(subject.getPhoneNumber())) {
 
-            String votoMessageId = getVotoMessageId(messageKey, externalId);
+            boolean hasHelpLine = StringUtils.isNotBlank(subject.getHelpLine());
+            String votoMessageId = getVotoMessageId(messageKey, hasHelpLine, externalId);
 
             JsonObject subscriberData = new JsonObject();
             subscriberData.addProperty(UmurinziConstants.PREFERRED_LANGUAGE, config.getIvrLanguageId());
@@ -55,7 +56,7 @@ public class IvrCallHelper {
             JsonObject subscriberProperties = new JsonObject();
 
             subscriberProperties.addProperty(UmurinziConstants.SUBJECT_ID, subject.getSubjectId());
-            if (StringUtils.isNotBlank(subject.getHelpLine())) {
+            if (hasHelpLine) {
                 subscriberProperties.addProperty(UmurinziConstants.HELP_LINE, subject.getHelpLine());
             }
 
@@ -96,8 +97,8 @@ public class IvrCallHelper {
         return subject;
     }
 
-    private String getVotoMessageId(String messageKey, String subjectId) {
-        VotoMessage votoMessage = votoMessageDataService.findByMessageKey(messageKey);
+    private String getVotoMessageId(String messageKey, boolean hasHelpLine, String subjectId) {
+        VotoMessage votoMessage = votoMessageDataService.findByMessageKey(messageKey + (hasHelpLine ? UmurinziConstants.WITH_HELPLINE : ""));
 
         if (votoMessage == null) {
             throw new UmurinziInitiateCallException("Cannot initiate call for Provider with id: %s, because Voto Message with key: %s not found",

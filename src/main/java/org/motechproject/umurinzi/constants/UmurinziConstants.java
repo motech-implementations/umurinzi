@@ -54,6 +54,8 @@ public final class UmurinziConstants {
     public static final String RECEIVE_SMS = "receive_sms";
     public static final String HELP_LINE = "help_line";
 
+    public static final String WITH_HELPLINE = "-with-helpline";
+
     public static final String IVR_CALL_DETAIL_RECORD_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSS";
     public static final String IVR_CALL_DETAIL_RECORD_MOTECH_TIMESTAMP_FIELD = "motechTimestamp";
 
