@@ -111,10 +111,11 @@ public class VisitServiceImpl implements VisitService {
                         visit.setDate(boostVacDate);
 
                         umurinziEnrollmentService.completeCampaign(visit);
-                        visitDataService.update(visit);
                     } else {
                         visit.setDateProjected(boostVacDate);
                     }
+
+                    visitDataService.update(visit);
                 }
             }
 
