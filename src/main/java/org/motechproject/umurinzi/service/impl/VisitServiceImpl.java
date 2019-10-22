@@ -1,6 +1,7 @@
 package org.motechproject.umurinzi.service.impl;
 
 import java.util.Map;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.domain.Visit;
@@ -70,9 +71,7 @@ public class VisitServiceImpl implements VisitService {
             Map<VisitType, VisitScheduleOffset> offsetMap = visitScheduleOffsetService.getAllAsMap();
 
             if (boostVacDate == null) {
-                VisitScheduleOffset offset = offsetMap.get(VisitType.BOOST_VACCINATION_DAY);
-
-                boostVacDate = primeVacDate.plusDays(offset.getTimeOffset());
+                boostVacDate = calculateBoostVacDate(primeVacDate);
             }
 
             for (Visit visit : subject.getVisits()) {
@@ -102,22 +101,24 @@ public class VisitServiceImpl implements VisitService {
         LocalDate primeVacDate = subject.getPrimeVaccinationDate();
 
         if (primeVacDate != null) {
-            Map<VisitType, VisitScheduleOffset> offsetMap = visitScheduleOffsetService.getAllAsMap();
-
             if (boostVacDate == null) {
-                VisitScheduleOffset offset = offsetMap.get(VisitType.BOOST_VACCINATION_DAY);
-                boostVacDate = primeVacDate.plusDays(offset.getTimeOffset());
+                boostVacDate = calculateBoostVacDate(primeVacDate);
             }
 
-            if (subject.getBoostVaccinationDate() != null) {
-                for (Visit visit : subject.getVisits()) {
-                    if (VisitType.BOOST_VACCINATION_DAY.equals(visit.getType())) {
+            for (Visit visit : subject.getVisits()) {
+                if (VisitType.BOOST_VACCINATION_DAY.equals(visit.getType())) {
+                    if (subject.getBoostVaccinationDate() != null) {
                         visit.setDate(boostVacDate);
 
                         umurinziEnrollmentService.completeCampaign(visit);
                         visitDataService.update(visit);
+                    } else {
+                        visit.setDateProjected(boostVacDate);
                     }
                 }
+            }
+
+            if (subject.getBoostVaccinationDate() != null) {
                 umurinziEnrollmentService.enrollOrReenrollCampaignCompletedCampaign(subject);
             } else {
                 umurinziEnrollmentService.removeCampaignCompletedCampaign(subject.getSubjectId());
@@ -138,5 +139,20 @@ public class VisitServiceImpl implements VisitService {
             umurinziEnrollmentService.unenrollAndRemoveEnrollment(visit);
             visitDataService.update(visit);
         }
+    }
+
+    private LocalDate calculateBoostVacDate(LocalDate primeVacDate) {
+        Map<VisitType, VisitScheduleOffset> offsetMap = visitScheduleOffsetService.getAllAsMap();
+        VisitScheduleOffset offset = offsetMap.get(VisitType.BOOST_VACCINATION_DAY);
+
+        LocalDate boostVacDate = primeVacDate.plusDays(offset.getTimeOffset());
+
+        if (DateTimeConstants.SATURDAY == boostVacDate.getDayOfWeek()) {
+            boostVacDate = boostVacDate.plusDays(2);
+        } else if (DateTimeConstants.SUNDAY == boostVacDate.getDayOfWeek()) {
+            boostVacDate = boostVacDate.plusDays(1);
+        }
+
+        return boostVacDate;
     }
 }
