@@ -151,19 +151,6 @@
         "messageKey": "missed-dose-1-week-before-end-of-window",
         "timeOffset": "22 Day",
         "startTime": "7:30"
-      },
-      {
-        "name": "Missed Dose: end of window",
-        "formats": [
-          "IVR",
-          "SMS"
-        ],
-        "languages": [
-          "en"
-        ],
-        "messageKey": "missed-dose-end-of-window",
-        "timeOffset": "29 Day",
-        "startTime": "7:30"
       }
     ]
   },
