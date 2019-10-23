@@ -65,13 +65,11 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
     @Override
     public void enrollOrReenrollSubject(Subject subject) {
         for (Visit visit: subject.getVisits()) {
-            LocalDate referenceDate = visit.getDateProjected();
-
             if (VisitType.PRIME_VACCINATION_DAY.equals(visit.getType())) {
-                referenceDate = visit.getDate();
+                enrollOrReenrollSubject(subject, visit.getType().getDisplayValue(), visit.getDate());
+            } else if (visit.getDate() == null && visit.getDateProjected() != null) {
+                enrollOrReenrollSubject(subject, visit.getType().getDisplayValue(), visit.getDateProjected());
             }
-
-            enrollOrReenrollSubject(subject, visit.getType().getDisplayValue(), referenceDate);
         }
     }
 

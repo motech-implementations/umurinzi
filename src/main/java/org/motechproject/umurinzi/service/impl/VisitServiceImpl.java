@@ -91,6 +91,12 @@ public class VisitServiceImpl implements VisitService {
                 visitDataService.update(visit);
             }
 
+            if (subject.getBoostVaccinationDate() != null) {
+                umurinziEnrollmentService.enrollOrReenrollCampaignCompletedCampaign(subject);
+            } else {
+                umurinziEnrollmentService.removeCampaignCompletedCampaign(subject.getSubjectId());
+            }
+
             umurinziEnrollmentService.enrollOrReenrollSubject(subject);
         }
     }
