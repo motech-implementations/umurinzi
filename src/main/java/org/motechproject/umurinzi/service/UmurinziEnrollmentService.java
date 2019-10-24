@@ -1,5 +1,6 @@
 package org.motechproject.umurinzi.service;
 
+import java.util.List;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.domain.Visit;
 
@@ -10,6 +11,8 @@ public interface UmurinziEnrollmentService {
     void enrollSubjectToCampaign(String subjectId, String campaignName);
 
     void enrollOrReenrollSubject(Subject subject);
+
+    void enrollOrReenrollVisits(List<Visit> visits);
 
     void unenrollSubject(String subjectId);
 

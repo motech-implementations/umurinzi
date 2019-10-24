@@ -32,6 +32,7 @@
                 <value>umurinziSubjectsTab</value>
                 <value>umurinziEnrollmentsTab</value>
                 <value>umurinziReportsTab</value>
+                <value>umurinziManageHolidays</value>
             </list>
         </property>
     </bean>

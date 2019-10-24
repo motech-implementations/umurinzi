@@ -1,5 +1,6 @@
 package org.motechproject.umurinzi.web;
 
+import static org.motechproject.umurinzi.constants.UmurinziConstants.MANAGE_HOLIDAYS_PERMISSION;
 import static org.motechproject.umurinzi.constants.UmurinziConstants.REPORTS_TAB_PERMISSION;
 import static org.motechproject.umurinzi.constants.UmurinziConstants.SUBJECTS_TAB_PERMISSION;
 import static org.motechproject.umurinzi.constants.UmurinziConstants.ENROLLMENTS_TAB_PERMISSION;
@@ -33,6 +34,10 @@ public class TabAccessController {
 
         if (auth.getAuthorities().contains(new SimpleGrantedAuthority(REPORTS_TAB_PERMISSION))) {
             availableTabs.add("reports");
+        }
+
+        if (auth.getAuthorities().contains(new SimpleGrantedAuthority(MANAGE_HOLIDAYS_PERMISSION))) {
+            availableTabs.add("holidays");
         }
 
         return availableTabs;

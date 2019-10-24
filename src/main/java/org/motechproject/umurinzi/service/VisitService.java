@@ -1,5 +1,6 @@
 package org.motechproject.umurinzi.service;
 
+import org.joda.time.LocalDate;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.domain.Visit;
 
@@ -21,4 +22,6 @@ public interface VisitService {
     void recalculateBoostRelatedVisitsPlannedDates(Subject subject);
 
     void removeVisitsPlannedDates(Subject subject);
+
+    void recalculateVisitsForHoliday(LocalDate holidayDate);
 }

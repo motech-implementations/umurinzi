@@ -77,6 +77,7 @@ public final class UmurinziConstants {
     public static final String MANAGE_ENROLLMENTS_PERMISSION = "umurinziManageEnrollments";
     public static final String IMPORT_SUBJECTS_PERMISSION = "umurinziImportSubjects";
     public static final String MANAGE_MODULE = "manageUmurinzi";
+    public static final String MANAGE_HOLIDAYS_PERMISSION = "umurinziManageHolidays";
 
     public static final String HAS_ENROLLMENTS_TAB_ROLE = "hasRole('" + ENROLLMENTS_TAB_PERMISSION + "')";
     public static final String HAS_REPORTS_TAB_ROLE = "hasRole('" + REPORTS_TAB_PERMISSION + "')";
@@ -84,6 +85,7 @@ public final class UmurinziConstants {
     public static final String HAS_MANAGE_ENROLLMENTS_ROLE = "hasRole('" + MANAGE_ENROLLMENTS_PERMISSION + "')";
     public static final String HAS_IMPORT_SUBJECTS_ROLE = "hasRole('" + IMPORT_SUBJECTS_PERMISSION + "')";
     public static final String HAS_MANAGE_MODULE_ROLE = "hasRole('" + MANAGE_MODULE + "')";
+    public static final String HAS_MANAGE_HOLIDAYS_ROLE = "hasRole('" + MANAGE_HOLIDAYS_PERMISSION + "')";
 
     public static final String DAILY_CLINIC_VISIT_SCHEDULE_REPORT_NAME = "DailyClinicVisitScheduleReport";
     public static final String FOLLOW_UPS_MISSED_CLINIC_VISITS_REPORT_NAME = "FollowupsMissedClinicVisitsReport";

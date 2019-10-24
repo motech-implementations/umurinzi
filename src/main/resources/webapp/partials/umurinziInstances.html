@@ -7,6 +7,9 @@
                     <h4>{{msg('mds.error')}}</h4>
                     <p>{{msg('mds.error.dataRetrievalError')}}</p>
                 </div>
+                <button ng-click="addInstance(module, entity)" type="button" class="btn btn-success" ng-show="showAddInstanceButton && !shouldHideButton()">
+                    <i class="fa fa-plus"></i> {{msg('mds.btn.add')}}
+                </button>
                 <button id="lookupDialogButton" ng-click="showLookupDialog()" type="button" class="btn btn-default" ng-show="showLookupButton">
                     <i class="fa fa-lg fa-caret-down"></i>
                     {{msg('mds.btn.lookup')}}

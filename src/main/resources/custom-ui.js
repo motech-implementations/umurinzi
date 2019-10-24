@@ -28,6 +28,11 @@ if ($scope.selectedEntity.name === "Participant") {
         },
         async: false
     });
+} else if ($scope.selectedEntity.name === "Holiday") {
+    $scope.showBackToEntityListButton = false;
+    $scope.showImportButton = true;
+    $scope.showAddInstanceButton = true;
+    $scope.showDeleteInstanceButton = true;
 } else {
     $scope.showViewTrashButton = false;
     $scope.backToEntityList = function() {
@@ -39,6 +44,8 @@ if ($scope.selectedEntity.name === "Participant") {
 
 if ($scope.selectedEntity.name === "Participant") {
     $rootScope.selectedTab = "subjects";
+} else if ($scope.selectedEntity.name === "Holiday") {
+    $rootScope.selectedTab = "holidays";
 } else {
     $rootScope.selectedTab = "reports";
 }
@@ -159,6 +166,15 @@ $scope.addEntityInstanceDefault = function () {
 
     if ($scope.selectedEntity.name === "Participant" && $scope.selectedInstance !== undefined) {
         $http.post('../umurinzi/subjectDataChanged', entityObject)
+          .success(function(response) {
+              $scope.saveCurrentRecord();
+          })
+          .error(function(response) {
+              motechAlert("umurinzi.updateSubject.errorMsg", "umurinzi.updateSubject.errorTitle", response);
+              unblockUI();
+          });
+    } else if ($scope.selectedEntity.name === "Holiday" && $scope.selectedInstance !== undefined) {
+        $http.post('../umurinzi/holidayDataChanged', entityObject)
           .success(function(response) {
               $scope.saveCurrentRecord();
           })

@@ -21,6 +21,12 @@ public interface VisitDataService extends MotechDataService<Visit> {
             @LookupField(name = "type") VisitType type,
             @LookupField(name = "date", customOperator = Constants.Operators.LT_EQ) LocalDate date);
 
+    @Lookup
+    List<Visit> findByVisitTypeAndActualDateAndPlannedDate(
+        @LookupField(name = "type") VisitType type,
+        @LookupField(name = "date", customOperator = Constants.Operators.EQ) LocalDate date,
+        @LookupField(name = "dateProjected") LocalDate dateProjected);
+
     /**
      * UI Lookups
      */

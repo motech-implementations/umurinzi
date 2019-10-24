@@ -1,5 +1,6 @@
 package org.motechproject.umurinzi.service.impl;
 
+import java.util.List;
 import org.joda.time.LocalDate;
 import org.motechproject.commons.date.model.Time;
 import org.motechproject.umurinzi.domain.Enrollment;
@@ -74,6 +75,17 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
     }
 
     @Override
+    public void enrollOrReenrollVisits(List<Visit> visits) {
+        for (Visit visit: visits) {
+            if (VisitType.PRIME_VACCINATION_DAY.equals(visit.getType())) {
+                enrollOrReenrollSubject(visit.getSubject(), visit.getType().getDisplayValue(), visit.getDate());
+            } else if (visit.getDate() == null && visit.getDateProjected() != null) {
+                enrollOrReenrollSubject(visit.getSubject(), visit.getType().getDisplayValue(), visit.getDateProjected());
+            }
+        }
+    }
+
+  @Override
     public void unenrollSubject(String subjectId) {
         SubjectEnrollments subjectEnrollments = subjectEnrollmentsDataService.findBySubjectId(subjectId);
         if (subjectEnrollments == null || !EnrollmentStatus.ENROLLED.equals(subjectEnrollments.getStatus())) {

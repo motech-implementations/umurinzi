@@ -3,7 +3,7 @@
 
     /* App Module */
     var umurinzi = angular.module('umurinzi', ['umurinzi.controllers', 'umurinzi.directives',
-          'motech-dashboard', 'data-services', 'ui.directives']), subjectId, callDetailRecordId, smsRecordId;
+          'motech-dashboard', 'data-services', 'ui.directives']), subjectId, callDetailRecordId, smsRecordId, holidayId;
 
     $.ajax({
         url: '../mds/entities/getEntity/Umurinzi/Participant',
@@ -25,6 +25,14 @@
         url: '../mds/entities/getEntity/SMS Module/SmsRecord',
         success:  function(data) {
             smsRecordId = data.id;
+        },
+        async: false
+    });
+
+    $.ajax({
+        url: '../mds/entities/getEntity/Umurinzi/Holiday',
+        success:  function(data) {
+            holidayId = data.id;
         },
         async: false
     });
@@ -55,6 +63,19 @@
                     resolve: {
                         entityId: function ($route) {
                             $route.current.params.entityId = subjectId;
+                        },
+                        moduleName: function ($route) {
+                            $route.current.params.moduleName = 'umurinzi';
+                        }
+                    }
+                });
+            } else if (tab === "holidays") {
+                $routeProvider.when('/umurinzi/{0}'.format(tab), {
+                    templateUrl: '../umurinzi/resources/partials/umurinziInstances.html',
+                    controller: 'MdsDataBrowserCtrl',
+                    resolve: {
+                        entityId: function ($route) {
+                            $route.current.params.entityId = holidayId;
                         },
                         moduleName: function ($route) {
                             $route.current.params.moduleName = 'umurinzi';

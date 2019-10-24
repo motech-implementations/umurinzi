@@ -19,24 +19,28 @@ import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.motechproject.umurinzi.constants.UmurinziConstants;
-import org.motechproject.umurinzi.domain.Subject;
-import org.motechproject.umurinzi.exception.UmurinziLookupException;
-import org.motechproject.umurinzi.service.LookupService;
-import org.motechproject.umurinzi.service.SubjectService;
-import org.motechproject.umurinzi.service.impl.SubjectCsvImportCustomizer;
-import org.motechproject.umurinzi.util.QueryParamsBuilder;
-import org.motechproject.umurinzi.util.SubjectVisitsMixin;
-import org.motechproject.umurinzi.web.domain.GridSettings;
-import org.motechproject.umurinzi.web.domain.Records;
 import org.motechproject.mds.dto.CsvImportResults;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.LookupDto;
 import org.motechproject.mds.ex.csv.CsvImportException;
 import org.motechproject.mds.query.QueryParams;
+import org.motechproject.mds.service.CsvImportCustomizer;
 import org.motechproject.mds.service.CsvImportExportService;
 import org.motechproject.mds.service.EntityService;
 import org.motechproject.mds.util.Constants;
+import org.motechproject.umurinzi.constants.UmurinziConstants;
+import org.motechproject.umurinzi.domain.Holiday;
+import org.motechproject.umurinzi.domain.Subject;
+import org.motechproject.umurinzi.exception.UmurinziLookupException;
+import org.motechproject.umurinzi.service.HolidayService;
+import org.motechproject.umurinzi.service.LookupService;
+import org.motechproject.umurinzi.service.SubjectService;
+import org.motechproject.umurinzi.service.impl.HolidayCsvImportCustomizer;
+import org.motechproject.umurinzi.service.impl.SubjectCsvImportCustomizer;
+import org.motechproject.umurinzi.util.QueryParamsBuilder;
+import org.motechproject.umurinzi.util.SubjectVisitsMixin;
+import org.motechproject.umurinzi.web.domain.GridSettings;
+import org.motechproject.umurinzi.web.domain.Records;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +71,13 @@ public class InstanceController {
     private SubjectCsvImportCustomizer subjectCsvImportCustomizer;
 
     @Autowired
+    private HolidayCsvImportCustomizer holidayCsvImportCustomizer;
+
+    @Autowired
     private SubjectService subjectService;
+
+    @Autowired
+    private HolidayService holidayService;
 
     @Autowired
     private EntityService entityService;
@@ -78,7 +88,7 @@ public class InstanceController {
     @RequestMapping(value = "/instances/{entityId}/Participantcsvimport", method = RequestMethod.POST)
     @ResponseBody
     public long subjectImportCsv(@PathVariable long entityId, @RequestParam(required = true) MultipartFile csvFile) {
-        return importCsv(entityId, csvFile);
+        return importCsv(entityId, csvFile, subjectCsvImportCustomizer);
     }
 
     @PreAuthorize(UmurinziConstants.HAS_IMPORT_SUBJECTS_ROLE)
@@ -86,6 +96,13 @@ public class InstanceController {
     @ResponseBody
     public ResponseEntity<String> checkSubjectImportPermissions() {
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PreAuthorize(UmurinziConstants.HAS_MANAGE_HOLIDAYS_ROLE)
+    @RequestMapping(value = "/instances/{entityId}/Holidaycsvimport", method = RequestMethod.POST)
+    @ResponseBody
+    public long holidayImportCsv(@PathVariable long entityId, @RequestParam(required = true) MultipartFile csvFile) {
+        return importCsv(entityId, csvFile, holidayCsvImportCustomizer);
     }
 
     @PreAuthorize(UmurinziConstants.HAS_SUBJECTS_TAB_ROLE)
@@ -102,6 +119,22 @@ public class InstanceController {
         ObjectMapper mapper = new ObjectMapper();
 
         mapper.getSerializationConfig().addMixInAnnotations(Subject.class, SubjectVisitsMixin.class);
+
+        return mapper.writeValueAsString(records);
+    }
+
+    @PreAuthorize(UmurinziConstants.HAS_MANAGE_HOLIDAYS_ROLE)
+    @RequestMapping(value = "/instances/Holiday", method = RequestMethod.POST)
+    @ResponseBody
+    public String getHolidayInstances(GridSettings settings) throws IOException {
+        String lookup = settings.getLookup();
+        Map<String, Object> fieldMap = getFields(settings);
+
+        QueryParams queryParams = QueryParamsBuilder.buildQueryParams(settings, fieldMap);
+
+        Records<Holiday> records = lookupService.getEntities(Holiday.class, lookup, settings.getFields(), queryParams);
+
+        ObjectMapper mapper = new ObjectMapper();
 
         return mapper.writeValueAsString(records);
     }
@@ -174,12 +207,20 @@ public class InstanceController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private long importCsv(long entityId, MultipartFile csvFile) {
+    @PreAuthorize(UmurinziConstants.HAS_MANAGE_HOLIDAYS_ROLE)
+    @RequestMapping(value = "/holidayDataChanged", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<String> holidayDataChanged(@RequestBody Holiday holiday) {
+        holidayService.dataChanged(holiday);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private long importCsv(long entityId, MultipartFile csvFile, CsvImportCustomizer csvImportCustomizer) {
         try {
             try (InputStream in = csvFile.getInputStream()) {
                 Reader reader = new InputStreamReader(in);
                 CsvImportResults results = csvImportExportService.importCsv(entityId, reader,
-                        csvFile.getOriginalFilename(), subjectCsvImportCustomizer);
+                        csvFile.getOriginalFilename(), csvImportCustomizer);
                 return results.totalNumberOfImportedInstances();
             }
         } catch (IOException e) {
