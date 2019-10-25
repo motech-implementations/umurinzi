@@ -173,7 +173,7 @@ $scope.addEntityInstanceDefault = function () {
               motechAlert("umurinzi.updateSubject.errorMsg", "umurinzi.updateSubject.errorTitle", response);
               unblockUI();
           });
-    } else if ($scope.selectedEntity.name === "Holiday" && $scope.selectedInstance !== undefined) {
+    } else if ($scope.selectedEntity.name === "Holiday") {
         $http.post('../umurinzi/holidayDataChanged', entityObject)
           .success(function(response) {
               $scope.saveCurrentRecord();
