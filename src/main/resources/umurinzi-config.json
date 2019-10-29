@@ -17,5 +17,7 @@
   "detectVoiceMail": true,
   "retryAttempts": 3,
   "retryDelay": 15,
-  "ivrLanguageId": null
+  "ivrLanguageId": null,
+  "voiceSenderId": null,
+  "smsSenderId": null
 }

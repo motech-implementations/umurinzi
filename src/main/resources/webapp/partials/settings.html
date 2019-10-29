@@ -135,6 +135,20 @@
                         <input class="form-control" id="ivrLanguageId" type="text" ng-model="config.ivrLanguageId" ng-required="config.sendIvrCalls">
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="voiceSenderId">{{msg('umurinzi.settings.calls.voiceSenderId')}}</label>
+                    <div class="col-md-2">
+                        <input class="form-control" id="voiceSenderId" type="text" ng-model="config.voiceSenderId" ng-required="config.sendIvrCalls">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="smsSenderId">{{msg('umurinzi.settings.calls.smsSenderId')}}</label>
+                    <div class="col-md-2">
+                        <input class="form-control" id="smsSenderId" type="text" ng-model="config.smsSenderId" ng-required="config.sendIvrCalls">
+                    </div>
+                </div>
             </div>
 
             <div class="form-inline">

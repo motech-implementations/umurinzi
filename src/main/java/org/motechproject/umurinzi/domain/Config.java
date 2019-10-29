@@ -83,4 +83,12 @@ public class Config {
     @Getter
     @Setter
     private String ivrLanguageId;
+
+    @Getter
+    @Setter
+    private String voiceSenderId;
+
+    @Getter
+    @Setter
+    private String smsSenderId;
 }

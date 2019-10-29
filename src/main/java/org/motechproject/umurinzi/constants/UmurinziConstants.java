@@ -53,6 +53,8 @@ public final class UmurinziConstants {
     public static final String RECEIVE_VOICE = "receive_voice";
     public static final String RECEIVE_SMS = "receive_sms";
     public static final String HELP_LINE = "help_line";
+    public static final String VOICE_SENDER_ID = "voice_sender_id";
+    public static final String SMS_SENDER_ID = "sms_sender_id";
 
     public static final String WITH_HELPLINE = "-with-helpline";
 

@@ -53,6 +53,13 @@ public class IvrCallHelper {
             subscriberData.addProperty(UmurinziConstants.RECEIVE_VOICE, "1");
             subscriberData.addProperty(UmurinziConstants.RECEIVE_SMS, "1");
 
+            if (StringUtils.isNotBlank(config.getVoiceSenderId())) {
+                subscriberData.addProperty(UmurinziConstants.VOICE_SENDER_ID, config.getVoiceSenderId());
+            }
+            if (StringUtils.isNotBlank(config.getSmsSenderId())) {
+                subscriberData.addProperty(UmurinziConstants.SMS_SENDER_ID, config.getSmsSenderId());
+            }
+
             JsonObject subscriberProperties = new JsonObject();
 
             subscriberProperties.addProperty(UmurinziConstants.SUBJECT_ID, subject.getSubjectId());
