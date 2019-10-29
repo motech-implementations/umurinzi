@@ -72,6 +72,12 @@ public class Visit {
     @Setter
     private String owner;
 
+    @NonEditable
+    @Field
+    @Getter
+    @Setter
+    private Boolean ignoreDateLimitation = false;
+
     public Visit(Subject subject, VisitType type) {
         this.subject = subject;
         this.type = type;

@@ -22,6 +22,7 @@ import org.motechproject.umurinzi.domain.Visit;
 import org.motechproject.umurinzi.dto.IvrAndSmsStatisticReportDto;
 import org.motechproject.umurinzi.dto.MissedVisitsReportDto;
 import org.motechproject.umurinzi.dto.OptsOutOfMotechMessagesReportDto;
+import org.motechproject.umurinzi.dto.VisitRescheduleDto;
 import org.motechproject.umurinzi.exception.UmurinziExportException;
 import org.motechproject.umurinzi.exception.UmurinziLookupException;
 import org.motechproject.umurinzi.helper.DtoLookupHelper;
@@ -57,6 +58,16 @@ public class ExportController {
     private ExportService exportService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @RequestMapping(value = "/exportInstances/visitReschedule", method = RequestMethod.GET)
+    public void exportVisitReschedule(GridSettings settings, @RequestParam String exportRecords,
+                                      @RequestParam String outputFormat, HttpServletResponse response) throws IOException {
+
+        GridSettings newSettings = DtoLookupHelper.changeLookupForVisitReschedule(settings);
+
+        exportEntity(newSettings, exportRecords, outputFormat, response, UmurinziConstants.VISIT_RESCHEDULE_NAME,
+                VisitRescheduleDto.class, Visit.class, UmurinziConstants.VISIT_RESCHEDULE_FIELDS_MAP);
+    }
 
     @RequestMapping(value = "/exportDailyClinicVisitScheduleReport", method = RequestMethod.GET)
     public void exportDailyClinicVisitScheduleReport(GridSettings settings, @RequestParam String exportRecords,

@@ -321,6 +321,220 @@
         };
     });
 
+    controllers.controller('UmurinziRescheduleCtrl', function ($scope, $http, $timeout, $filter) {
+        $scope.getLookups("../umurinzi/getLookupsForVisitReschedule");
+
+        $scope.$parent.selectedFilter.startDate = undefined;
+        $scope.$parent.selectedFilter.endDate = undefined;
+        $scope.$parent.selectedFilter = $scope.filters[5];
+        $scope.visitForPrint = {};
+
+        $scope.newForm = function() {
+            $scope.form = {};
+            $scope.form.dto = {};
+        };
+
+        $scope.setActualDateToCurrentDate = function () {
+            $scope.form.dto.actualDate = $filter('date')(new Date(), "yyyy-MM-dd");
+        };
+
+        $scope.showPlannedDate = function () {
+            var isActualDateEmpty = $scope.form.dto.actualDate === null || $scope.form.dto.actualDate === "" || $scope.form.dto.actualDate === undefined;
+            return isActualDateEmpty;
+        };
+
+        $scope.clearActualDate = function () {
+           motechConfirm("umurinzi.visitReschedule.removeActualDate", "umurinzi.confirm", function(confirmed) {
+                   if (confirmed) {
+                       $scope.form.dto.actualDate = null;
+                       $timeout(function() {
+                           $('#actualDateInput').trigger('change');
+                       }, 100);
+                   }
+           })
+        };
+
+        $scope.showRescheduleModal = function(modalHeaderMessage, modalBodyMessage) {
+            $timeout(function() {
+            $scope.rescheduleModalHeader = modalHeaderMessage;
+            $scope.rescheduleModalBody = modalBodyMessage;
+            $('#visitRescheduleModal').modal('show');
+            $scope.setDatePicker();
+            }, 10);
+        };
+
+        $scope.getUploadSuccessMessageAndTogglePrintButton = function () {
+            if ($scope.form.dto && $scope.form.dto.actualDate) {
+                $scope.rescheduleModalBody = $scope.msg('umurinzi.visitReschedule.actualDateUpdateSuccessful');
+                $scope.diablePrint = true;
+            } else {
+                $scope.rescheduleModalBody = $scope.msg('umurinzi.visitReschedule.plannedDateUpdateSuccessful');
+                $scope.diablePrint = false;
+            }
+        };
+
+        $scope.setDatePicker = function () {
+            var plannedDate = $scope.parseDate($scope.form.dto.plannedDate);
+            var minDate = $scope.form.dto.minDate;
+
+            if (plannedDate && minDate && plannedDate < minDate) {
+                minDate = plannedDate;
+            }
+
+            var plannedDateInput = $('#plannedDateInput');
+            plannedDateInput.datepicker("setDate", plannedDate);
+            plannedDateInput.datepicker('option', 'minDate', minDate);
+            plannedDateInput.datepicker('option', 'maxDate', $scope.form.dto.maxDate);
+
+            var actualDateInput = $('#actualDateInput');
+            actualDateInput.datepicker('option', 'minDate', $scope.form.dto.minActualDate);
+            actualDateInput.datepicker('option', 'maxDate', $scope.form.dto.maxActualDate);
+            if ($scope.form.dto.actualDate) {
+                var actualDate = $scope.parseDate($scope.form.dto.actualDate);
+                actualDateInput.datepicker("setDate", actualDate);
+            } else {
+                actualDateInput.datepicker("setDate", null);
+            }
+        };
+
+        $scope.saveVisitReschedule = function(ignoreLimitation) {
+            function sendRequest() {
+                $scope.getUploadSuccessMessageAndTogglePrintButton();
+                $http.post('../umurinzi/saveVisitReschedule/' + ignoreLimitation, $scope.form.dto)
+                    .success(function(data) {
+                        if (data && (typeof(data) === 'string')) {
+                            jConfirm($scope.msg('umurinzi.visitReschedule.confirmMsg', data), $scope.msg('umurinzi.visitReschedule.confirmTitle'),
+                                function (response) {
+                                    if (response) {
+                                        $scope.saveVisitReschedule(true);
+                                    }
+                                });
+                        } else {
+                            $("#visitReschedule").trigger('reloadGrid');
+                            $scope.visitForPrint = data;
+                            $scope.form.dto = undefined;
+                        }
+                    })
+                    .error(function(response) {
+                        motechAlert('umurinzi.visitReschedule.updateError', 'umurinzi.error', response);
+                    });
+            }
+
+            if (ignoreLimitation) {
+                sendRequest();
+            } else {
+                var confirmMsg = "umurinzi.visitReschedule.confirm.shouldSavePlannedDate";
+                if ($scope.form.dto.actualDate !== ""
+                    && $scope.form.dto.actualDate !== undefined
+                    && $scope.form.dto.actualDate !== null) {
+                    confirmMsg = "umurinzi.visitReschedule.confirm.shouldSaveActualDate";
+                }
+                motechConfirm(confirmMsg, "umurinzi.confirm",
+                    function(confirmed) {
+                        if (confirmed) {
+                            var daysBetween = Math.round((new Date - $scope.parseDate($scope.form.dto.actualDate))/(1000*60*60*24));
+                            if (daysBetween > 7) {
+                                motechConfirm("umurinzi.visitReschedule.confirm.shouldSaveOldActualDate", "umurinzi.confirm",
+                                    function(confirmed) {
+                                    if (confirmed) {
+                                        sendRequest();
+                                    }
+                                })
+                            } else {
+                                sendRequest();
+                            }
+                        }
+                })
+            }
+        };
+
+        $scope.formIsFilled = function() {
+            return $scope.form
+                && $scope.form.dto
+                && ($scope.form.dto.actualDate || $scope.form.dto.plannedDate);
+        };
+
+        $scope.exportInstance = function() {
+            var sortColumn, sortDirection, url = "../umurinzi/exportInstances/visitReschedule";
+            url = url + "?outputFormat=" + $scope.exportFormat;
+            url = url + "&exportRecords=" + $scope.actualExportRecords;
+
+            if ($scope.checkboxModel.exportWithFilter === true) {
+                url = url + "&dateFilter=" + $scope.selectedFilter.dateFilter;
+
+                if ($scope.selectedFilter.startDate) {
+                    url = url + "&startDate=" + $scope.selectedFilter.startDate;
+                }
+
+                if ($scope.selectedFilter.endDate) {
+                    url = url + "&endDate=" + $scope.selectedFilter.endDate;
+                }
+            }
+
+            if ($scope.checkboxModel.exportWithOrder === true) {
+                sortColumn = $('#visitReschedule').getGridParam('sortname');
+                sortDirection = $('#visitReschedule').getGridParam('sortorder');
+
+                url = url + "&sortColumn=" + sortColumn;
+                url = url + "&sortDirection=" + sortDirection;
+            }
+
+            $scope.exportInstanceWithUrl(url);
+        };
+
+        $scope.$watch('form.dto.ignoreDateLimitation', function (value) {
+            if ($scope.form && $scope.form.dto) {
+                var plannedDate = $scope.parseDate($scope.form.dto.plannedDate);
+                var minDate = $scope.earliestDateToReturn;
+
+                if (!value) {
+                    $scope.form.dto.maxDate = $scope.latestDateToReturn;
+                }
+
+                if (plannedDate && minDate && plannedDate < minDate) {
+                    minDate = plannedDate;
+                }
+
+                $scope.form.dto.minDate = minDate;
+            }
+        });
+
+        $scope.setPrintData = function(document, participantId, plannedDate) {
+
+            $('#versionDate', document).html($filter('date')(new Date(), $scope.cardDateTimeFormat));
+            $('#subjectId', document).html(participantId);
+            $('#date', document).html($filter('date')($scope.parseDate(plannedDate), $scope.cardDateFormat));
+        };
+
+        $scope.print = function() {
+
+            setTimeout(function() {
+                var subjectId = $scope.visitForPrint.participantId;
+                var date = $scope.visitForPrint.plannedDate;
+
+                var winPrint = window.open("../umurinzi/resources/partials/card/visitRescheduleCard.html");
+                 if ((!(window.ActiveXObject) && "ActiveXObject" in window) || (navigator.userAgent.indexOf("MSIE") > -1)) {
+                   // iexplorer
+                    var windowOnload = winPrint.onload || function() {
+                        setTimeout(function(){
+                            $scope.setPrintData(winPrint.document, subjectId, date);
+                            winPrint.focus();
+                            winPrint.print();
+                        }, 500);
+                      };
+
+                      winPrint.onload = new function() { windowOnload(); } ;
+                 } else {
+                    winPrint.onload = function() {
+                        $scope.setPrintData(winPrint.document, subjectId, date);
+                        winPrint.focus();
+                        winPrint.print();
+                    }
+                 }
+             }, 500);
+        };
+    });
+
     controllers.controller('UmurinziReportsCtrl', function ($scope, $routeParams) {
         $scope.reportType = $routeParams.reportType;
         $scope.reportName = "";

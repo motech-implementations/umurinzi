@@ -172,7 +172,8 @@ public class VisitServiceImpl implements VisitService {
         return recalculateBoostVacDateForHolidays(boostVacDate);
     }
 
-    private LocalDate recalculateBoostVacDateForHolidays(LocalDate boostVacDate) {
+    private LocalDate recalculateBoostVacDateForHolidays(LocalDate date) {
+        LocalDate boostVacDate = date;
         if (DateTimeConstants.SATURDAY == boostVacDate.getDayOfWeek()) {
             boostVacDate = boostVacDate.plusDays(2);
         } else if (DateTimeConstants.SUNDAY == boostVacDate.getDayOfWeek()) {

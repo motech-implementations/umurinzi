@@ -29,6 +29,7 @@ public class TabAccessController {
         }
 
         if (auth.getAuthorities().contains(new SimpleGrantedAuthority(ENROLLMENTS_TAB_PERMISSION))) {
+            availableTabs.add("reschedule");
             availableTabs.add("enrollment");
         }
 

@@ -255,6 +255,205 @@
         };
     }]);
 
+    directives.directive('visitRescheduleGrid', function ($compile, $timeout) {
+
+        var gridDataExtension;
+        var rowsToColor = [];
+
+        function createButton(disabled) {
+            if (disabled) {
+                return '<button type="button" class="btn btn-primary btn-sm ng-binding printBtn" ng-click="print()" disabled><i class="fa fa-fw fa-print"></i></button>';
+            } else {
+                return '<button type="button" class="btn btn-primary btn-sm ng-binding printBtn" ng-click="print()"><i class="fa fa-fw fa-print"></i></button>';
+            }
+        }
+
+        function extendGrid(cellValue, options, rowObject) {
+            var rowExtraData = {};
+
+            rowExtraData.visitId = rowObject.visitId;
+            rowExtraData.earliestDate = rowObject.earliestDate;
+            rowExtraData.latestDate = rowObject.latestDate;
+            rowExtraData.ignoreDateLimitation = rowObject.ignoreDateLimitation;
+            rowExtraData.notVaccinated = rowObject.notVaccinated;
+
+            gridDataExtension[options.rowId] = rowExtraData;
+
+            return cellValue;
+        }
+
+        return {
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                var elem = angular.element(element), eventChange, eventResize;
+
+                elem.jqGrid({
+                    url: "../umurinzi/visitReschedule",
+                    datatype: "json",
+                    mtype: "GET",
+                    colNames: [
+                        scope.msg("umurinzi.visitReschedule.participantId"),
+                        scope.msg("umurinzi.visitReschedule.visitType"),
+                        scope.msg("umurinzi.visitReschedule.actualDate"),
+                        scope.msg("umurinzi.visitReschedule.plannedDate"),
+                        ""],
+                    colModel: [
+                        {
+                            name: "participantId",
+                            formatter: extendGrid,
+                            index: 'subject.subjectId'
+                        },
+                        {
+                            name: "visitType",
+                            index: 'type',
+                            fixed: true,
+                            width: 275
+                        },
+                        {
+                            name: "actualDate",
+                            index: 'date'
+                        },
+                        {
+                            name: "plannedDate",
+                            index: 'dateProjected'
+                        },
+                        {
+                            name: "print", align: "center", sortable: false, width: 60
+                        }
+                        ],
+                    gridComplete: function(){
+                        var ids = elem.getDataIDs();
+                        for(var i = 0; i < ids.length; i++){
+                            var buttonDisabled = elem.getRowData(ids[i]).actualDate !== ""
+                            && elem.getRowData(ids[i]).actualDate !== null
+                            && elem.getRowData(ids[i]).actualDate !== undefined;
+                            elem.setRowData(ids[i], {print: createButton(buttonDisabled)})
+                        }
+                        $compile($('.printBtn'))(scope);
+                        $('#visitRescheduleTable .ui-jqgrid-hdiv').addClass("table-lightblue");
+                        $('#visitRescheduleTable .ui-jqgrid-btable').addClass("table-lightblue");
+                        for (var i = 0; i < rowsToColor.length; i++) {
+                            $("#" + rowsToColor[i]).find("td").css("color", "red");
+                        }
+                    },
+                    pager: "#pager",
+                    rowNum: 50,
+                    rowList: [10, 20, 50, 100],
+                    prmNames: {
+                        sort: 'sortColumn',
+                        order: 'sortDirection'
+                    },
+                    sortname: null,
+                    sortorder: "desc",
+                    viewrecords: true,
+                    gridview: true,
+                    loadOnce: false,
+                    beforeSelectRow: function() {
+                        return false;
+                    },
+                    beforeRequest: function() {
+                        gridDataExtension = [];
+                        rowsToColor = [];
+                    },
+                    onCellSelect: function(rowId, iCol, cellContent, e) {
+                        if (iCol !== 4) {
+                            var rowData = elem.getRowData(rowId),
+                                extraRowData = gridDataExtension[rowId];
+
+                            if (extraRowData.earliestDate === undefined || extraRowData.earliestDate === null || extraRowData.earliestDate === "") {
+                                scope.visitForPrint = elem.getRowData(rowId);
+                                scope.form = null;
+                                var message = "umurinzi.visitReschedule.participantVisitScheduleOffsetMissing";
+
+                                if (extraRowData.notVaccinated) {
+                                    message = "umurinzi.visitReschedule.participantNotPrimeVaccinated";
+                                }
+
+                                scope.showRescheduleModal(scope.msg('umurinzi.visitReschedule.cannotReschedule'), scope.msg(message));
+                            } else {
+                                scope.newForm();
+                                scope.form.dto.participantId = rowData.participantId;
+                                scope.form.dto.visitType = rowData.visitType;
+                                scope.form.dto.plannedDate = rowData.plannedDate;
+                                scope.form.dto.actualDate = rowData.actualDate;
+                                scope.form.dto.visitId = extraRowData.visitId;
+
+                                scope.form.dto.ignoreDateLimitation = extraRowData.ignoreDateLimitation;
+                                scope.earliestDateToReturn = scope.parseDate(extraRowData.earliestDate);
+
+                                if (extraRowData.latestDate === undefined || extraRowData.latestDate === null || extraRowData.latestDate === "") {
+                                    scope.latestDateToReturn = null;
+                                } else {
+                                    scope.latestDateToReturn = scope.parseDate(extraRowData.latestDate);
+                                }
+
+                                scope.form.dto.minActualDate = null;
+                                scope.form.dto.maxActualDate = new Date();
+
+                                var plannedDate = scope.parseDate(scope.form.dto.plannedDate);
+                                var minDate = scope.earliestDateToReturn;
+
+                                if (!scope.form.dto.ignoreDateLimitation) {
+                                    scope.form.dto.maxDate = scope.latestDateToReturn;
+                                } else {
+                                    scope.form.dto.maxDate = null;
+                                }
+
+                                if (plannedDate && minDate && plannedDate < minDate) {
+                                    minDate = plannedDate;
+                                }
+
+                                scope.form.dto.minDate = minDate;
+
+                                scope.showRescheduleModal(scope.msg('umurinzi.visitReschedule.update'), scope.msg('umurinzi.visitReschedule.plannedDateUpdateSuccessful'));
+                            }
+                        } else {
+                            scope.visitForPrint = elem.getRowData(rowId);
+                        }
+                    },
+                    postData: {
+                        startDate: function() {
+                            return handleUndefined(scope.selectedFilter.startDate);
+                        },
+                        endDate: function() {
+                            return handleUndefined(scope.selectedFilter.endDate);
+                        },
+                        dateFilter: function() {
+                            return handleUndefined(scope.selectedFilter.dateFilter);
+                        }
+                    }
+                });
+
+                scope.$watch("lookupRefresh", function () {
+                    $('#' + attrs.id).jqGrid('setGridParam', {
+                        page: 1,
+                        postData: {
+                            fields: JSON.stringify(scope.lookupBy),
+                            lookup: (scope.selectedLookup) ? scope.selectedLookup.lookupName : ""
+                        }
+                    }).trigger('reloadGrid');
+                });
+
+                $(window).on('resize', function() {
+                    clearTimeout(eventResize);
+                    eventResize = $timeout(function() {
+                        scope.resizeGridHeight(attrs.id);
+                        scope.resizeGridWidth(attrs.id);
+                        $(".ui-layout-content").scrollTop(0);
+                    }, 200);
+                }).trigger('resize');
+
+                $('#inner-center').on('change', function() {
+                    clearTimeout(eventChange);
+                    eventChange = $timeout(function() {
+                        scope.resizeGridWidth(attrs.id);
+                        scope.resizeGridHeight(attrs.id);
+                    }, 200);
+                });
+            }
+        };
+    });
+
     directives.directive('umurinziReportGrid', function($http) {
         return {
             restrict: 'A',
