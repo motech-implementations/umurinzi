@@ -38,6 +38,13 @@
                 </div>
 
                 <div class="form-group">
+                    <label class="col-md-2 control-label" for="zetesDbDriver">{{msg('umurinzi.settings.zetes.driver')}}</label>
+                    <div class="col-md-4">
+                        <input class="form-control" id="zetesDbDriver" type="text" ng-model="config.zetesDbDriver" ng-required="config.enableZetesImportJob">
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label class="col-md-2 control-label" for="zetesDbUsername">{{msg('umurinzi.settings.zetes.username')}}</label>
                     <div class="col-md-4">
                         <input class="form-control" id="zetesDbUsername" type="text" ng-model="config.zetesDbUsername" ng-required="config.enableZetesImportJob">

@@ -26,6 +26,10 @@ public class Config {
 
     @Getter
     @Setter
+    private String zetesDbDriver;
+
+    @Getter
+    @Setter
     private String zetesDbUsername;
 
     @Getter

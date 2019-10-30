@@ -5,6 +5,7 @@ import org.motechproject.event.listener.annotations.MotechListener;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.exception.UmurinziInitiateCallException;
 import org.motechproject.umurinzi.helper.IvrCallHelper;
+import org.motechproject.umurinzi.helper.ZetesHelper;
 import org.motechproject.umurinzi.service.UmurinziEnrollmentService;
 import org.motechproject.umurinzi.service.ReportService;
 import org.motechproject.messagecampaign.EventKeys;
@@ -27,11 +28,21 @@ public class UmurinziEventListener {
     @Autowired
     private IvrCallHelper ivrCallHelper;
 
+    @Autowired
+    private ZetesHelper zetesHelper;
+
     @MotechListener(subjects = { UmurinziConstants.DAILY_REPORT_EVENT })
     public void generateDailyReport(MotechEvent event) {
         LOGGER.info("Started generation of daily reports...");
         reportService.generateIvrAndSmsStatisticReports();
         LOGGER.info("Daily Reports generation completed");
+    }
+
+    @MotechListener(subjects = { UmurinziConstants.ZETES_IMPORT_EVENT })
+    public void importZetesData(MotechEvent event) {
+        LOGGER.info("Started import of Zetes data...");
+        zetesHelper.fetchZetesData();
+        LOGGER.info("Zetes data import completed");
     }
 
     @MotechListener(subjects = EventKeys.CAMPAIGN_COMPLETED)
