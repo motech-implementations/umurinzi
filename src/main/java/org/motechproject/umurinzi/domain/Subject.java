@@ -137,6 +137,7 @@ public class Subject {
 
     @Ignore
     public void addVisit(Visit visit) {
+        visit.setSubject(this);
         visits.add(visit);
     }
 
