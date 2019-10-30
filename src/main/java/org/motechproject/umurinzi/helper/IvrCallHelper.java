@@ -53,13 +53,6 @@ public class IvrCallHelper {
             subscriberData.addProperty(UmurinziConstants.RECEIVE_VOICE, "1");
             subscriberData.addProperty(UmurinziConstants.RECEIVE_SMS, "1");
 
-            if (StringUtils.isNotBlank(config.getVoiceSenderId())) {
-                subscriberData.addProperty(UmurinziConstants.VOICE_SENDER_ID, config.getVoiceSenderId());
-            }
-            if (StringUtils.isNotBlank(config.getSmsSenderId())) {
-                subscriberData.addProperty(UmurinziConstants.SMS_SENDER_ID, config.getSmsSenderId());
-            }
-
             JsonObject subscriberProperties = new JsonObject();
 
             subscriberProperties.addProperty(UmurinziConstants.SUBJECT_ID, subject.getSubjectId());
@@ -73,6 +66,12 @@ public class IvrCallHelper {
             String subscriber = gson.toJson(subscriberData);
 
             Map<String, String> callParams = new HashMap<>();
+            if (StringUtils.isNotBlank(config.getVoiceSenderId())) {
+                callParams.put(UmurinziConstants.VOICE_SENDER_ID, config.getVoiceSenderId());
+            }
+            if (StringUtils.isNotBlank(config.getSmsSenderId())) {
+                callParams.put(UmurinziConstants.SMS_SENDER_ID, config.getSmsSenderId());
+            }
             callParams.put(UmurinziConstants.API_KEY, config.getApiKey());
             callParams.put(UmurinziConstants.MESSAGE_ID, votoMessageId);
             callParams.put(UmurinziConstants.SEND_TO_PHONES, subject.getPhoneNumber());
