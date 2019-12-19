@@ -2,8 +2,10 @@ package org.motechproject.umurinzi.web;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.Period;
 import org.motechproject.commons.date.model.Time;
 import org.motechproject.commons.date.util.DateUtil;
+import org.motechproject.commons.date.util.JodaFormatter;
 import org.motechproject.umurinzi.domain.Config;
 import org.motechproject.umurinzi.scheduler.UmurinziScheduler;
 import org.motechproject.umurinzi.service.ConfigService;
@@ -69,12 +71,13 @@ public class ConfigController {
         }
 
         if (configService.getConfig().getEnableZetesImportJob()) {
+            Period period = new JodaFormatter().parsePeriod(configService.getConfig().getZetesImportPeriod());
             DateTime importStartDate = DateUtil.newDateTime(LocalDate.now(),
                 Time.parseTime(configService.getConfig().getZetesImportStartTime(), ":"));
             if (importStartDate.isBeforeNow()) {
                 importStartDate = importStartDate.plusDays(1);
             }
-            umurinziScheduler.scheduleZetesImportJob(importStartDate);
+            umurinziScheduler.scheduleZetesImportJob(importStartDate, period);
         }
     }
 }

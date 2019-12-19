@@ -18,6 +18,10 @@ public class Config {
 
     @Getter
     @Setter
+    private String zetesImportPeriod = UmurinziConstants.ZETES_IMPORT_EVENT_PERIOD;
+
+    @Getter
+    @Setter
     private String lastZetesImportDate;
 
     @Getter

@@ -29,6 +29,7 @@ public final class UmurinziConstants {
     public static final String ZETES_IMPORT_EVENT = "zetes_import_event";
     public static final String ZETES_IMPORT_EVENT_START_DATE = "zetes_import_event_start_date";
     public static final String ZETES_IMPORT_EVENT_START_TIME = "00:01";
+    public static final String ZETES_IMPORT_EVENT_PERIOD = "30 Minutes";
 
     public static final String REPORT_DATE_FORMAT = "yyyy-MM-dd";
     public static final String DAILY_REPORT_EVENT = "daily_report_event";

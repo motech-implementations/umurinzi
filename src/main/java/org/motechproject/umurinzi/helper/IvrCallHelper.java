@@ -37,16 +37,19 @@ public class IvrCallHelper {
     private OutboundCallService outboundCallService;
 
     public void initiateIvrCall(String messageKey, String externalId) {
-        Config config = configService.getConfig();
-
         Subject subject = getSubject(externalId);
+        initiateIvrCall(messageKey, subject);
+    }
+
+    public void initiateIvrCall(String messageKey, Subject subject) {
+        Config config = configService.getConfig();
 
         if (config.getSendIvrCalls() != null && config.getSendIvrCalls()
             && StringUtils.isNotBlank(config.getIvrLanguageId())
             && StringUtils.isNotBlank(subject.getPhoneNumber())) {
 
             boolean hasHelpLine = StringUtils.isNotBlank(subject.getHelpLine());
-            String votoMessageId = getVotoMessageId(messageKey, hasHelpLine, externalId);
+            String votoMessageId = getVotoMessageId(messageKey, hasHelpLine, subject.getSubjectId());
 
             JsonObject subscriberData = new JsonObject();
             subscriberData.addProperty(UmurinziConstants.PREFERRED_LANGUAGE, config.getIvrLanguageId());
@@ -84,7 +87,7 @@ public class IvrCallHelper {
             callParams.put(UmurinziConstants.RETRY_ATTEMPTS_SHORT, config.getRetryAttempts().toString());
             callParams.put(UmurinziConstants.RETRY_DELAY_SHORT, config.getRetryDelay().toString());
             callParams.put(UmurinziConstants.RETRY_ATTEMPTS_LONG, UmurinziConstants.RETRY_ATTEMPTS_LONG_DEFAULT);
-            callParams.put(UmurinziConstants.SUBJECT_ID, externalId);
+            callParams.put(UmurinziConstants.SUBJECT_ID, subject.getSubjectId());
             callParams.put(UmurinziConstants.SUBJECT_PHONE_NUMBER, subject.getPhoneNumber());
 
             LOGGER.info("Initiating call: {}", callParams.toString());

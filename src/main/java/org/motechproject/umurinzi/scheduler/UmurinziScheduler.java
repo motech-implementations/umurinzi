@@ -36,9 +36,7 @@ public class UmurinziScheduler {
         motechSchedulerService.safeUnscheduleAllJobs(UmurinziConstants.DAILY_REPORT_EVENT);
     }
 
-    public void scheduleZetesImportJob(DateTime startDate) {
-        Period period = Period.days(1);
-
+    public void scheduleZetesImportJob(DateTime startDate, Period period) {
         Map<String, Object> eventParameters = new HashMap<>();
         eventParameters.put(UmurinziConstants.ZETES_IMPORT_EVENT_START_DATE, startDate);
 
