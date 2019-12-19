@@ -29,4 +29,6 @@ public interface UmurinziEnrollmentService {
     void enrollOrReenrollCampaignCompletedCampaign(Subject subject);
 
     void removeCampaignCompletedCampaign(String subjectId);
+
+    void unenrollAndRemoveEnrollment(Subject subject);
 }

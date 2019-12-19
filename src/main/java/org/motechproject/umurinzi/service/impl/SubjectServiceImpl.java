@@ -1,9 +1,11 @@
 package org.motechproject.umurinzi.service.impl;
 
 import java.util.Objects;
+import org.apache.commons.lang.StringUtils;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.repository.SubjectDataService;
 import org.motechproject.umurinzi.service.SubjectService;
+import org.motechproject.umurinzi.service.UmurinziEnrollmentService;
 import org.motechproject.umurinzi.service.VisitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,9 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Autowired
     private VisitService visitService;
+
+    @Autowired
+    private UmurinziEnrollmentService umurinziEnrollmentService;
 
     @Override
     public Subject findSubjectBySubjectId(String subjectId) {
@@ -73,6 +78,23 @@ public class SubjectServiceImpl implements SubjectService {
                 subject.setBoostVaccinationDate(newSubject.getBoostVaccinationDate());
                 visitService.recalculateBoostRelatedVisitsPlannedDates(subject);
             }
+
+            updateEnrollmentsAfterUpdate(newSubject, oldSubject, subject);
+        }
+    }
+
+    private void updateEnrollmentsAfterUpdate(Subject newSubject, Subject oldSubject, Subject subject) {
+        if (StringUtils.isBlank(oldSubject.getPhoneNumber()) && StringUtils.isNotBlank(newSubject.getPhoneNumber())) {
+            subject.setPrimeVaccinationDate(newSubject.getPrimeVaccinationDate());
+            subject.setBoostVaccinationDate(newSubject.getBoostVaccinationDate());
+
+            umurinziEnrollmentService.enrollOrReenrollSubject(subject);
+
+            if (subject.getBoostVaccinationDate() != null) {
+                umurinziEnrollmentService.enrollOrReenrollCampaignCompletedCampaign(subject);
+            }
+        } else if (StringUtils.isNotBlank(oldSubject.getPhoneNumber()) && StringUtils.isBlank(newSubject.getPhoneNumber())) {
+            umurinziEnrollmentService.unenrollAndRemoveEnrollment(subject);
         }
     }
 }
