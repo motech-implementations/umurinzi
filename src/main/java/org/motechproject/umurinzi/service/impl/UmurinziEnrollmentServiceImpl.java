@@ -1,6 +1,7 @@
 package org.motechproject.umurinzi.service.impl;
 
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 import org.motechproject.commons.date.model.Time;
 import org.motechproject.umurinzi.domain.Enrollment;
@@ -85,7 +86,7 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
         }
     }
 
-  @Override
+    @Override
     public void unenrollSubject(String subjectId) {
         SubjectEnrollments subjectEnrollments = subjectEnrollmentsDataService.findBySubjectId(subjectId);
         if (subjectEnrollments == null || !EnrollmentStatus.ENROLLED.equals(subjectEnrollments.getStatus())) {
@@ -138,6 +139,11 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
     @Override
     public void createEnrollmentOrReenrollCampaign(Visit visit, boolean rollbackCompleted) {
         Subject subject = visit.getSubject();
+
+        if (requiredDataMissing(subject)) {
+            return;
+        }
+
         SubjectEnrollments subjectEnrollments = subjectEnrollmentsDataService.findBySubjectId(subject.getSubjectId());
 
         if (subjectEnrollments == null) {
@@ -188,6 +194,26 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
     @Override
     public void removeCampaignCompletedCampaign(String subjectId) {
         unenrollAndRemoveEnrollment(subjectId, VACCINATION_RECEIVED_CAMPAIGN);
+    }
+
+    @Override
+    public void unenrollAndRemoveEnrollment(Subject subject) {
+        SubjectEnrollments subjectEnrollments = subjectEnrollmentsDataService.findBySubjectId(subject.getSubjectId());
+
+        if (subjectEnrollments != null) {
+            try {
+                for (Enrollment enrollment : subjectEnrollments.getEnrollments()) {
+                    if (EnrollmentStatus.ENROLLED.equals(enrollment.getStatus())) {
+                        unscheduleJobsForEnrollment(enrollment);
+                    }
+                    enrollmentDataService.delete(enrollment);
+                }
+
+                subjectEnrollmentsDataService.delete(subjectEnrollments);
+            } catch (UmurinziEnrollmentException e) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+        }
     }
 
     private void reenrollSubjectWithNewDate(String subjectId, String campaignName, LocalDate date) {
@@ -271,6 +297,10 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
         if (referenceDate == null) {
             throw new UmurinziEnrollmentException("Cannot enroll Participant with id: %s to Campaign with name: %s, because reference date is empty",
                     subject.getSubjectId(), campaignName);
+        }
+
+        if (requiredDataMissing(subject)) {
+            return;
         }
 
         SubjectEnrollments subjectEnrollments = subjectEnrollmentsDataService.findBySubjectId(subject.getSubjectId());
@@ -416,6 +446,10 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
             throw new UmurinziEnrollmentException("Cannot enroll Participant, because no unenrolled Participant exist with id: %s",
                     subjectId);
         }
+    }
+
+    private boolean requiredDataMissing(Subject subject) {
+        return StringUtils.isBlank(subject.getPhoneNumber());
     }
 
     @Autowired
