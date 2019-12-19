@@ -4,19 +4,6 @@
     "type": "OFFSET",
     "messages": [
       {
-        "name": "Welcome message",
-        "formats": [
-          "IVR",
-          "SMS"
-        ],
-        "languages": [
-          "en"
-        ],
-        "messageKey": "welcome-message",
-        "timeOffset": "1 Day",
-        "startTime": "7:30"
-      },
-      {
         "name": "Post 1st Dose Reminder 1",
         "formats": [
           "IVR",

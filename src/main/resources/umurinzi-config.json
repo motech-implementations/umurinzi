@@ -1,6 +1,7 @@
 {
   "enableZetesImportJob": false,
   "zetesImportStartTime": "00:01",
+  "zetesImportPeriod": "30 Minutes",
   "lastZetesImportDate": null,
   "zetesDbUrl": null,
   "zetesDbDriver": "org.postgresql.Driver",

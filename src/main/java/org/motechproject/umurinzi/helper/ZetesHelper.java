@@ -13,6 +13,7 @@ import org.joda.time.LocalDate;
 import org.motechproject.umurinzi.domain.Config;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.dto.ZetesSubjectDto;
+import org.motechproject.umurinzi.exception.UmurinziInitiateCallException;
 import org.motechproject.umurinzi.exception.UmurinziReportException;
 import org.motechproject.umurinzi.mapper.ZetesMapper;
 import org.motechproject.umurinzi.service.ConfigService;
@@ -40,11 +41,16 @@ public class ZetesHelper {
   private static final String PRIME_VAC_DATE_COLUMN = "PRIME_VAC_DATE";
   private static final String BOOST_VAC_DATE_COLUMN = "BOOST_VAC_DATE";
 
+  private static final String WELCOME_MESSAGE = "welcome-message";
+
   @Autowired
   private SubjectService subjectService;
 
   @Autowired
   private ConfigService configService;
+
+  @Autowired
+  private IvrCallHelper ivrCallHelper;
 
   public void fetchZetesData() {
     Config config = configService.getConfig();
@@ -147,6 +153,12 @@ public class ZetesHelper {
       subject = MAPPER.fromDto(zetesSubject);
 
       subjectService.create(subject);
+
+      try {
+        ivrCallHelper.initiateIvrCall(WELCOME_MESSAGE, subject);
+      } catch (UmurinziInitiateCallException e) {
+        LOGGER.error(e.getMessage(), e);
+      }
     }
   }
 }

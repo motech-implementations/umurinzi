@@ -31,6 +31,23 @@
                 </div>
 
                 <div class="form-group">
+                    <label class="col-md-2 control-label" for="zetesImportPeriod">{{msg('umurinzi.settings.zetes.period')}}</label>
+                    <div class="col-md-4">
+                        <select class="form-control" id="zetesImportPeriod" ng-model="config.zetesImportPeriod" ng-required="config.enableZetesImportJob">
+                            <option value="1 Day">{{msg('umurinzi.settings.zetes.period.1d')}}</option>
+                            <option value="12 Hours">{{msg('umurinzi.settings.zetes.period.12h')}}</option>
+                            <option value="8 Hours">{{msg('umurinzi.settings.zetes.period.8h')}}</option>
+                            <option value="6 Hours">{{msg('umurinzi.settings.zetes.period.6h')}}</option>
+                            <option value="4 Hours">{{msg('umurinzi.settings.zetes.period.4h')}}</option>
+                            <option value="2 Hours">{{msg('umurinzi.settings.zetes.period.2h')}}</option>
+                            <option value="1 Hour">{{msg('umurinzi.settings.zetes.period.1h')}}</option>
+                            <option value="30 Minutes">{{msg('umurinzi.settings.zetes.period.30m')}}</option>
+                            <option value="15 Minutes">{{msg('umurinzi.settings.zetes.period.15m')}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label class="col-md-2 control-label" for="zetesDbUrl">{{msg('umurinzi.settings.zetes.url')}}</label>
                     <div class="col-md-4">
                         <input class="form-control" id="zetesDbUrl" type="text" ng-model="config.zetesDbUrl" ng-required="config.enableZetesImportJob">
