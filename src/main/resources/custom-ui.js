@@ -220,6 +220,8 @@ $scope.loadEditValueForm = function (field) {
         return '../umurinzi/resources/partials/widgets/field-phone-number.html';
     } else if (field.name === 'visits') {
         return '../umurinzi/resources/partials/widgets/field-visits.html';
+    } else if (field.name === 'enrollment') {
+        return '../umurinzi/resources/partials/widgets/field-enrollment.html';
     }
 
     if (isPhoneNumberForm) {
