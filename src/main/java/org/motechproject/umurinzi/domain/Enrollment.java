@@ -17,7 +17,7 @@ import org.motechproject.mds.annotations.Field;
 import org.motechproject.mds.annotations.NonEditable;
 import org.motechproject.messagecampaign.domain.campaign.CampaignEnrollment;
 
-@Entity(nonEditable = true, maxFetchDepth = 1)
+@Entity(recordHistory = true, nonEditable = true, maxFetchDepth = 1)
 @Unique(name = "externalIdAndCampaignName", members = {"externalId", "campaignName" })
 @NoArgsConstructor
 public class Enrollment {

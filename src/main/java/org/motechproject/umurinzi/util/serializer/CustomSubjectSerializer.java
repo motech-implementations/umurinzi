@@ -11,9 +11,8 @@ public class CustomSubjectSerializer extends JsonSerializer<Subject> {
 
     @Override
     public void serialize(Subject subject, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        if (subject.getVisits() != null) {
-            subject.setVisits(null);
-        }
+        subject.setVisits(null);
+        subject.setEnrollment(null);
         jsonGenerator.writeObject(subject);
     }
 }
