@@ -181,14 +181,12 @@ public class ReportServiceImpl implements ReportService {
 
         if (sms) {
             if (StringUtils.isBlank(smsDeliveryLogId)) {
-                throw new UmurinziReportException(
-                    "Cannot generate report for Call Detail Record with Provider Call Id: %s for Providers with Ids %s, because SMS delivery log is empty",
+                throw new UmurinziReportException("Cannot generate report for Call Detail Record with Provider Call Id: %s for Providers with Ids %s, because SMS delivery log is empty",
                     providerCallId, subjectId);
             }
 
             for (CallDetailRecord callDetailRecord : endRecords) {
-                if (smsDeliveryLogId.equals(callDetailRecord.getProviderExtraData()
-                    .get(UmurinziConstants.IVR_DELIVERY_LOG_ID))) {
+                if (smsDeliveryLogId.equals(callDetailRecord.getProviderExtraData().get(UmurinziConstants.IVR_DELIVERY_LOG_ID))) {
                     smsRecord = callDetailRecord;
                 } else {
                     callRecord = callDetailRecord;
@@ -205,8 +203,6 @@ public class ReportServiceImpl implements ReportService {
         } else if (endRecords.size() < 2) {
             callRecord = endRecords.get(0);
         } else {
-            sms = true;
-
             for (CallDetailRecord callDetailRecord : endRecords) {
                 if (StringUtils.isNotBlank(callDetailRecord.getCallDuration())
                     || StringUtils.isNotBlank(callDetailRecord.getMessagePercentListened())
@@ -225,6 +221,8 @@ public class ReportServiceImpl implements ReportService {
         }
 
         if (smsRecord != null) {
+            sms = true;
+
             if (smsRecord.getCallStatus().contains(UmurinziConstants.IVR_CALL_DETAIL_RECORD_STATUS_FAILED)) {
                 smsFailed = true;
             } else {
