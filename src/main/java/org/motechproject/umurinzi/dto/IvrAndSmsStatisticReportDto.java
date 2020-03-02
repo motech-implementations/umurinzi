@@ -41,6 +41,11 @@ public class IvrAndSmsStatisticReportDto {
     @JsonProperty
     @JsonSerialize(using = CustomDoubleSerializer.class)
     @Getter
+    private Double callLength;
+
+    @JsonProperty
+    @JsonSerialize(using = CustomDoubleSerializer.class)
+    @Getter
     private Double messagePercentListened;
 
     @JsonProperty
@@ -67,6 +72,7 @@ public class IvrAndSmsStatisticReportDto {
         sendDate = ivrAndSmsStatisticReport.getSendDate();
         expectedDuration = ivrAndSmsStatisticReport.getExpectedDuration();
         timeListenedTo = ivrAndSmsStatisticReport.getTimeListenedTo();
+        callLength = ivrAndSmsStatisticReport.getCallLength();
         messagePercentListened = ivrAndSmsStatisticReport.getMessagePercentListened();
         receivedDate = ivrAndSmsStatisticReport.getReceivedDate();
         numberOfAttempts = ivrAndSmsStatisticReport.getNumberOfAttempts();
