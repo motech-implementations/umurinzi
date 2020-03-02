@@ -134,6 +134,7 @@
       "umurinzi.reports.IvrAndSmsStatisticReport.sendDate",
       "umurinzi.reports.IvrAndSmsStatisticReport.expectedDuration",
       "umurinzi.reports.IvrAndSmsStatisticReport.timeListenedTo",
+      "umurinzi.reports.IvrAndSmsStatisticReport.callLength",
       "umurinzi.reports.IvrAndSmsStatisticReport.messagePercentListened",
       "umurinzi.reports.IvrAndSmsStatisticReport.receivedDate",
       "umurinzi.reports.IvrAndSmsStatisticReport.noOfAttempts",
@@ -171,6 +172,10 @@
     }, {
       "name": "timeListenedTo",
       "index": "timeListenedTo",
+      "align": "center"
+    }, {
+      "name": "callLength",
+      "index": "callLength",
       "align": "center"
     }, {
       "name": "messagePercentListened",
