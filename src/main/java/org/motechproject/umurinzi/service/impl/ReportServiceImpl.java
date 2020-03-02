@@ -237,7 +237,7 @@ public class ReportServiceImpl implements ReportService {
                 smsReceivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter)
                     .toDateTime(DateTimeZone.getDefault());
             }
-        } else if (sms) {
+        } else {
             LOGGER.warn("SMS is sent but not yet received for Call Detail Record with Provider Call Id: {} for Providers with Ids {}", providerCallId, subjectId);
 
             Config config = configService.getConfig();
