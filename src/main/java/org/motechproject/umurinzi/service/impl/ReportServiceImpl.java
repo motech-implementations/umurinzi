@@ -36,6 +36,7 @@ public class ReportServiceImpl implements ReportService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportServiceImpl.class);
 
     private static final int HUNDRED_PERCENT = 100;
+    private static final int DAYS_WAIT_FOR_SMS = 4;
 
     @Autowired
     private SubjectService subjectService;
@@ -221,6 +222,8 @@ public class ReportServiceImpl implements ReportService {
             }
         }
 
+        DateTime maxSmsWaitDate = sendDate.plusDays(DAYS_WAIT_FOR_SMS);
+
         if (smsRecord != null) {
             sms = true;
 
@@ -237,12 +240,15 @@ public class ReportServiceImpl implements ReportService {
                 smsReceivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter)
                     .toDateTime(DateTimeZone.getDefault());
             }
-        } else {
+        } else if (maxSmsWaitDate.isAfterNow()) {
             LOGGER.warn("SMS is sent but not yet received for Call Detail Record with Provider Call Id: {} for Providers with Ids {}", providerCallId, subjectId);
 
             Config config = configService.getConfig();
             config.getIvrAndSmsStatisticReportsToUpdate().add(initialRecord.getMotechCallId());
             configService.updateConfig(config);
+        } else {
+            smsFailed = true;
+            LOGGER.error("SMS wait time exceeded, marked as Fail for Call Detail Record with Provider Call Id: {} for Providers with Ids {}", providerCallId, subjectId);
         }
 
         if (callRecord != null) {
@@ -259,17 +265,21 @@ public class ReportServiceImpl implements ReportService {
 
                 if (StringUtils.isNotBlank(callRecord.getCallDuration())) {
                     callLength = Double.parseDouble(callRecord.getCallDuration());
+                }
 
-                    if (StringUtils.isNotBlank(callRecord.getMessagePercentListened())) {
-                        messagePercentListened = Double.parseDouble(callRecord.getMessagePercentListened());
-                        String messageSecondsCompleted = callRecord.getProviderExtraData().get(
-                            UmurinziConstants.IVR_CALL_DETAIL_RECORD_MESSAGE_SECOND_COMPLETED);
+                String messageSecondsCompleted = callRecord.getProviderExtraData().get(
+                    UmurinziConstants.IVR_CALL_DETAIL_RECORD_MESSAGE_SECOND_COMPLETED);
 
-                        if (StringUtils.isNotBlank(messageSecondsCompleted)) {
-                            timeListenedTo = Double.parseDouble(messageSecondsCompleted);
-                            expectedDuration = timeListenedTo * HUNDRED_PERCENT / messagePercentListened;
-                        }
-                    }
+                if (StringUtils.isNotBlank(messageSecondsCompleted)) {
+                    timeListenedTo = Double.parseDouble(messageSecondsCompleted);
+                }
+
+                if (StringUtils.isNotBlank(callRecord.getMessagePercentListened())) {
+                    messagePercentListened = Double.parseDouble(callRecord.getMessagePercentListened());
+                }
+
+                if (messagePercentListened > 0) {
+                    expectedDuration = timeListenedTo * HUNDRED_PERCENT / messagePercentListened;
                 }
             }
 
