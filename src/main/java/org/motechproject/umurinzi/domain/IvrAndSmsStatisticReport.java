@@ -118,9 +118,7 @@ public class IvrAndSmsStatisticReport {
         if (smsFailed) {
             return SmsStatus.FAIL;
         }
-        if (sms) {
-            return SmsStatus.YES;
-        }
-        return SmsStatus.NO;
+
+        return SmsStatus.YES;
     }
 }
