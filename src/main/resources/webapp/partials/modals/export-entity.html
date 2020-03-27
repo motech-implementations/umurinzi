@@ -62,7 +62,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="confExportBtn" class="btn btn-primary" ng-click="exportInstance()">{{msg('umurinzi.btn.export')}}</button>
+                <button id="confExportBtn" class="btn btn-primary" ng-disabled="disableExportButton" ng-click="exportInstance()">{{msg('umurinzi.btn.export')}}</button>
                 <button class="btn btn-default" ng-click="closeExportUmurinziInstanceModal()">{{msg('umurinzi.btn.cancel')}}</button>
             </div>
         </div>
