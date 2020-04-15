@@ -16,7 +16,6 @@ import org.motechproject.mds.service.impl.csv.writer.CsvTableWriter;
 import org.motechproject.mds.service.impl.csv.writer.TableWriter;
 import org.motechproject.umurinzi.service.ExportService;
 import org.motechproject.umurinzi.service.LookupService;
-import org.motechproject.umurinzi.template.PdfBasicTemplate;
 import org.motechproject.umurinzi.util.CustomColumnWidthPdfTableWriter;
 import org.motechproject.umurinzi.util.ExcelTableWriter;
 import org.motechproject.umurinzi.util.PdfTableWriter;
@@ -33,10 +32,10 @@ public class ExportServiceImpl implements ExportService {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void exportEntityToPDF(PdfBasicTemplate template, Class<?> entityDtoType, Class<?> entityType,
+    public void exportEntityToPDF(OutputStream outputStream, Class<?> entityDtoType, Class<?> entityType,
                                   Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams)
             throws IOException {
-        PdfTableWriter tableWriter = new CustomColumnWidthPdfTableWriter(template);
+        PdfTableWriter tableWriter = new CustomColumnWidthPdfTableWriter(outputStream);
         exportEntity(entityDtoType, entityType, headerMap, tableWriter, lookup, lookupFields, queryParams);
     }
 

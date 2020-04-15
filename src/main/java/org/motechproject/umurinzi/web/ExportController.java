@@ -27,8 +27,6 @@ import org.motechproject.umurinzi.exception.UmurinziExportException;
 import org.motechproject.umurinzi.exception.UmurinziLookupException;
 import org.motechproject.umurinzi.helper.DtoLookupHelper;
 import org.motechproject.umurinzi.service.ExportService;
-import org.motechproject.umurinzi.template.PdfBasicTemplate;
-import org.motechproject.umurinzi.template.PdfExportTemplate;
 import org.motechproject.umurinzi.util.QueryParamsBuilder;
 import org.motechproject.umurinzi.web.domain.GridSettings;
 import org.slf4j.Logger;
@@ -151,9 +149,7 @@ public class ExportController {
 
         try {
             if (PDF_EXPORT_FORMAT.equals(outputFormat)) {
-                PdfBasicTemplate template = new PdfExportTemplate(response.getOutputStream());
-
-                exportService.exportEntityToPDF(template, entityDtoType, entityType, headerMap,
+                exportService.exportEntityToPDF(response.getOutputStream(), entityDtoType, entityType, headerMap,
                         settings.getLookup(), settings.getFields(), queryParams);
             } else if (CSV_EXPORT_FORMAT.equals(outputFormat)) {
                 exportService.exportEntityToCSV(response.getWriter(), entityDtoType, entityType, headerMap,
