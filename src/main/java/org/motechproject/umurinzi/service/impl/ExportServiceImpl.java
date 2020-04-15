@@ -1,6 +1,7 @@
 package org.motechproject.umurinzi.service.impl;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -10,17 +11,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.motechproject.mds.query.QueryParams;
+import org.motechproject.mds.service.impl.csv.writer.CsvTableWriter;
+import org.motechproject.mds.service.impl.csv.writer.TableWriter;
 import org.motechproject.umurinzi.service.ExportService;
 import org.motechproject.umurinzi.service.LookupService;
 import org.motechproject.umurinzi.template.PdfBasicTemplate;
-import org.motechproject.umurinzi.template.XlsBasicTemplate;
 import org.motechproject.umurinzi.util.CustomColumnWidthPdfTableWriter;
 import org.motechproject.umurinzi.util.ExcelTableWriter;
 import org.motechproject.umurinzi.util.PdfTableWriter;
 import org.motechproject.umurinzi.web.domain.Records;
-import org.motechproject.mds.query.QueryParams;
-import org.motechproject.mds.service.impl.csv.writer.CsvTableWriter;
-import org.motechproject.mds.service.impl.csv.writer.TableWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,10 +49,10 @@ public class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public void exportEntityToExcel(XlsBasicTemplate template, Class<?> entityDtoType, Class<?> entityType,
+    public void exportEntityToExcel(OutputStream outputStream, Class<?> entityDtoType, Class<?> entityType,
                                     Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams)
             throws IOException {
-        ExcelTableWriter tableWriter = new ExcelTableWriter(template);
+        ExcelTableWriter tableWriter = new ExcelTableWriter(outputStream);
         exportEntity(entityDtoType, entityType, headerMap, tableWriter, lookup, lookupFields, queryParams);
     }
 
