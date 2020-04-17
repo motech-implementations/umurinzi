@@ -2,13 +2,14 @@ package org.motechproject.umurinzi.scheduler;
 
 import org.motechproject.event.MotechEvent;
 import org.motechproject.event.listener.annotations.MotechListener;
+import org.motechproject.messagecampaign.EventKeys;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.exception.UmurinziInitiateCallException;
 import org.motechproject.umurinzi.helper.IvrCallHelper;
 import org.motechproject.umurinzi.helper.ZetesHelper;
-import org.motechproject.umurinzi.service.UmurinziEnrollmentService;
+import org.motechproject.umurinzi.service.ExportService;
 import org.motechproject.umurinzi.service.ReportService;
-import org.motechproject.messagecampaign.EventKeys;
+import org.motechproject.umurinzi.service.UmurinziEnrollmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class UmurinziEventListener {
 
     @Autowired
     private ZetesHelper zetesHelper;
+
+    @Autowired
+    private ExportService exportService;
 
     @MotechListener(subjects = { UmurinziConstants.DAILY_REPORT_EVENT })
     public void generateDailyReport(MotechEvent event) {
@@ -65,5 +69,10 @@ public class UmurinziEventListener {
         } catch (UmurinziInitiateCallException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    @MotechListener(subjects = { UmurinziConstants.CLEAR_EXPORT_TASKS_EVENT })
+    public void clearExportTasks(MotechEvent event) {
+        exportService.cancelAllExportTasks();
     }
 }

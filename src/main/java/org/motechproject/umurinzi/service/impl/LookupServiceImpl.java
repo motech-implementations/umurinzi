@@ -136,6 +136,19 @@ public class LookupServiceImpl implements LookupService {
     }
 
     @Override
+    public <T> long getEntitiesCount(Class<T> entityType, String lookup, String lookupFields) {
+        try {
+            if (StringUtils.isBlank(lookup) || StringUtils.isBlank(lookupFields)) {
+                return mdsLookupService.countAll(entityType.getName());
+            }
+
+            return mdsLookupService.count(entityType.getName(), lookup, getFields(lookupFields));
+        } catch (IOException e) {
+            throw new UmurinziLookupException("Invalid lookup fields: " + lookupFields, e.getCause());
+        }
+    }
+
+    @Override
     public List<LookupDto> getAvailableLookups(String entityName) {
         EntityDto entity = getEntityByEntityClassName(entityName);
         AdvancedSettingsDto settingsDto = entityService.getAdvancedSettings(entity.getId(), true);

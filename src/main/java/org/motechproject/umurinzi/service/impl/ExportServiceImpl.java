@@ -1,123 +1,124 @@
 package org.motechproject.umurinzi.service.impl;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import static org.motechproject.umurinzi.constants.UmurinziConstants.CSV_EXPORT_FORMAT;
+import static org.motechproject.umurinzi.constants.UmurinziConstants.PDF_EXPORT_FORMAT;
+import static org.motechproject.umurinzi.constants.UmurinziConstants.XLS_EXPORT_FORMAT;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import java.util.UUID;
 import org.motechproject.mds.query.QueryParams;
 import org.motechproject.mds.service.impl.csv.writer.CsvTableWriter;
 import org.motechproject.mds.service.impl.csv.writer.TableWriter;
+import org.motechproject.umurinzi.dto.ExportResult;
+import org.motechproject.umurinzi.dto.ExportStatusResponse;
 import org.motechproject.umurinzi.service.ExportService;
-import org.motechproject.umurinzi.service.LookupService;
+import org.motechproject.umurinzi.task.ExportTask;
 import org.motechproject.umurinzi.util.CustomColumnWidthPdfTableWriter;
 import org.motechproject.umurinzi.util.ExcelTableWriter;
-import org.motechproject.umurinzi.util.PdfTableWriter;
-import org.motechproject.umurinzi.web.domain.Records;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 @Service("exportService")
 public class ExportServiceImpl implements ExportService {
 
+    private final Map<UUID, ExportTask> exportTaskMap = new HashMap<>();
+
     @Autowired
-    private LookupService lookupService;
+    @Qualifier("taskExecutor")
+    private ThreadPoolTaskExecutor taskExecutor;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
-    @Override
-    public void exportEntityToPDF(OutputStream outputStream, Class<?> entityDtoType, Class<?> entityType,
-                                  Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams)
-            throws IOException {
-        PdfTableWriter tableWriter = new CustomColumnWidthPdfTableWriter(outputStream);
-        exportEntity(entityDtoType, entityType, headerMap, tableWriter, lookup, lookupFields, queryParams);
-    }
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Override
-    public void exportEntityToCSV(Writer writer, Class<?> entityDtoType, Class<?> entityType,
-                                  Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams)
-            throws IOException {
-        CsvTableWriter tableWriter = new CsvTableWriter(writer);
-        exportEntity(entityDtoType, entityType, headerMap, tableWriter, lookup, lookupFields, queryParams);
-    }
+    public UUID exportEntity(String outputFormat, String fileName, Class<?> entityDtoType, Class<?> entityType,
+        Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams) {
 
-    @Override
-    public void exportEntityToExcel(OutputStream outputStream, Class<?> entityDtoType, Class<?> entityType,
-                                    Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams)
-            throws IOException {
-        ExcelTableWriter tableWriter = new ExcelTableWriter(outputStream);
-        exportEntity(entityDtoType, entityType, headerMap, tableWriter, lookup, lookupFields, queryParams);
-    }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        TableWriter tableWriter;
 
-    @Override
-    public <T> void exportEntity(List<T> entities, Map<String, String> headerMap, TableWriter tableWriter)
-            throws IOException {
-        exportEntityList(entities, headerMap, tableWriter);
-    }
-
-    private void exportEntity(Class<?> entityDtoType, Class<?> entityType, Map<String, String> headerMap,
-                              TableWriter tableWriter, String lookup, String lookupFields, QueryParams queryParams) throws IOException {
-        Records records;
-        if (entityDtoType != null) {
-            records = lookupService.getEntities(entityDtoType, entityType, lookup, lookupFields, queryParams);
+        if (PDF_EXPORT_FORMAT.equals(outputFormat)) {
+            tableWriter = new CustomColumnWidthPdfTableWriter(outputStream);
+        } else if (CSV_EXPORT_FORMAT.equals(outputFormat)) {
+            Writer writer = new OutputStreamWriter(outputStream);
+            tableWriter = new CsvTableWriter(writer);
+        } else if (XLS_EXPORT_FORMAT.equals(outputFormat)) {
+            tableWriter = new ExcelTableWriter(outputStream);
         } else {
-            records = lookupService.getEntities(entityType, lookup, lookupFields, queryParams);
+            throw new IllegalArgumentException("Invalid export format: " + outputFormat);
         }
 
-        exportEntityList(records.getRows(), headerMap, tableWriter);
+        ExportTask exportTask = applicationContext.getBean(ExportTask.class);
+
+        UUID taskId = exportTask.setExportParams(outputStream, fileName, outputFormat, entityDtoType,
+            entityType, headerMap, tableWriter, lookup, lookupFields, queryParams);
+        exportTaskMap.put(taskId, exportTask);
+
+        taskExecutor.execute(exportTask);
+
+        return taskId;
     }
 
-    private void exportEntityList(List entities, Map<String, String> headerMap, TableWriter tableWriter)
-            throws IOException {
-        Set<String> keys = headerMap.keySet();
-        String[] fields = keys.toArray(new String[keys.size()]);
-        try {
-            tableWriter.writeHeader(fields);
-            for (Object entity : entities) {
-                Map<String, String> row = buildRow(entity, headerMap);
-                tableWriter.writeRow(row, fields);
-            }
-        } catch (IOException e) {
-            throw new IOException("IO Error when writing data", e);
-        } finally {
-            tableWriter.close();
-        }
+    @Override
+    public ExportStatusResponse getExportStatus(UUID exportId) {
+        return getTaskStatus(exportId);
     }
 
-    private <T> Map<String, String> buildRow(T entity, Map<String, String> headerMap) throws IOException {
-        String json = objectMapper.writeValueAsString(entity);
-        Map<String, Object> entityMap = objectMapper.readValue(json, new TypeReference<HashMap>() {
-        });
-        Map<String, String> row = new LinkedHashMap<>();
+    @Override
+    public ExportResult getExportResults(UUID exportId) {
+        return getTaskResultsAndRemove(exportId);
+    }
 
-        for (Entry<String, String> entry : headerMap.entrySet()) {
-            String fieldName = entry.getValue();
-            if (fieldName == null) {
-                row.put(entry.getKey(), null);
-                continue;
-            }
-            String[] fieldPath = fieldName.split("\\.");
-            String value = null;
-            if (fieldPath.length == 2) {
-                Map objectMap = (Map) entityMap.get(fieldPath[0]);
-                Object fieldValue = objectMap.get(fieldPath[1]);
-                if (fieldValue != null) {
-                    value = fieldValue.toString();
-                }
-            } else {
-                Object entryValue = entityMap.get(entry.getValue());
-                if (entryValue != null) {
-                    value = entryValue.toString();
-                }
-            }
-            row.put(entry.getKey(), value);
+    @Override
+    public void cancelExport(UUID exportId) {
+        cancelAndRemoveTask(exportId);
+    }
+
+    @Override
+    public void cancelAllExportTasks() {
+        cancelAndRemoveAllTasks();
+    }
+
+    private synchronized ExportStatusResponse getTaskStatus(UUID taskId) {
+        ExportTask exportTask = getTask(taskId);
+
+        return new ExportStatusResponse(exportTask.getStatus(), exportTask.getProgress());
+    }
+
+    private synchronized ExportResult getTaskResultsAndRemove(UUID taskId) {
+        ExportTask exportTask = getTask(taskId);
+        exportTaskMap.remove(taskId);
+
+        return new ExportResult(exportTask.getFileName(), exportTask.getExportFormat(), exportTask.getOutputStream());
+    }
+
+    private synchronized void cancelAndRemoveTask(UUID taskId) {
+        ExportTask exportTask = getTask(taskId);
+        exportTask.cancel();
+
+        exportTaskMap.remove(taskId);
+    }
+
+    private synchronized void cancelAndRemoveAllTasks() {
+        for (ExportTask exportTask : exportTaskMap.values()) {
+            exportTask.cancel();
         }
-        return row;
+
+        exportTaskMap.clear();
+    }
+
+    private ExportTask getTask(UUID taskId) {
+        if (!exportTaskMap.containsKey(taskId)) {
+            throw new IllegalArgumentException("Export task with id: " + taskId.toString() + " not found");
+        }
+
+        return exportTaskMap.get(taskId);
     }
 }

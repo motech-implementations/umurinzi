@@ -64,7 +64,10 @@
 
     <osgi:reference id="csvImportExportService" interface="org.motechproject.mds.service.CsvImportExportService" />
 
-    <osgi:reference id="schedulerService" interface="org.motechproject.scheduler.service.MotechSchedulerService" />
+    <osgi:reference id="schedulerService"
+      interface="org.motechproject.scheduler.service.MotechSchedulerService">
+        <osgi:reference-listener ref="jobImporter"/>
+    </osgi:reference>
 
     <osgi:reference id="messageCampaignService"
       interface="org.motechproject.messagecampaign.service.MessageCampaignService">

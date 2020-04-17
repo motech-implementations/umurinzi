@@ -57,4 +57,9 @@
         <property name="maxUploadSize" value="10000000"/>
     </bean>
 
+    <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <property name="corePoolSize" value="3" />
+        <property name="maxPoolSize" value="3" />
+        <property name="queueCapacity" value="25" />
+    </bean>
 </beans>
