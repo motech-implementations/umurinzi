@@ -161,6 +161,7 @@
             .success(function (data) {
                 $scope.exportTaskId = data;
 
+                setTimeout(function(){$scope.checkExportStatus()}, 1500);
                 $scope.exportStatusTimer = setInterval(function(){$scope.checkExportStatus()}, 5000);
             })
             .error(function (response) {
