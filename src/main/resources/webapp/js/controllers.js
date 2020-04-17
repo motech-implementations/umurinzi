@@ -38,7 +38,7 @@
         $scope.cardDateTimeFormat = "dd-MM-yyyy HH:mm";
 
         $scope.availableExportRecords = ['All','10', '25', '50', '100', '250'];
-        $scope.availableExportFormats = ['pdf','xls', 'csv'];
+        $scope.availableExportFormats = ['pdf', 'csv'];
         $scope.actualExportRecords = 'All';
         $scope.actualExportColumns = 'All';
         $scope.exportFormat = 'pdf';
