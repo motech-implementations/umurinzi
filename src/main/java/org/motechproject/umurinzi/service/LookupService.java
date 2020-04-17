@@ -1,11 +1,10 @@
 package org.motechproject.umurinzi.service;
 
+import java.util.List;
 import org.motechproject.mds.dto.LookupDto;
 import org.motechproject.mds.query.QueryParams;
 import org.motechproject.umurinzi.web.domain.GridSettings;
 import org.motechproject.umurinzi.web.domain.Records;
-
-import java.util.List;
 
 public interface LookupService {
 
@@ -19,6 +18,8 @@ public interface LookupService {
 
     <T> Records<T> getEntities(String entityClassName, String lookup,
                                String lookupFields, QueryParams queryParams);
+
+    <T> long getEntitiesCount(Class<T> entityType, String lookup, String lookupFields);
 
     List<LookupDto> getAvailableLookups(String entityName);
 }

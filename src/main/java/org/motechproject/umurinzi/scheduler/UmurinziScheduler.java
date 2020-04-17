@@ -3,11 +3,14 @@ package org.motechproject.umurinzi.scheduler;
 import java.util.HashMap;
 import java.util.Map;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.Period;
+import org.motechproject.commons.date.model.Time;
+import org.motechproject.commons.date.util.DateUtil;
 import org.motechproject.event.MotechEvent;
-import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.scheduler.contract.RepeatingPeriodSchedulableJob;
 import org.motechproject.scheduler.service.MotechSchedulerService;
+import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -48,5 +51,16 @@ public class UmurinziScheduler {
 
     public void unscheduleZetesImportJob() {
         motechSchedulerService.safeUnscheduleAllJobs(UmurinziConstants.ZETES_IMPORT_EVENT);
+    }
+
+    public void scheduleClearExportTasksJob() {
+        DateTime startDate =  DateUtil.newDateTime(LocalDate.now().plusDays(1),
+            Time.parseTime(UmurinziConstants.CLEAR_EXPORT_TASKS_EVENT_START_TIME, ":"));
+        Period period = Period.days(1);
+
+        MotechEvent event = new MotechEvent(UmurinziConstants.CLEAR_EXPORT_TASKS_EVENT);
+
+        RepeatingPeriodSchedulableJob job = new RepeatingPeriodSchedulableJob(event, startDate.toDate(), null, period, true);
+        motechSchedulerService.safeScheduleRepeatingPeriodJob(job);
     }
 }

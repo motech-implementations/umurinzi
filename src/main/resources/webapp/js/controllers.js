@@ -38,7 +38,7 @@
         $scope.cardDateTimeFormat = "dd-MM-yyyy HH:mm";
 
         $scope.availableExportRecords = ['All','10', '25', '50', '100', '250'];
-        $scope.availableExportFormats = ['pdf','xls'];
+        $scope.availableExportFormats = ['pdf','xls', 'csv'];
         $scope.actualExportRecords = 'All';
         $scope.actualExportColumns = 'All';
         $scope.exportFormat = 'pdf';
@@ -46,6 +46,10 @@
             exportWithOrder : false,
             exportWithFilter : true
         };
+        $scope.disableExportButton = false;
+        $scope.exportTaskId = null;
+        $scope.exportProgress = 0;
+        $scope.exportStatusTimer = null;
 
         $scope.exportEntityInstances = function () {
             $scope.checkboxModel.exportWithFilter = true;
@@ -61,23 +65,106 @@
         };
 
         $scope.closeExportUmurinziInstanceModal = function () {
+            $scope.cancelExport();
+
             $('#exportUmurinziInstanceModal').resetForm();
             $('#exportUmurinziInstanceModal').modal('hide');
         };
 
+        $scope.saveFile = function (data, filename, type) {
+            var file = new Blob([data], {type: type});
+
+            if (window.navigator.msSaveOrOpenBlob) // IE10+
+                window.navigator.msSaveOrOpenBlob(file, filename);
+            else { // Others
+                var a = document.createElement("a"),
+                  url = URL.createObjectURL(file);
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(function() {
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }, 0);
+            }
+        };
+
+        $scope.finishExport = function() {
+            $scope.disableExportButton = false;
+            $scope.exportProgress = 0;
+            $scope.exportTaskId = null;
+
+            if ($scope.exportStatusTimer) {
+                clearInterval($scope.exportStatusTimer);
+                $scope.exportStatusTimer = null;
+            }
+        };
+
+        $scope.cancelExport = function() {
+            if ($scope.exportTaskId) {
+                $http.get("../umurinzi/export/" + $scope.exportTaskId + "/cancel");
+                $scope.finishExport();
+            }
+        };
+
+        $scope.checkExportStatus = function() {
+            $http.get("../umurinzi/export/" + $scope.exportTaskId + "/status")
+              .success(function (data) {
+                  $scope.exportProgress = Math.floor(data.progress * 100);
+
+                  if (data.status === 'FAILED' || data.status === 'CANCELED') {
+                      $scope.finishExport();
+                      motechAlert('mds.error', 'mds.error.exportData');
+                  } else if (data.status === 'FINISHED') {
+                      $http.get("../umurinzi/export/" + $scope.exportTaskId + "/results", { responseType: 'blob' })
+                        .success(function (data, status, headers) {
+                            $('#exportUmurinziInstanceForm').resetForm();
+                            $('#exportUmurinziInstanceModal').modal('hide');
+
+                            var fileType = headers('Content-Type');
+                            var fileName = 'instance.' + $scope.exportFormat;
+
+                            var contentDisposition = headers('Content-Disposition');
+                            var filenameRegex = /filename[^;=\n]*=([\w.]*)/;
+                            var matches = filenameRegex.exec(contentDisposition);
+
+                            if (matches != null && matches[1]) {
+                                fileName = matches[1];
+                            }
+
+                            $scope.saveFile(data, fileName, fileType);
+                        })
+                        .error(function (response) {
+                            handleResponse('mds.error', 'mds.error.exportData', response);
+                        });
+
+                      $scope.finishExport();
+                  }
+              })
+              .error(function (response) {
+                  $scope.finishExport();
+                  handleResponse('mds.error', 'mds.error.exportData', response);
+              });
+        };
+
         $scope.exportInstanceWithUrl = function(url) {
+            $scope.disableExportButton = true;
+            $scope.exportProgress = 0;
+
             if ($scope.selectedLookup !== undefined && $scope.checkboxModel.exportWithFilter === true) {
                 url = url + "&lookup=" + (($scope.selectedLookup) ? $scope.selectedLookup.lookupName : "");
                 url = url + "&fields=" + encodeURIComponent(JSON.stringify($scope.lookupBy));
             }
 
             $http.get(url)
-            .success(function () {
-                $('#exportUmurinziInstanceModal').resetForm();
-                $('#exportUmurinziInstanceModal').modal('hide');
-                window.location.replace(url);
+            .success(function (data) {
+                $scope.exportTaskId = data;
+
+                $scope.exportStatusTimer = setInterval(function(){$scope.checkExportStatus()}, 5000);
             })
             .error(function (response) {
+                $scope.finishExport();
                 handleResponse('mds.error', 'mds.error.exportData', response);
             });
         };

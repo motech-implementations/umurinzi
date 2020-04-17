@@ -12,7 +12,9 @@ public final class UmurinziConstants {
 
     public static final String SIMPLE_DATE_FORMAT = "yyyy-MM-dd";
 
+    public static final String PDF_EXPORT_FORMAT = "pdf";
     public static final String CSV_EXPORT_FORMAT = "csv";
+    public static final String XLS_EXPORT_FORMAT = "xls";
 
     public static final String TEXT_CSV_CONTENT = "text/csv";
     public static final String APPLICATION_PDF_CONTENT = "application/pdf";
@@ -25,6 +27,9 @@ public final class UmurinziConstants {
             put("SMS", 32f);
         }
     };
+
+    public static final String CLEAR_EXPORT_TASKS_EVENT = "clear_export_tasks_event";
+    public static final String CLEAR_EXPORT_TASKS_EVENT_START_TIME = "03:00";
 
     public static final String ZETES_IMPORT_EVENT = "zetes_import_event";
     public static final String ZETES_IMPORT_EVENT_START_DATE = "zetes_import_event_start_date";

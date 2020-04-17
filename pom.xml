@@ -355,7 +355,6 @@
               org.motechproject.umurinzi.repository;version=${project.version},
               org.motechproject.umurinzi.service;version=${project.version},
               org.motechproject.umurinzi.service.impl;version=${project.version},
-              org.motechproject.umurinzi.template;version=${project.version},
               org.motechproject.umurinzi.util;version=${project.version},
               org.motechproject.umurinzi.web;version=${project.version},
               org.motechproject.umurinzi.web.domain;version=${project.version}

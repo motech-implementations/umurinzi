@@ -1,47 +1,47 @@
 package org.motechproject.umurinzi.util;
 
 import com.itextpdf.text.DocumentException;
-import org.apache.log4j.Logger;
-import org.motechproject.umurinzi.constants.UmurinziConstants;
-import org.motechproject.umurinzi.template.PdfBasicTemplate;
-
 import java.io.IOException;
+import java.io.OutputStream;
+import org.motechproject.umurinzi.constants.UmurinziConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CustomColumnWidthPdfTableWriter extends PdfTableWriter {
-    private static final float MARGIN = 5f;
-    // Object initialization for log
-    private static Logger log = Logger.getLogger(CustomColumnWidthPdfTableWriter.class.getName());
-    private float totalWidth;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomColumnWidthPdfTableWriter.class);
 
-    public CustomColumnWidthPdfTableWriter(PdfBasicTemplate template) {
-        super(template);
-        totalWidth = template.getNextPageRectangle().getWidth() - 2 * MARGIN;
+    private static final float TABLE_WIDTH = 550f;
+
+    public CustomColumnWidthPdfTableWriter(OutputStream outputStream) {
+        super(outputStream);
     }
 
     @Override
     public void writeHeader(String[] headers) throws IOException {
         super.writeHeader(headers);
-        dataTable.setTotalWidth(totalWidth);
+        dataTable.setTotalWidth(TABLE_WIDTH);
+
         try {
             dataTable.setWidths(calculateColumnWidths(headers));
         } catch (DocumentException e) {
-            log.error("writeHeader - DocumentException - Reason : " + e.getLocalizedMessage(), e);
+            LOGGER.error("writeHeader - DocumentException - Reason : " + e.getLocalizedMessage(), e);
         }
     }
 
-    private float[] calculateColumnWidths(String[] headers) throws DocumentException {
-        float spaceForTheRestOfColumns = dataTable.getTotalWidth();
-        int numberOfColumnsWithFixedWidth = 0;
+    private float[] calculateColumnWidths(String[] headers) {
+        float spaceForTheRestOfColumns = TABLE_WIDTH;
+        int fixedWidthColumnsCount = 0;
+
         for (int i = 0; i < dataTable.getNumberOfColumns(); i++) {
             if (UmurinziConstants.REPORT_COLUMN_WIDTHS.containsKey(headers[i])) {
                 spaceForTheRestOfColumns -= UmurinziConstants.REPORT_COLUMN_WIDTHS.get(headers[i]);
-                numberOfColumnsWithFixedWidth++;
+                fixedWidthColumnsCount++;
             }
         }
 
-        float relativeWidth = spaceForTheRestOfColumns
-                / (dataTable.getNumberOfColumns() - numberOfColumnsWithFixedWidth);
+        float relativeWidth = spaceForTheRestOfColumns / (dataTable.getNumberOfColumns() - fixedWidthColumnsCount);
         float[] allWidths = new float[dataTable.getNumberOfColumns()];
+
         for (int i = 0; i < dataTable.getNumberOfColumns(); i++) {
             if (UmurinziConstants.REPORT_COLUMN_WIDTHS.containsKey(headers[i])) {
                 allWidths[i] = UmurinziConstants.REPORT_COLUMN_WIDTHS.get(headers[i]);

@@ -1,4 +1,4 @@
-<div id="exportUmurinziInstanceModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exportUmurinziInstanceModalLabel" aria-hidden="true">
+<div id="exportUmurinziInstanceModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="exportUmurinziInstanceModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -60,9 +60,21 @@
                         </div>
                     </div>
                 </form>
+                <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10 text-center">
+                        <span>{{msg('umurinzi.export.progress')}}</span>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="{{exportProgress}}"
+                                 aria-valuemin="0" aria-valuemax="100" ng-style="{'width':exportProgress + '%'}">
+                                <span>{{exportProgress}}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
-                <button id="confExportBtn" class="btn btn-primary" ng-click="exportInstance()">{{msg('umurinzi.btn.export')}}</button>
+                <button id="confExportBtn" class="btn btn-primary" ng-disabled="disableExportButton" ng-click="exportInstance()">{{msg('umurinzi.btn.export')}}</button>
                 <button class="btn btn-default" ng-click="closeExportUmurinziInstanceModal()">{{msg('umurinzi.btn.cancel')}}</button>
             </div>
         </div>
