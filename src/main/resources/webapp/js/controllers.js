@@ -67,7 +67,7 @@
         $scope.closeExportUmurinziInstanceModal = function () {
             $scope.cancelExport();
 
-            $('#exportUmurinziInstanceModal').resetForm();
+            $('#exportUmurinziInstanceForm').resetForm();
             $('#exportUmurinziInstanceModal').modal('hide');
         };
 

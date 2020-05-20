@@ -30,14 +30,17 @@ public class ZetesHelper {
 
   private static final ZetesMapper MAPPER = ZetesMapper.INSTANCE;
 
-  private static final String SQL_QUERY = "SELECT subject.\"SUBJECT_ID\", subject.\"PHONE\", "
-      + "to_date(prime.\"DATE_DOSING\", 'dd-MON-yy') AS \"PRIME_VAC_DATE\", to_date(boost.\"DATE_DOSING\", 'dd-MON-yy') AS \"BOOST_VAC_DATE\" "
-      + "FROM \"DEMO_UMURINZI\" subject LEFT JOIN \"DOSING_UMURINZI\" prime ON subject.\"SUBJECT_ID\" = prime.\"SUBJECT_ID\" AND prime.\"VISIT_PURPOSE\" = 'DOSE 1 VISIT' "
+  private static final String SQL_QUERY = "SELECT subject.\"SUBJECT_ID\", subject.\"PHONE\", subject.\"CITY_FIRST_VACCINATED\", "
+      + "to_date(prime.\"DATE_DOSING\", 'dd-MON-yy') AS \"PRIME_VAC_DATE\", "
+      + "to_date(boost.\"DATE_DOSING\", 'dd-MON-yy') AS \"BOOST_VAC_DATE\" "
+      + "FROM \"DEMO_UMURINZI\" subject "
+      + "LEFT JOIN \"DOSING_UMURINZI\" prime ON subject.\"SUBJECT_ID\" = prime.\"SUBJECT_ID\" AND prime.\"VISIT_PURPOSE\" = 'DOSE 1 VISIT' "
       + "LEFT JOIN \"DOSING_UMURINZI\" boost ON subject.\"SUBJECT_ID\" = boost.\"SUBJECT_ID\" AND boost.\"VISIT_PURPOSE\" = 'DOSE 1 & 2 VISIT' "
-      + "GROUP BY subject.\"SUBJECT_ID\", \"PHONE\", \"PRIME_VAC_DATE\", \"BOOST_VAC_DATE\", subject.\"REFRESH_DATE\", prime.\"REFRESH_DATE\", boost.\"REFRESH_DATE\" ";
+      + "GROUP BY subject.\"SUBJECT_ID\", \"PHONE\", \"CITY_FIRST_VACCINATED\", \"PRIME_VAC_DATE\", \"BOOST_VAC_DATE\", subject.\"REFRESH_DATE\", prime.\"REFRESH_DATE\", boost.\"REFRESH_DATE\" ";
 
   private static final String SUBJECT_ID_COLUMN = "SUBJECT_ID";
   private static final String PHONE_COLUMN = "PHONE";
+  private static final String CITY_FIRST_VACCINATED = "CITY_FIRST_VACCINATED";
   private static final String PRIME_VAC_DATE_COLUMN = "PRIME_VAC_DATE";
   private static final String BOOST_VAC_DATE_COLUMN = "BOOST_VAC_DATE";
 
@@ -125,6 +128,7 @@ public class ZetesHelper {
 
       subject.setSubjectId(resultSet.getString(SUBJECT_ID_COLUMN));
       subject.setPhoneNumber(resultSet.getString(PHONE_COLUMN));
+      subject.setVaccinationSite(resultSet.getString(CITY_FIRST_VACCINATED));
       subject.setPrimeVaccinationDate(resultSet.getDate(PRIME_VAC_DATE_COLUMN));
       subject.setBoostVaccinationDate(resultSet.getDate(BOOST_VAC_DATE_COLUMN));
 

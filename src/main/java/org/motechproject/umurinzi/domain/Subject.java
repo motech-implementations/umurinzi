@@ -76,9 +76,24 @@ public class Subject {
     @Setter
     private String helpLine;
 
+    @UIDisplayable(position = 5)
+    @Column
+    @Field
+    @Getter
+    @Setter
+    private String vaccinationSite;
+
     /**
      * Other fields
      */
+    @UIDisplayable(position = 6)
+    @JsonIgnore
+    @NonEditable
+    @Field(displayName = "Enrollment Status")
+    @Persistent(mappedBy = "subject")
+    @Cascade(persist = false, update = false)
+    private SubjectEnrollments enrollment;
+
     @JsonDeserialize(using = CustomVisitListDeserializer.class)
     @NonEditable(display = false)
     @Field
@@ -93,13 +108,6 @@ public class Subject {
     @Getter
     @Setter
     private String name;
-
-    @JsonIgnore
-    @NonEditable
-    @Field(displayName = "Enrollment Status")
-    @Persistent(mappedBy = "subject")
-    @Cascade(persist = false, update = false)
-    private SubjectEnrollments enrollment;
 
     /**
      * Motech internal fields

@@ -16,6 +16,10 @@ public class ZetesSubjectDto {
 
   @Getter
   @Setter
+  private String vaccinationSite;
+
+  @Getter
+  @Setter
   private Date primeVaccinationDate;
 
   @Getter
