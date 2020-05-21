@@ -78,7 +78,7 @@ public class Subject {
 
     @UIDisplayable(position = 5)
     @Column
-    @Field
+    @Field(displayName = "Prime Vaccination Site")
     @Getter
     @Setter
     private String vaccinationSite;
