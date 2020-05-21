@@ -204,7 +204,8 @@ public final class UmurinziConstants {
 
     public static final List<String> AVAILABLE_LOOKUPS_FOR_SUBJECTS =
         new ArrayList<>(Arrays.asList("Find By Prime Vaccination Date Range", "Find By Boost Vaccination Date Range",
-            "Find By Participant Id", "Find By exact Phone Number", "Find By Visit Type And Actual Date Range"));
+            "Find By Participant Id", "Find By exact Phone Number", "Find By Visit Type And Actual Date Range",
+            "Find By Prime Vaccination Site"));
 
     private UmurinziConstants() {
     }
