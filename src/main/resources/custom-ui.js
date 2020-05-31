@@ -19,6 +19,12 @@ $scope.showDeleteInstanceButton = false;
 $scope.showLookupButton = true;
 $scope.showImportButton = false;
 
+$scope.showFieldSelect = true;
+
+$scope.exportTaskId = null;
+$scope.exportProgress = 0;
+$scope.exportStatusTimer = null;
+
 if ($scope.selectedEntity.name === "Participant") {
     $scope.showBackToEntityListButton = false;
     $.ajax({
@@ -51,8 +57,10 @@ if ($scope.selectedEntity.name === "Participant") {
 }
 
 var importCsvModal = '../umurinzi/resources/partials/modals/import-csv.html';
+var exportModal = '../umurinzi/resources/partials/modals/export-entity.html';
 
 $scope.customModals.push(importCsvModal);
+$scope.customModals.push(exportModal);
 
 $scope.importEntityInstances = function() {
     $('#importSubjectModal').modal('show');
@@ -80,8 +88,15 @@ $scope.closeImportSubjectModal = function () {
 };
 
 $scope.closeExportUmurinziInstanceModal = function () {
-    $('#exportUmurinziInstanceModal').resetForm();
+    $scope.cancelExport();
+
+    $('#exportUmurinziInstanceForm').resetForm();
     $('#exportUmurinziInstanceModal').modal('hide');
+};
+
+$scope.exportEntityInstances = function () {
+    $scope.checkboxModel.exportWithLookup = true;
+    $('#exportUmurinziInstanceModal').modal('show');
 };
 
 $scope.saveFile = function (data, filename, type) {
@@ -101,6 +116,63 @@ $scope.saveFile = function (data, filename, type) {
             window.URL.revokeObjectURL(url);
         }, 0);
     }
+};
+
+$scope.finishExport = function() {
+    $scope.exportProgress = 0;
+    $scope.exportTaskId = null;
+
+    if ($scope.exportStatusTimer) {
+        clearInterval($scope.exportStatusTimer);
+        $scope.exportStatusTimer = null;
+    }
+};
+
+$scope.cancelExport = function() {
+    if ($scope.exportTaskId) {
+        $http.get("../umurinzi/export/" + $scope.exportTaskId + "/cancel");
+        $scope.finishExport();
+    }
+};
+
+$scope.checkExportStatus = function() {
+    $http.get("../umurinzi/export/" + $scope.exportTaskId + "/status")
+      .success(function (data) {
+          $scope.exportProgress = Math.floor(data.progress * 100);
+
+          if (data.status === 'FAILED' || data.status === 'CANCELED') {
+              $scope.finishExport();
+              motechAlert('mds.error', 'mds.error.exportData');
+          } else if (data.status === 'FINISHED') {
+              $http.get("../umurinzi/export/" + $scope.exportTaskId + "/results", { responseType: 'blob' })
+                .success(function (data, status, headers) {
+                    $('#exportUmurinziInstanceForm').resetForm();
+                    $('#exportUmurinziInstanceModal').modal('hide');
+
+                    var fileType = headers('Content-Type');
+                    var fileName = 'instance.' + $scope.exportFormat;
+
+                    var contentDisposition = headers('Content-Disposition');
+                    var filenameRegex = /filename[^;=\n]*=([\w.]*)/;
+                    var matches = filenameRegex.exec(contentDisposition);
+
+                    if (matches != null && matches[1]) {
+                        fileName = matches[1];
+                    }
+
+                    $scope.saveFile(data, fileName, fileType);
+                })
+                .error(function (response) {
+                    handleResponse('mds.error', 'mds.error.exportData', response);
+                });
+
+              $scope.finishExport();
+          }
+      })
+      .error(function (response) {
+          $scope.finishExport();
+          handleResponse('mds.error', 'mds.error.exportData', response);
+      });
 };
 
 $scope.exportInstance = function() {
@@ -131,25 +203,17 @@ $scope.exportInstance = function() {
         url = url + "&fields=" + JSON.stringify($scope.lookupBy);
     }
 
-    $http.get(url, { responseType: 'blob' })
-      .success(function (data, status, headers) {
-          $('#exportInstanceForm').resetForm();
-          $('#exportInstanceModal').modal('hide');
+    $scope.exportProgress = 0;
 
-          var fileType = headers('Content-Type');
-          var fileName = 'instance.' + $scope.exportFormat;
+    $http.get(url)
+      .success(function (data) {
+          $scope.exportTaskId = data;
 
-          var contentDisposition = headers('Content-Disposition');
-          var filenameRegex = /filename[^;=\n]*=([\w.]*)/;
-          var matches = filenameRegex.exec(contentDisposition);
-
-          if (matches != null && matches[1]) {
-              fileName = matches[1];
-          }
-
-          $scope.saveFile(data, fileName, fileType);
+          setTimeout(function(){$scope.checkExportStatus()}, 1500);
+          $scope.exportStatusTimer = setInterval(function(){$scope.checkExportStatus()}, 5000);
       })
       .error(function (response) {
+          $scope.finishExport();
           handleResponse('mds.error', 'mds.error.exportData', response);
       });
 };

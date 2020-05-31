@@ -1,9 +1,5 @@
 package org.motechproject.umurinzi.web;
 
-import static org.apache.commons.lang.CharEncoding.UTF_8;
-import static org.motechproject.umurinzi.constants.UmurinziConstants.APPLICATION_PDF_CONTENT;
-import static org.motechproject.umurinzi.constants.UmurinziConstants.TEXT_CSV_CONTENT;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,26 +8,24 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mds.dto.CsvImportResults;
 import org.motechproject.mds.dto.EntityDto;
+import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.LookupDto;
 import org.motechproject.mds.ex.csv.CsvImportException;
 import org.motechproject.mds.query.QueryParams;
 import org.motechproject.mds.service.CsvImportCustomizer;
 import org.motechproject.mds.service.CsvImportExportService;
 import org.motechproject.mds.service.EntityService;
-import org.motechproject.mds.util.Constants;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.domain.Holiday;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.exception.UmurinziLookupException;
+import org.motechproject.umurinzi.service.ExportService;
 import org.motechproject.umurinzi.service.HolidayService;
 import org.motechproject.umurinzi.service.LookupService;
 import org.motechproject.umurinzi.service.SubjectService;
@@ -66,6 +60,9 @@ public class InstanceController {
 
     @Autowired
     private CsvImportExportService csvImportExportService;
+
+    @Autowired
+    private ExportService exportService;
 
     @Autowired
     private SubjectCsvImportCustomizer subjectCsvImportCustomizer;
@@ -140,43 +137,20 @@ public class InstanceController {
     }
 
     @RequestMapping(value = "/entities/{entityId}/exportInstances", method = RequestMethod.GET)
-    public void exportEntityInstances(@PathVariable Long entityId, GridSettings settings,
+    public ResponseEntity<String> exportEntityInstances(@PathVariable Long entityId, GridSettings settings,
                                       @RequestParam String exportRecords,
-                                      @RequestParam String outputFormat,
-                                      HttpServletResponse response) throws IOException {
+                                      @RequestParam String outputFormat) throws IOException {
 
         EntityDto entityDto = entityService.getEntity(entityId);
-        String entityName = entityDto.getName();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyyMMddHHmmss");
-
-        final String fileName = entityName + "_" + DateTime.now().toString(dateTimeFormatter);
-
-        if (Constants.ExportFormat.PDF.equals(outputFormat)) {
-            response.setContentType(APPLICATION_PDF_CONTENT);
-        } else {
-            response.setContentType(TEXT_CSV_CONTENT);
-        }
-        response.setCharacterEncoding(UTF_8);
-        response.setHeader(
-                "Content-Disposition",
-                "attachment; filename=" + fileName + "." + outputFormat.toLowerCase());
 
         QueryParams queryParams = new QueryParams(1, StringUtils.equalsIgnoreCase(exportRecords, "all") ? null : Integer.valueOf(exportRecords),
                 QueryParamsBuilder.buildOrderList(settings, getFields(settings)));
 
-        if (Constants.ExportFormat.PDF.equals(outputFormat)) {
-            response.setContentType(APPLICATION_PDF_CONTENT);
+        Map<String, String> headerMap = getHeaderMap(entityId, settings.getSelectedFields());
 
-            csvImportExportService.exportPdf(entityId, response.getOutputStream(), settings.getLookup(), queryParams,
-                    settings.getSelectedFields(), getFields(settings));
-        } else if (UmurinziConstants.CSV_EXPORT_FORMAT.equals(outputFormat)) {
-            response.setContentType(TEXT_CSV_CONTENT);
+        UUID exportId = exportService.exportEntity(outputFormat, entityDto.getName(), entityDto.getClassName(), headerMap, settings.getLookup(), settings.getFields(), queryParams);
 
-            csvImportExportService.exportCsv(entityId, response.getWriter(), settings.getLookup(), queryParams,
-                    settings.getSelectedFields(), getFields(settings));
-        } else {
-            throw new IllegalArgumentException("Invalid export format: " + outputFormat);
-        }
+        return new ResponseEntity<>(exportId.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/getLookupsForSubjects", method = RequestMethod.GET)
@@ -234,5 +208,26 @@ public class InstanceController {
         } else {
             return objectMapper.readValue(gridSettings.getFields(), new TypeReference<LinkedHashMap>() {}); //NO CHECKSTYLE WhitespaceAround
         }
+    }
+
+    private Map<String, String> getHeaderMap(Long entityId, List<String> selectedFields) {
+        List<FieldDto> fields = entityService.getEntityFields(entityId);
+        Map<String, String> fieldsMap = new LinkedHashMap<>();
+
+        for (FieldDto fieldDto : fields) {
+            fieldsMap.put(fieldDto.getBasic().getDisplayName(), fieldDto.getBasic().getName());
+        }
+
+        if (selectedFields == null || selectedFields.isEmpty()) {
+            return fieldsMap;
+        }
+
+        Map<String, String> headerMap = new LinkedHashMap<>();
+
+        for (String field : selectedFields) {
+            headerMap.put(field, fieldsMap.get(field));
+        }
+
+        return headerMap;
     }
 }

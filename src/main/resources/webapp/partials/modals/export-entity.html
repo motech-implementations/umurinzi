@@ -23,6 +23,22 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group" ng-if="showFieldSelect">
+                        <label class="col-sm-6 control-label" for="columns">
+                            {{msg('mds.form.exportColumns')}}
+                        </label>
+                        <div class="form-inline col-md-4 col-sm-4">
+                            <div ng-init="setDefaultExportColumns()" class="btn-group" id="columns">
+                                <a class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    {{msg('mds.form.exportColumns.' + actualExportColumns)}}
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li ng-repeat="columns in availableExportColumns" ng-click="changeExportColumns(columns)"><a>{{ msg('mds.form.exportColumns.' + columns) }}</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="col-sm-6 control-label" for="exportFormat">
                             {{msg('umurinzi.form.exportFormat')}}
@@ -55,7 +71,7 @@
                         </label>
                         <div class="form-inline col-md-4 col-sm-4">
                             <div class="btn-group" id="exportWithFilter">
-                                <input type="checkbox" ng-model="checkboxModel.exportWithFilter" ng-checked="checkboxModel.exportWithFilter">
+                                <input type="checkbox" ng-model="checkboxModel.exportWithLookup" ng-checked="checkboxModel.exportWithLookup">
                             </div>
                         </div>
                     </div>
