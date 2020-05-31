@@ -38,7 +38,18 @@ public class ExportServiceImpl implements ExportService {
     private ApplicationContext applicationContext;
 
     @Override
-    public UUID exportEntity(String outputFormat, String fileName, Class<?> entityDtoType, Class<?> entityType,
+    public UUID exportEntity(String outputFormat, String fileName, String entityName,
+        Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams) {
+        return exportEntity(outputFormat, fileName, null, null, entityName, headerMap, lookup, lookupFields, queryParams);
+    }
+
+    @Override
+    public UUID exportEntity(String outputFormat, String fileName, Class<?> entityDtoType, Class<?> entityType,  //NO CHECKSTYLE ParameterNumber
+        Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams) {
+        return exportEntity(outputFormat, fileName, entityDtoType, entityType, null, headerMap, lookup, lookupFields, queryParams);
+    }
+
+    private UUID exportEntity(String outputFormat, String fileName, Class<?> entityDtoType, Class<?> entityType, String entityName,  //NO CHECKSTYLE ParameterNumber
         Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams) {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -58,7 +69,7 @@ public class ExportServiceImpl implements ExportService {
         ExportTask exportTask = applicationContext.getBean(ExportTask.class);
 
         UUID taskId = exportTask.setExportParams(outputStream, fileName, outputFormat, entityDtoType,
-            entityType, headerMap, tableWriter, lookup, lookupFields, queryParams);
+            entityType, entityName, headerMap, tableWriter, lookup, lookupFields, queryParams);
         exportTaskMap.put(taskId, exportTask);
 
         taskExecutor.execute(exportTask);

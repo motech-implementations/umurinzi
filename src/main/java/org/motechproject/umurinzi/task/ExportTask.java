@@ -55,6 +55,7 @@ public class ExportTask implements Runnable {
 
   private Class<?> entityDtoType;
   private Class<?> entityType;
+  private String entityName;
   private Map<String, String> headerMap;
   private TableWriter tableWriter;
   private String lookup;
@@ -67,14 +68,23 @@ public class ExportTask implements Runnable {
     this.id = UUID.randomUUID();
   }
 
+  //CHECKSTYLE:OFF: checkstyle:cyclomaticcomplexity
+  @SuppressWarnings("checkstyle:CyclomaticComplexity")
   @Override
-  public void run() {
+  public void run() { //NO CHECKSTYLE CyclomaticComplexity
     Records records;
     long batchCount = 0;
     status = ExportStatus.IN_PROGRESS;
 
     if (!queryParams.isPagingSet()) {
-      long recordsCount = lookupService.getEntitiesCount(entityType, lookup, lookupFields);
+      long recordsCount;
+
+      if (entityType != null) {
+        recordsCount = lookupService.getEntitiesCount(entityType, lookup, lookupFields);
+      } else {
+        recordsCount = lookupService.getEntitiesCount(entityName, lookup, lookupFields);
+      }
+
       batchCount = recordsCount / MAX_EXPORT_BATCH_SIZE;
     }
 
@@ -97,8 +107,10 @@ public class ExportTask implements Runnable {
 
         if (entityDtoType != null) {
           records = lookupService.getEntities(entityDtoType, entityType, lookup, lookupFields, newQueryParams);
-        } else {
+        } else if (entityType != null) {
           records = lookupService.getEntities(entityType, lookup, lookupFields, newQueryParams);
+        } else {
+          records = lookupService.getEntities(entityName, lookup, lookupFields, newQueryParams);
         }
 
         List entities = records.getRows();
@@ -128,15 +140,17 @@ public class ExportTask implements Runnable {
       queryParams = null;
     }
   }
+  //CHECKSTYLE:ON: checkstyle:cyclomaticcomplexity
 
-  public UUID setExportParams(ByteArrayOutputStream outputStream, String fileName, String exportFormat,
-      Class<?> entityDtoType, Class<?> entityType, Map<String, String> headerMap, TableWriter tableWriter,
+  public UUID setExportParams(ByteArrayOutputStream outputStream, String fileName, String exportFormat,  //NO CHECKSTYLE ParameterNumber
+      Class<?> entityDtoType, Class<?> entityType, String entityName, Map<String, String> headerMap, TableWriter tableWriter,
       String lookup, String lookupFields, QueryParams queryParams) {
     this.outputStream = outputStream;
     this.fileName = fileName;
     this.exportFormat = exportFormat;
     this.entityDtoType = entityDtoType;
     this.entityType = entityType;
+    this.entityName = entityName;
     this.headerMap = headerMap;
     this.tableWriter = tableWriter;
     this.lookup = lookup;
