@@ -3,6 +3,7 @@
   "zetesImportStartTime": "00:01",
   "zetesImportPeriod": "30 Minutes",
   "lastZetesImportDate": null,
+  "lastSubjectTransferDate": null,
   "zetesDbUrl": null,
   "zetesDbDriver": "org.postgresql.Driver",
   "zetesDbUsername": null,

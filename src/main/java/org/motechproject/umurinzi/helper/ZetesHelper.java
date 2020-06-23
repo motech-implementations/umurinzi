@@ -38,13 +38,18 @@ public class ZetesHelper {
       + "LEFT JOIN \"DOSING_UMURINZI\" boost ON subject.\"SUBJECT_ID\" = boost.\"SUBJECT_ID\" AND boost.\"VISIT_PURPOSE\" = 'DOSE 1 & 2 VISIT' "
       + "GROUP BY subject.\"SUBJECT_ID\", \"PHONE\", \"CITY_FIRST_VACCINATED\", \"PRIME_VAC_DATE\", \"BOOST_VAC_DATE\", subject.\"REFRESH_DATE\", prime.\"REFRESH_DATE\", boost.\"REFRESH_DATE\" ";
 
+  private static final String TRANSFER_SQL_QUERY = "SELECT transfer.\"SUBJECT_ID\", transfer.\"SUBJECT_ID_EBL3010\" "
+      + "FROM \"UMURINZI_TRANSFER_TO_EBL3010\" transfer";
+
   private static final String SUBJECT_ID_COLUMN = "SUBJECT_ID";
   private static final String PHONE_COLUMN = "PHONE";
   private static final String CITY_FIRST_VACCINATED = "CITY_FIRST_VACCINATED";
   private static final String PRIME_VAC_DATE_COLUMN = "PRIME_VAC_DATE";
   private static final String BOOST_VAC_DATE_COLUMN = "BOOST_VAC_DATE";
+  private static final String SUBJECT_TRANSFER_ID_COLUMN = "SUBJECT_ID_EBL3010";
 
   private static final String WELCOME_MESSAGE = "welcome-message";
+  private static final String TRANSFER_MESSAGE = "transfer-message";
 
   @Autowired
   private SubjectService subjectService;
@@ -83,18 +88,65 @@ public class ZetesHelper {
     }
   }
 
-  private List<ZetesSubjectDto> fetchSubjectsFromZetes(LocalDate lastUpdateDate) {
+  public void transferSubjects() {
     Config config = configService.getConfig();
-    String databaseUrl = config.getZetesDbUrl();
-    String username = config.getZetesDbUsername();
-    String password = config.getZetesDbPassword();
 
-    loadSQLDriverClass(config.getZetesDbDriver());
+    try {
+      if (StringUtils.isNotBlank(config.getLastSubjectTransferDate())) {
+        LocalDate startDate = SIMPLE_DATE_FORMATTER
+            .parseLocalDate(config.getLastSubjectTransferDate());
+        transferSubjects(startDate);
+      } else {
+        transferSubjects(null);
+      }
 
+      config = configService.getConfig();
+      config.setLastSubjectTransferDate(LocalDate.now().toString(SIMPLE_DATE_FORMATTER));
+      configService.updateConfig(config);
+    } catch (UmurinziReportException e) {
+      LOGGER.error("Error occurred while importing data from Zetes", e);
+    }
+  }
+
+  public void transferSubjects(LocalDate lastTransfer) {
     Connection sqlConnection = null;
 
     try {
-      sqlConnection = DriverManager.getConnection(databaseUrl, username, password);
+      sqlConnection = getSqlConnection();
+      StringBuilder query = new StringBuilder(TRANSFER_SQL_QUERY);
+
+      if (lastTransfer != null) {
+        query.append("WHERE transfer.\"DATE_TRANSFER_TO_EBL3010\" >= '")
+            .append(lastTransfer.toString(SIMPLE_DATE_FORMATTER))
+            .append("'");
+      }
+
+      ResultSet resultSet = sqlConnection.createStatement().executeQuery(query.toString());
+
+      while (resultSet.next()) {
+        String subjectId = resultSet.getString(SUBJECT_ID_COLUMN);
+        String subjectTransferId = resultSet.getString(SUBJECT_TRANSFER_ID_COLUMN);
+
+        transferSubject(subjectId, subjectTransferId);
+      }
+    } catch (SQLException e) {
+      throw new UmurinziReportException("Error occurred while fetching data from Zetes", e);
+    } finally {
+      if (sqlConnection != null) {
+        try {
+          sqlConnection.close();
+        } catch (SQLException e) {
+          LOGGER.error("Error while closing SQL connection", e);
+        }
+      }
+    }
+  }
+
+  private List<ZetesSubjectDto> fetchSubjectsFromZetes(LocalDate lastUpdateDate) {
+    Connection sqlConnection = null;
+
+    try {
+      sqlConnection = getSqlConnection();
       StringBuilder query = new StringBuilder(SQL_QUERY);
 
       if (lastUpdateDate != null) {
@@ -118,6 +170,17 @@ public class ZetesHelper {
         }
       }
     }
+  }
+
+  private Connection getSqlConnection() throws SQLException {
+    Config config = configService.getConfig();
+    String databaseUrl = config.getZetesDbUrl();
+    String username = config.getZetesDbUsername();
+    String password = config.getZetesDbPassword();
+
+    loadSQLDriverClass(config.getZetesDbDriver());
+
+    return DriverManager.getConnection(databaseUrl, username, password);
   }
 
   private List<ZetesSubjectDto> getSubjectsFromResultSet(ResultSet resultSet) throws SQLException {
@@ -163,6 +226,31 @@ public class ZetesHelper {
       } catch (UmurinziInitiateCallException e) {
         LOGGER.error(e.getMessage(), e);
       }
+    }
+  }
+
+  private void transferSubject(String subjectId, String transferSubjectId) {
+    Subject subject = subjectService.findSubjectBySubjectId(subjectId);
+
+    if (subject == null) {
+      LOGGER.error("Cannot transfer Subject with Transfer Id: " + transferSubjectId
+       + ", because Subject with Id: " + subjectId + " not found.");
+    } else if (StringUtils.isBlank(subject.getTransferSubjectId())) {
+      subject.setTransferSubjectId(transferSubjectId);
+
+      subjectService.update(subject);
+
+      try {
+        ivrCallHelper.initiateIvrCall(TRANSFER_MESSAGE, subject);
+      } catch (UmurinziInitiateCallException e) {
+        LOGGER.error(e.getMessage(), e);
+      }
+    } else {
+      subject.setTransferSubjectId(transferSubjectId);
+      subjectService.update(subject);
+
+      LOGGER.warn("Transfer Id updated for Subject with Id: " + subjectId + ", new Transfer Id: "
+          + transferSubjectId + " old Transfer Id: " + subject.getTransferSubjectId());
     }
   }
 }
