@@ -46,6 +46,7 @@ public class UmurinziEventListener {
     public void importZetesData(MotechEvent event) {
         LOGGER.info("Started import of Zetes data...");
         zetesHelper.fetchZetesData();
+        zetesHelper.transferSubjects();
         LOGGER.info("Zetes data import completed");
     }
 

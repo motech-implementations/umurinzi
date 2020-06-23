@@ -26,6 +26,10 @@ public class Config {
 
     @Getter
     @Setter
+    private String lastSubjectTransferDate;
+
+    @Getter
+    @Setter
     private String zetesDbUrl;
 
     @Getter

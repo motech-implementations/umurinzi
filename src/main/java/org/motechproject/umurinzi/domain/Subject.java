@@ -94,6 +94,13 @@ public class Subject {
     @Cascade(persist = false, update = false)
     private SubjectEnrollments enrollment;
 
+    @UIDisplayable(position = 7)
+    @Column
+    @Field(displayName = "Participant ID EBL3010")
+    @Getter
+    @Setter
+    private String transferSubjectId;
+
     @JsonDeserialize(using = CustomVisitListDeserializer.class)
     @NonEditable(display = false)
     @Field
@@ -143,6 +150,7 @@ public class Subject {
         primeVaccinationDate = subject.getPrimeVaccinationDate();
         boostVaccinationDate = subject.getBoostVaccinationDate();
         name = subject.getName();
+        transferSubjectId = subject.transferSubjectId;
     }
 
     public void setPhoneNumber(String phoneNumber) {

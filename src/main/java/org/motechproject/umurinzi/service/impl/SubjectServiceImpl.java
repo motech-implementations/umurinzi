@@ -84,7 +84,8 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     private void updateEnrollmentsAfterUpdate(Subject newSubject, Subject oldSubject, Subject subject) {
-        if (StringUtils.isBlank(oldSubject.getPhoneNumber()) && StringUtils.isNotBlank(newSubject.getPhoneNumber())) {
+        if ((StringUtils.isBlank(oldSubject.getPhoneNumber()) || StringUtils.isNotBlank(oldSubject.getTransferSubjectId()))
+            && StringUtils.isNotBlank(newSubject.getPhoneNumber()) && StringUtils.isBlank(newSubject.getTransferSubjectId())) {
             subject.setPrimeVaccinationDate(newSubject.getPrimeVaccinationDate());
             subject.setBoostVaccinationDate(newSubject.getBoostVaccinationDate());
 
@@ -93,7 +94,8 @@ public class SubjectServiceImpl implements SubjectService {
             if (subject.getBoostVaccinationDate() != null) {
                 umurinziEnrollmentService.enrollOrReenrollCampaignCompletedCampaign(subject);
             }
-        } else if (StringUtils.isNotBlank(oldSubject.getPhoneNumber()) && StringUtils.isBlank(newSubject.getPhoneNumber())) {
+        } else if (StringUtils.isNotBlank(oldSubject.getPhoneNumber()) && StringUtils.isBlank(oldSubject.getTransferSubjectId())
+            && (StringUtils.isBlank(newSubject.getPhoneNumber()) || StringUtils.isNotBlank(newSubject.getTransferSubjectId()))) {
             umurinziEnrollmentService.unenrollAndRemoveEnrollment(subject);
         }
     }
