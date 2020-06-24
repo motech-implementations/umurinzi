@@ -31,7 +31,7 @@ import org.motechproject.umurinzi.util.serializer.CustomVisitListDeserializer;
 /**
  * Models data for registration of Subject
  */
-@Entity(recordHistory = true, name = "Participant", maxFetchDepth = 3)
+@Entity(recordHistory = true, name = "Participant", maxFetchDepth = 2)
 @NoArgsConstructor
 public class Subject {
     public static final String SUBJECT_ID_FIELD_NAME = "subjectId";

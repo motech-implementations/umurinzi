@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.motechproject.umurinzi.dto.ExportField;
 
 public final class UmurinziConstants {
 
@@ -106,74 +107,60 @@ public final class UmurinziConstants {
     public static final String IVR_AND_SMS_STATISTIC_REPORT_NAME = "NumberOfTimesParticipantsListenedToEachMessageReport";
     public static final String SUBJECT_ENROLLMENTS_NAME = "ParticipantEnrollments";
 
-    public static final Map<String, String> VISIT_RESCHEDULE_FIELDS_MAP = new LinkedHashMap<String, String>() {
-        {
-            put("Participant Id", "participantId");
-            put("Visit Type", "visitType");
-            put("Actual Date", "actualDate");
-            put("Planned Date", "plannedDate");
-        }
-    };
+    public static final String DATE_FIELD_TYPE = "org.joda.time.LocalDate";
+    public static final String DATE_TIME_FIELD_TYPE = "org.joda.time.DateTime";
+    public static final String VISIT_TYPE_FIELD_TYPE = "VisitType";
+    public static final String DOUBLE_FIELD_TYPE = "java.lang.Double";
+    public static final String INT_FIELD_TYPE = "java.lang.Integer";
+    public static final String STRING_FIELD_TYPE = "java.lang.String";
 
-    public static final Map<String, String> DAILY_CLINIC_VISIT_SCHEDULE_REPORT_MAP = new LinkedHashMap<String, String>() {
-        {
-            put("Planned Visit Date", "dateProjected");
-            put("Participant ID",    "subject.subjectId");
-            put("Phone Number",      "subject.phoneNumber");
-            put("Visit type",        "type");
-        }
-    };
+    public static final List<ExportField> VISIT_RESCHEDULE_FIELDS_MAP = Arrays.asList(
+        new ExportField("Participant Id", STRING_FIELD_TYPE, "participantId"),
+        new ExportField("Visit Type", VISIT_TYPE_FIELD_TYPE, "visitType"),
+        new ExportField("Actual Date", DATE_FIELD_TYPE, "actualDate"),
+        new ExportField("Planned Date", DATE_FIELD_TYPE, "plannedDate"));
 
-    public static final Map<String, String> FOLLOW_UPS_MISSED_CLINIC_VISITS_REPORT_MAP = new LinkedHashMap<String, String>() {
-        {
-            put("Participant ID",           "subject.subjectId");
-            put("Visit type",               "type");
-            put("Planned Visit Date",       "dateProjected");
-            put("No Of Days Exceeded Visit", "noOfDaysExceededVisit");
-        }
-    };
+    public static final List<ExportField> DAILY_CLINIC_VISIT_SCHEDULE_REPORT_MAP = Arrays.asList(
+        new ExportField("Planned Visit Date", DATE_FIELD_TYPE, "dateProjected"),
+        new ExportField("Participant Id", STRING_FIELD_TYPE, "subject", "subjectId"),
+        new ExportField("Phone Number", STRING_FIELD_TYPE, "subject", "phoneNumber"),
+        new ExportField("Visit type", VISIT_TYPE_FIELD_TYPE, "type"));
 
-    public static final Map<String, String> M_AND_E_MISSED_CLINIC_VISITS_REPORT_MAP = new LinkedHashMap<String, String>() {
-        {
-            put("Participant Id",           "subject.subjectId");
-            put("Phone",                    "subject.phoneNumber");
-            put("Visit type",               "type");
-            put("Planned Visit Date",       "dateProjected");
-            put("No Of Days Exceeded Visit", "noOfDaysExceededVisit");
-        }
-    };
+    public static final List<ExportField> FOLLOW_UPS_MISSED_CLINIC_VISITS_REPORT_MAP = Arrays.asList(
+        new ExportField("Participant Id", STRING_FIELD_TYPE, "subject", "subjectId"),
+        new ExportField("Visit type", VISIT_TYPE_FIELD_TYPE, "type"),
+        new ExportField("Planned Visit Date", DATE_FIELD_TYPE, "dateProjected"),
+        new ExportField("No Of Days Exceeded Visit", INT_FIELD_TYPE, "noOfDaysExceededVisit")
+    );
 
-    public static final Map<String, String> OPTS_OUT_OF_MOTECH_MESSAGES_REPORT_MAP = new LinkedHashMap<String, String>() {
-        {
-            put("Participant Id",           "subject.subjectId");
-            put("Date of Unenrollment",     "dateOfUnenrollment");
-        }
-    };
+    public static final List<ExportField> M_AND_E_MISSED_CLINIC_VISITS_REPORT_MAP = Arrays.asList(
+        new ExportField("Participant Id", STRING_FIELD_TYPE, "subject", "subjectId"),
+        new ExportField("Phone", STRING_FIELD_TYPE, "subject", "phoneNumber"),
+        new ExportField("Visit type", VISIT_TYPE_FIELD_TYPE, "type"),
+        new ExportField("Planned Visit Date", DATE_FIELD_TYPE, "dateProjected"),
+        new ExportField("No Of Days Exceeded Visit", INT_FIELD_TYPE, "noOfDaysExceededVisit"));
 
+    public static final List<ExportField> OPTS_OUT_OF_MOTECH_MESSAGES_REPORT_MAP = Arrays.asList(
+        new ExportField("Participant Id", STRING_FIELD_TYPE, "subject", "subjectId"),
+        new ExportField("Date of Unenrollment", DATE_FIELD_TYPE, "dateOfUnenrollment"));
 
-    public static final Map<String, String> IVR_AND_SMS_STATISTIC_REPORT_MAP = new LinkedHashMap<String, String>() {
-        {
-            put("Participant Id",           "subject.subjectId");
-            put("Phone",                    "subject.phoneNumber");
-            put("Message ID",               "messageId");
-            put("Sent Date",                "sendDate");
-            put("Expected Duration",        "expectedDuration");
-            put("Time Listened To",         "timeListenedTo");
-            put("Call Length",              "callLength");
-            put("Percent Listened",         "messagePercentListened");
-            put("Received Date",            "receivedDate");
-            put("No. of Attempts",          "numberOfAttempts");
-            put("SMS",                      "sms");
-            put("SMS Received Date",        "smsReceivedDate");
-        }
-    };
+    public static final List<ExportField> IVR_AND_SMS_STATISTIC_REPORT_MAP = Arrays.asList(
+        new ExportField("Participant Id", STRING_FIELD_TYPE, "subject", "subjectId"),
+        new ExportField("Phone", STRING_FIELD_TYPE, "subject", "phoneNumber"),
+        new ExportField("Message ID", STRING_FIELD_TYPE, "messageId"),
+        new ExportField("Sent Date", DATE_TIME_FIELD_TYPE, "sendDate"),
+        new ExportField("Expected Duration", DOUBLE_FIELD_TYPE, "expectedDuration"),
+        new ExportField("Time Listened To", DOUBLE_FIELD_TYPE, "timeListenedTo"),
+        new ExportField("Call Length", DOUBLE_FIELD_TYPE, "callLength"),
+        new ExportField("Percent Listened", DOUBLE_FIELD_TYPE, "messagePercentListened"),
+        new ExportField("Received Date", DATE_TIME_FIELD_TYPE, "receivedDate"),
+        new ExportField("No. of Attempts", INT_FIELD_TYPE, "numberOfAttempts"),
+        new ExportField("SMS", STRING_FIELD_TYPE, "sms"),
+        new ExportField("SMS Received Date", DATE_TIME_FIELD_TYPE, "smsReceivedDate"));
 
-    public static final Map<String, String> SUBJECT_ENROLLMENTS_MAP = new LinkedHashMap<String, String>() {
-        {
-            put("Participant Id",           "subject.subjectId");
-            put("Status",                   "status");
-        }
-    };
+    public static final List<ExportField> SUBJECT_ENROLLMENTS_MAP = Arrays.asList(
+        new ExportField("Participant Id", STRING_FIELD_TYPE, "subject", "subjectId"),
+        new ExportField("Status", STRING_FIELD_TYPE, "status"));
 
     public static final List<String> AVAILABLE_LOOKUPS_FOR_SUBJECT_ENROLLMENTS =
         new ArrayList<>(Arrays.asList("Find By Participant Id", "Find By Status"));

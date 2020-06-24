@@ -23,6 +23,7 @@ $scope.showFieldSelect = true;
 
 $scope.exportTaskId = null;
 $scope.exportProgress = 0;
+$scope.exportData = [];
 $scope.exportStatusTimer = null;
 
 if ($scope.selectedEntity.name === "Participant") {
@@ -55,6 +56,8 @@ if ($scope.selectedEntity.name === "Participant") {
 } else {
     $rootScope.selectedTab = "reports";
 }
+
+$scope.disableExportButton = false;
 
 var importCsvModal = '../umurinzi/resources/partials/modals/import-csv.html';
 var exportModal = '../umurinzi/resources/partials/modals/export-entity.html';
@@ -99,8 +102,22 @@ $scope.exportEntityInstances = function () {
     $('#exportUmurinziInstanceModal').modal('show');
 };
 
-$scope.saveFile = function (data, filename, type) {
-    var file = new Blob([data], {type: type});
+$scope.saveFile = function (data, name, type) {
+    var filename = name + "_" + new Date().toISOString().replace(/[T\-:]/g, '').substring(0, 14) + "." + type;
+    var fileType;
+
+    switch (type) {
+        case "pdf":
+            fileType = "application/pdf";
+            break;
+        case "xls":
+            fileType = "application/vnd.ms-excel";
+            break;
+        default:
+            fileType = "text/csv";
+    }
+
+    var file = new Blob(data, {type: type});
 
     if (window.navigator.msSaveOrOpenBlob) // IE10+
         window.navigator.msSaveOrOpenBlob(file, filename);
@@ -119,13 +136,17 @@ $scope.saveFile = function (data, filename, type) {
 };
 
 $scope.finishExport = function() {
+    $scope.disableExportButton = false;
     $scope.exportProgress = 0;
+    $scope.exportData = [];
     $scope.exportTaskId = null;
 
     if ($scope.exportStatusTimer) {
         clearInterval($scope.exportStatusTimer);
         $scope.exportStatusTimer = null;
     }
+
+    $scope.closeExportUmurinziInstanceModal();
 };
 
 $scope.cancelExport = function() {
@@ -140,32 +161,23 @@ $scope.checkExportStatus = function() {
       .success(function (data) {
           $scope.exportProgress = Math.floor(data.progress * 100);
 
+          if (data.data && data.data.length > 0) {
+            var byteString = atob(data.data);
+            var ab = new ArrayBuffer(byteString.length);
+            var ia = new Uint8Array(ab);
+
+            for (var i = 0; i < byteString.length; i++) {
+              ia[i] = byteString.charCodeAt(i);
+            }
+
+            $scope.exportData.push(ab);
+          }
+
           if (data.status === 'FAILED' || data.status === 'CANCELED') {
               $scope.finishExport();
               motechAlert('mds.error', 'mds.error.exportData');
           } else if (data.status === 'FINISHED') {
-              $http.get("../umurinzi/export/" + $scope.exportTaskId + "/results", { responseType: 'blob' })
-                .success(function (data, status, headers) {
-                    $('#exportUmurinziInstanceForm').resetForm();
-                    $('#exportUmurinziInstanceModal').modal('hide');
-
-                    var fileType = headers('Content-Type');
-                    var fileName = 'instance.' + $scope.exportFormat;
-
-                    var contentDisposition = headers('Content-Disposition');
-                    var filenameRegex = /filename[^;=\n]*=([\w.]*)/;
-                    var matches = filenameRegex.exec(contentDisposition);
-
-                    if (matches != null && matches[1]) {
-                        fileName = matches[1];
-                    }
-
-                    $scope.saveFile(data, fileName, fileType);
-                })
-                .error(function (response) {
-                    handleResponse('mds.error', 'mds.error.exportData', response);
-                });
-
+              $scope.saveFile($scope.exportData, $scope.selectedEntity.name, $scope.exportFormat);
               $scope.finishExport();
           }
       })
@@ -203,7 +215,9 @@ $scope.exportInstance = function() {
         url = url + "&fields=" + JSON.stringify($scope.lookupBy);
     }
 
+    $scope.disableExportButton = true;
     $scope.exportProgress = 0;
+    $scope.exportData = [];
 
     $http.get(url)
       .success(function (data) {

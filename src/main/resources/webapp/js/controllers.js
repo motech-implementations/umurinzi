@@ -50,6 +50,9 @@
         $scope.exportTaskId = null;
         $scope.exportProgress = 0;
         $scope.exportStatusTimer = null;
+        $scope.exportData = [];
+
+        $scope.exportFileName = 'Instance';
 
         $scope.showFieldSelect = false;
 
@@ -73,8 +76,22 @@
             $('#exportUmurinziInstanceModal').modal('hide');
         };
 
-        $scope.saveFile = function (data, filename, type) {
-            var file = new Blob([data], {type: type});
+        $scope.saveFile = function (data, name, type) {
+            var filename = name + "_" + new Date().toISOString().replace(/[T\-:]/g, '').substring(0, 14) + "." + type;
+            var fileType;
+
+            switch (type) {
+                case "pdf":
+                    fileType = "application/pdf";
+                    break;
+                case "xls":
+                    fileType = "application/vnd.ms-excel";
+                    break;
+                default:
+                    fileType = "text/csv";
+            }
+
+            var file = new Blob(data, {type: type});
 
             if (window.navigator.msSaveOrOpenBlob) // IE10+
                 window.navigator.msSaveOrOpenBlob(file, filename);
@@ -95,12 +112,15 @@
         $scope.finishExport = function() {
             $scope.disableExportButton = false;
             $scope.exportProgress = 0;
+            $scope.exportData = [];
             $scope.exportTaskId = null;
 
             if ($scope.exportStatusTimer) {
                 clearInterval($scope.exportStatusTimer);
                 $scope.exportStatusTimer = null;
             }
+
+            $scope.closeExportUmurinziInstanceModal();
         };
 
         $scope.cancelExport = function() {
@@ -115,32 +135,23 @@
               .success(function (data) {
                   $scope.exportProgress = Math.floor(data.progress * 100);
 
+                  if (data.data && data.data.length > 0) {
+                      var byteString = atob(data.data);
+                      var ab = new ArrayBuffer(byteString.length);
+                      var ia = new Uint8Array(ab);
+
+                      for (var i = 0; i < byteString.length; i++) {
+                          ia[i] = byteString.charCodeAt(i);
+                      }
+
+                      $scope.exportData.push(ab);
+                  }
+
                   if (data.status === 'FAILED' || data.status === 'CANCELED') {
                       $scope.finishExport();
                       motechAlert('mds.error', 'mds.error.exportData');
                   } else if (data.status === 'FINISHED') {
-                      $http.get("../umurinzi/export/" + $scope.exportTaskId + "/results", { responseType: 'blob' })
-                        .success(function (data, status, headers) {
-                            $('#exportUmurinziInstanceForm').resetForm();
-                            $('#exportUmurinziInstanceModal').modal('hide');
-
-                            var fileType = headers('Content-Type');
-                            var fileName = 'instance.' + $scope.exportFormat;
-
-                            var contentDisposition = headers('Content-Disposition');
-                            var filenameRegex = /filename[^;=\n]*=([\w.]*)/;
-                            var matches = filenameRegex.exec(contentDisposition);
-
-                            if (matches != null && matches[1]) {
-                                fileName = matches[1];
-                            }
-
-                            $scope.saveFile(data, fileName, fileType);
-                        })
-                        .error(function (response) {
-                            handleResponse('mds.error', 'mds.error.exportData', response);
-                        });
-
+                      $scope.saveFile($scope.exportData, $scope.exportFileName, $scope.exportFormat);
                       $scope.finishExport();
                   }
               })
@@ -150,9 +161,11 @@
               });
         };
 
-        $scope.exportInstanceWithUrl = function(url) {
+        $scope.exportInstanceWithUrl = function(url, fileName) {
             $scope.disableExportButton = true;
             $scope.exportProgress = 0;
+            $scope.exportData = [];
+            $scope.exportFileName = fileName;
 
             if ($scope.selectedLookup !== undefined && $scope.checkboxModel.exportWithLookup === true) {
                 url = url + "&lookup=" + (($scope.selectedLookup) ? $scope.selectedLookup.lookupName : "");
@@ -569,7 +582,7 @@
                 url = url + "&sortDirection=" + sortDirection;
             }
 
-            $scope.exportInstanceWithUrl(url);
+            $scope.exportInstanceWithUrl(url, 'VisitReschedule');
         };
 
         $scope.$watch('form.dto.ignoreDateLimitation', function (value) {
@@ -677,23 +690,28 @@
         $scope.getLookups(url);
 
         $scope.exportInstance = function() {
-            var url, rows, page, sortColumn, sortDirection;
+            var url, fileName, sortColumn, sortDirection;
 
             switch($scope.reportType){
                 case "dailyClinicVisitScheduleReport":
                     url = "../umurinzi/exportDailyClinicVisitScheduleReport";
+                    fileName = "DailyClinicVisitScheduleReport";
                     break;
                 case "followupsMissedClinicVisitsReport":
                     url = "../umurinzi/exportFollowupsMissedClinicVisitsReport";
+                    fileName = "FollowupsMissedClinicVisitsReport";
                     break;
                 case "MandEMissedClinicVisitsReport":
                     url = "../umurinzi/exportMandEMissedClinicVisitsReport";
+                    fileName = "MandEMissedClinicVisitsReport";
                     break;
                 case "optsOutOfMotechMessagesReport":
                     url = "../umurinzi/exportOptsOutOfMotechMessagesReport";
+                    fileName = "ParticipantsWhoOptOutOfReceivingMotechMessagesReport";
                     break;
                 case "ivrAndSmsStatisticReport":
                     url = "../umurinzi/exportIvrAndSmsStatisticReport";
+                    fileName = "NumberOfTimesParticipantsListenedToEachMessageReport";
                     break;
             }
             url = url + "?outputFormat=" + $scope.exportFormat;
@@ -719,7 +737,7 @@
                 }
             }
 
-            $scope.exportInstanceWithUrl(url);
+            $scope.exportInstanceWithUrl(url, fileName);
         };
 
         $scope.backToEntityList = function() {
@@ -796,7 +814,7 @@
         };
 
         $scope.exportInstance = function() {
-            var url, rows, page, sortColumn, sortDirection;
+            var url, sortColumn, sortDirection;
 
             url = "../umurinzi/exportSubjectEnrollment";
             url = url + "?outputFormat=" + $scope.exportFormat;
@@ -810,7 +828,7 @@
                 url = url + "&sortDirection=" + sortDirection;
             }
 
-            $scope.exportInstanceWithUrl(url);
+            $scope.exportInstanceWithUrl(url, 'ParticipantEnrollments');
         };
     });
 

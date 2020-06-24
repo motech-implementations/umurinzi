@@ -16,4 +16,8 @@ public class ExportStatusResponse {
   @Getter
   @Setter
   private Double progress;
+
+  @Getter
+  @Setter
+  private byte[] data;
 }

@@ -12,7 +12,7 @@ import org.motechproject.mds.annotations.NonEditable;
 import org.motechproject.mds.util.SecurityMode;
 
 @Access(value = SecurityMode.PERMISSIONS, members = { "manageUmurinzi" })
-@Entity(nonEditable = true, maxFetchDepth = 3)
+@Entity(nonEditable = true, maxFetchDepth = 2)
 @Unique(name = "providerCallIdAndSubject", members = {"providerCallId", "subject" })
 public class IvrAndSmsStatisticReport {
 
