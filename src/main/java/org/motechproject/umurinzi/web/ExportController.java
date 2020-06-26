@@ -1,30 +1,19 @@
 package org.motechproject.umurinzi.web;
 
-import static org.apache.commons.lang.CharEncoding.UTF_8;
-import static org.motechproject.umurinzi.constants.UmurinziConstants.APPLICATION_PDF_CONTENT;
-import static org.motechproject.umurinzi.constants.UmurinziConstants.CSV_EXPORT_FORMAT;
-import static org.motechproject.umurinzi.constants.UmurinziConstants.PDF_EXPORT_FORMAT;
-import static org.motechproject.umurinzi.constants.UmurinziConstants.TEXT_CSV_CONTENT;
-import static org.motechproject.umurinzi.constants.UmurinziConstants.XLS_EXPORT_FORMAT;
-
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.mds.query.QueryParams;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.domain.IvrAndSmsStatisticReport;
 import org.motechproject.umurinzi.domain.SubjectEnrollments;
 import org.motechproject.umurinzi.domain.Visit;
-import org.motechproject.umurinzi.dto.ExportResult;
+import org.motechproject.umurinzi.dto.ExportField;
 import org.motechproject.umurinzi.dto.ExportStatusResponse;
 import org.motechproject.umurinzi.dto.IvrAndSmsStatisticReportDto;
 import org.motechproject.umurinzi.dto.MissedVisitsReportDto;
@@ -63,19 +52,6 @@ public class ExportController {
         ExportStatusResponse exportStatus = exportService.getExportStatus(exportId);
 
         return new ResponseEntity<>(exportStatus, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/export/{exportId}/results", method = RequestMethod.GET)
-    public void exportResults(@PathVariable UUID exportId, HttpServletResponse response) throws IOException {
-
-        ExportResult exportResult = exportService.getExportResults(exportId);
-
-        setResponseData(response, exportResult.getExportFormat(), exportResult.getFileName());
-
-        OutputStream responseOutputStream = response.getOutputStream();
-
-        exportResult.getOutputStream().writeTo(responseOutputStream);
-        responseOutputStream.close();
     }
 
     @RequestMapping(value = "/export/{exportId}/cancel", method = RequestMethod.GET)
@@ -179,14 +155,14 @@ public class ExportController {
     }
 
     private UUID exportEntity(GridSettings settings, String exportRecords, String outputFormat,
-        String fileNameBeginning, Class<?> entityDtoType, Class<?> entityType, Map<String, String> headerMap) throws IOException {
+        String fileNameBeginning, Class<?> entityDtoType, Class<?> entityType, List<ExportField> exportFields) throws IOException {
 
         QueryParams queryParams = new QueryParams(1,
             StringUtils.equalsIgnoreCase(exportRecords, "all") ? null : Integer.valueOf(exportRecords),
             QueryParamsBuilder.buildOrderList(settings, getFields(settings)));
 
         return exportService.exportEntity(outputFormat, fileNameBeginning, entityDtoType,
-            entityType, headerMap, settings.getLookup(), settings.getFields(), queryParams);
+            entityType, exportFields, settings.getLookup(), settings.getFields(), queryParams);
     }
 
     private Map<String, Object> getFields(GridSettings gridSettings) throws IOException {
@@ -196,24 +172,5 @@ public class ExportController {
             return objectMapper.readValue(gridSettings.getFields(), new TypeReference<LinkedHashMap>() {
             }); //NO CHECKSTYLE WhitespaceAround
         }
-    }
-
-    private void setResponseData(HttpServletResponse response, String outputFormat, String fileNameBeginning) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyyMMddHHmmss");
-        final String fileName = fileNameBeginning + "_" + DateTime.now().toString(dateTimeFormatter);
-
-        if (PDF_EXPORT_FORMAT.equals(outputFormat)) {
-            response.setContentType(APPLICATION_PDF_CONTENT);
-        } else if (CSV_EXPORT_FORMAT.equals(outputFormat)) {
-            response.setContentType(TEXT_CSV_CONTENT);
-        } else if (XLS_EXPORT_FORMAT.equals(outputFormat)) {
-            response.setContentType("application/vnd.ms-excel");
-        } else {
-            throw new IllegalArgumentException("Invalid export format: " + outputFormat);
-        }
-        response.setCharacterEncoding(UTF_8);
-        response.setHeader(
-                "Content-Disposition",
-                "attachment; filename=" + fileName + "." + outputFormat.toLowerCase());
     }
 }

@@ -16,6 +16,7 @@ import org.motechproject.mds.dto.CsvImportResults;
 import org.motechproject.mds.dto.EntityDto;
 import org.motechproject.mds.dto.FieldDto;
 import org.motechproject.mds.dto.LookupDto;
+import org.motechproject.mds.dto.TypeDto;
 import org.motechproject.mds.ex.csv.CsvImportException;
 import org.motechproject.mds.query.QueryParams;
 import org.motechproject.mds.service.CsvImportCustomizer;
@@ -24,6 +25,7 @@ import org.motechproject.mds.service.EntityService;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.domain.Holiday;
 import org.motechproject.umurinzi.domain.Subject;
+import org.motechproject.umurinzi.dto.ExportField;
 import org.motechproject.umurinzi.exception.UmurinziLookupException;
 import org.motechproject.umurinzi.service.ExportService;
 import org.motechproject.umurinzi.service.HolidayService;
@@ -146,9 +148,10 @@ public class InstanceController {
         QueryParams queryParams = new QueryParams(1, StringUtils.equalsIgnoreCase(exportRecords, "all") ? null : Integer.valueOf(exportRecords),
                 QueryParamsBuilder.buildOrderList(settings, getFields(settings)));
 
-        Map<String, String> headerMap = getHeaderMap(entityId, settings.getSelectedFields());
+        List<ExportField> exportFields = getExportFields(entityId, settings.getSelectedFields());
 
-        UUID exportId = exportService.exportEntity(outputFormat, entityDto.getName(), entityDto.getClassName(), headerMap, settings.getLookup(), settings.getFields(), queryParams);
+        UUID exportId = exportService.exportEntity(outputFormat, entityDto.getName(), entityDto.getClassName(),
+            exportFields, settings.getLookup(), settings.getFields(), queryParams);
 
         return new ResponseEntity<>(exportId.toString(), HttpStatus.OK);
     }
@@ -210,24 +213,34 @@ public class InstanceController {
         }
     }
 
-    private Map<String, String> getHeaderMap(Long entityId, List<String> selectedFields) {
+    private List<ExportField> getExportFields(Long entityId, List<String> selectedFields) {
         List<FieldDto> fields = entityService.getEntityFields(entityId);
-        Map<String, String> fieldsMap = new LinkedHashMap<>();
+        Map<String, ExportField> exportFieldMap = new LinkedHashMap<>();
 
         for (FieldDto fieldDto : fields) {
-            fieldsMap.put(fieldDto.getBasic().getDisplayName(), fieldDto.getBasic().getName());
+            TypeDto fieldType = fieldDto.getType();
+            String type;
+
+            if (fieldType.isRelationship()) {
+                type = fieldDto.getMetadata("related.class").getValue();
+            } else {
+                type = fieldType.getTypeClass();
+            }
+
+            exportFieldMap.put(fieldDto.getBasic().getDisplayName(),
+                new ExportField(fieldDto.getBasic().getDisplayName(), type, fieldDto.getBasic().getName()));
         }
 
         if (selectedFields == null || selectedFields.isEmpty()) {
-            return fieldsMap;
+            return new ArrayList<>(exportFieldMap.values());
         }
 
-        Map<String, String> headerMap = new LinkedHashMap<>();
+        List<ExportField> exportFields = new ArrayList<>();
 
         for (String field : selectedFields) {
-            headerMap.put(field, fieldsMap.get(field));
+            exportFields.add(exportFieldMap.get(field));
         }
 
-        return headerMap;
+        return exportFields;
     }
 }

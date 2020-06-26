@@ -4,19 +4,21 @@ import static org.motechproject.umurinzi.constants.UmurinziConstants.CSV_EXPORT_
 import static org.motechproject.umurinzi.constants.UmurinziConstants.PDF_EXPORT_FORMAT;
 import static org.motechproject.umurinzi.constants.UmurinziConstants.XLS_EXPORT_FORMAT;
 
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.motechproject.mds.query.QueryParams;
 import org.motechproject.mds.service.impl.csv.writer.CsvTableWriter;
 import org.motechproject.mds.service.impl.csv.writer.TableWriter;
-import org.motechproject.umurinzi.dto.ExportResult;
+import org.motechproject.umurinzi.dto.ExportField;
+import org.motechproject.umurinzi.dto.ExportStatus;
 import org.motechproject.umurinzi.dto.ExportStatusResponse;
 import org.motechproject.umurinzi.service.ExportService;
 import org.motechproject.umurinzi.task.ExportTask;
+import org.motechproject.umurinzi.util.CustomByteArrayOutputStream;
 import org.motechproject.umurinzi.util.CustomColumnWidthPdfTableWriter;
 import org.motechproject.umurinzi.util.ExcelTableWriter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,20 +41,20 @@ public class ExportServiceImpl implements ExportService {
 
     @Override
     public UUID exportEntity(String outputFormat, String fileName, String entityName,
-        Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams) {
-        return exportEntity(outputFormat, fileName, null, null, entityName, headerMap, lookup, lookupFields, queryParams);
+        List<ExportField> exportFields, String lookup, String lookupFields, QueryParams queryParams) {
+        return exportEntity(outputFormat, fileName, null, null, entityName, exportFields, lookup, lookupFields, queryParams);
     }
 
     @Override
     public UUID exportEntity(String outputFormat, String fileName, Class<?> entityDtoType, Class<?> entityType,  //NO CHECKSTYLE ParameterNumber
-        Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams) {
-        return exportEntity(outputFormat, fileName, entityDtoType, entityType, null, headerMap, lookup, lookupFields, queryParams);
+        List<ExportField> exportFields, String lookup, String lookupFields, QueryParams queryParams) {
+        return exportEntity(outputFormat, fileName, entityDtoType, entityType, null, exportFields, lookup, lookupFields, queryParams);
     }
 
     private UUID exportEntity(String outputFormat, String fileName, Class<?> entityDtoType, Class<?> entityType, String entityName,  //NO CHECKSTYLE ParameterNumber
-        Map<String, String> headerMap, String lookup, String lookupFields, QueryParams queryParams) {
+        List<ExportField> exportFields, String lookup, String lookupFields, QueryParams queryParams) {
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        CustomByteArrayOutputStream outputStream = new CustomByteArrayOutputStream();
         TableWriter tableWriter;
 
         if (PDF_EXPORT_FORMAT.equals(outputFormat)) {
@@ -68,8 +70,8 @@ public class ExportServiceImpl implements ExportService {
 
         ExportTask exportTask = applicationContext.getBean(ExportTask.class);
 
-        UUID taskId = exportTask.setExportParams(outputStream, fileName, outputFormat, entityDtoType,
-            entityType, entityName, headerMap, tableWriter, lookup, lookupFields, queryParams);
+        UUID taskId = exportTask.setExportParams(outputStream, entityDtoType, entityType, entityName,
+            exportFields, tableWriter, lookup, lookupFields, queryParams);
         exportTaskMap.put(taskId, exportTask);
 
         taskExecutor.execute(exportTask);
@@ -80,11 +82,6 @@ public class ExportServiceImpl implements ExportService {
     @Override
     public ExportStatusResponse getExportStatus(UUID exportId) {
         return getTaskStatus(exportId);
-    }
-
-    @Override
-    public ExportResult getExportResults(UUID exportId) {
-        return getTaskResultsAndRemove(exportId);
     }
 
     @Override
@@ -99,15 +96,13 @@ public class ExportServiceImpl implements ExportService {
 
     private synchronized ExportStatusResponse getTaskStatus(UUID taskId) {
         ExportTask exportTask = getTask(taskId);
+        ExportStatus status = exportTask.getStatus();
 
-        return new ExportStatusResponse(exportTask.getStatus(), exportTask.getProgress());
-    }
+        if (!ExportStatus.IN_PROGRESS.equals(status) && !ExportStatus.NOT_STARTED.equals(status)) {
+            exportTaskMap.remove(taskId);
+        }
 
-    private synchronized ExportResult getTaskResultsAndRemove(UUID taskId) {
-        ExportTask exportTask = getTask(taskId);
-        exportTaskMap.remove(taskId);
-
-        return new ExportResult(exportTask.getFileName(), exportTask.getExportFormat(), exportTask.getOutputStream());
+        return new ExportStatusResponse(status, exportTask.getProgress(), exportTask.readData());
     }
 
     private synchronized void cancelAndRemoveTask(UUID taskId) {
