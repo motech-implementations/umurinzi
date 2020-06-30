@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 /**
  * Implementation of the {@link org.motechproject.umurinzi.service.SubjectService} interface. Uses
@@ -58,9 +60,14 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public void subjectDataChanged(Subject subject) {
-        Subject oldSubject = findSubjectBySubjectId(subject.getSubjectId());
-        subjectDataChanged(subject, oldSubject, oldSubject);
+    public void subjectDataChanged(final Subject subject) {
+        subjectDataService.doInTransaction(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                Subject oldSubject = subjectDataService.findBySubjectId(subject.getSubjectId());
+                subjectDataChanged(subject, oldSubject, oldSubject);
+            }
+        });
     }
 
     private void subjectDataChanged(Subject newSubject, Subject oldSubject, Subject subject) {
