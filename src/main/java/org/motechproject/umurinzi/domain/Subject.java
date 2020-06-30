@@ -104,7 +104,7 @@ public class Subject {
     @JsonDeserialize(using = CustomVisitListDeserializer.class)
     @NonEditable(display = false)
     @Field
-    @Persistent(mappedBy = "subject")
+    @Persistent(mappedBy = "subject", defaultFetchGroup = "false")
     @Cascade(delete = true)
     @Getter
     @Setter

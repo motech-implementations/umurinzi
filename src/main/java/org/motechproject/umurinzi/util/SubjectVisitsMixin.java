@@ -1,13 +1,11 @@
 package org.motechproject.umurinzi.util;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.motechproject.umurinzi.domain.Visit;
-import org.motechproject.umurinzi.util.serializer.CustomVisitListSerializer;
-
 import java.util.List;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.motechproject.umurinzi.domain.Visit;
 
 public abstract class SubjectVisitsMixin {
 
-    @JsonSerialize(using = CustomVisitListSerializer.class)
+    @JsonIgnore
     public abstract List<Visit> getVisits();
 }
