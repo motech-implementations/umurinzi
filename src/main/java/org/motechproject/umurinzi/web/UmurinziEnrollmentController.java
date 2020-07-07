@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 @PreAuthorize(UmurinziConstants.HAS_ENROLLMENTS_TAB_ROLE)
@@ -147,6 +148,18 @@ public class UmurinziEnrollmentController {
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/enrollAllSubjects", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void enrollAllSubjects(@RequestBody List<String> subjectIds) {
+        umurinziEnrollmentService.enrollAllSubjects(subjectIds);
+    }
+
+    @RequestMapping(value = "/unenrollAllSubjects", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    public void unenrollAllSubjects(@RequestBody List<String> subjectIds) {
+        umurinziEnrollmentService.unenrollAllSubjects(subjectIds);
     }
 
     @PreAuthorize(UmurinziConstants.HAS_MANAGE_ENROLLMENTS_ROLE)

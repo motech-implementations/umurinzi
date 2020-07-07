@@ -216,6 +216,32 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
         }
     }
 
+    @Override
+    public void enrollAllSubjects(List<String> subjectIds) {
+        if (subjectIds != null && !subjectIds.isEmpty()) {
+            for (String subjectId : subjectIds) {
+                try {
+                    enrollSubject(subjectId);
+                } catch (UmurinziEnrollmentException e) {
+                    LOGGER.debug(e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void unenrollAllSubjects(List<String> subjectIds) {
+        if (subjectIds != null && !subjectIds.isEmpty()) {
+            for (String subjectId : subjectIds) {
+                try {
+                    unenrollSubject(subjectId);
+                } catch (UmurinziEnrollmentException e) {
+                    LOGGER.debug(e.getMessage(), e);
+                }
+            }
+        }
+    }
+
     private void reenrollSubjectWithNewDate(String subjectId, String campaignName, LocalDate date) {
         unenrollSubject(subjectId, campaignName);
         enrollUnenrolled(subjectId, campaignName, date);
