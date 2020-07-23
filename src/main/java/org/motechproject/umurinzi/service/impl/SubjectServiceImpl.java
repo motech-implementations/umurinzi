@@ -3,6 +3,8 @@ package org.motechproject.umurinzi.service.impl;
 import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.umurinzi.domain.Subject;
+import org.motechproject.umurinzi.domain.Visit;
+import org.motechproject.umurinzi.domain.enums.VisitType;
 import org.motechproject.umurinzi.repository.SubjectDataService;
 import org.motechproject.umurinzi.service.SubjectService;
 import org.motechproject.umurinzi.service.UmurinziEnrollmentService;
@@ -66,15 +68,32 @@ public class SubjectServiceImpl implements SubjectService {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 Subject oldSubject = subjectDataService.findBySubjectId(subject.getSubjectId());
                 subjectDataChanged(subject, oldSubject, oldSubject);
+                subject.setEnrollment(oldSubject.getEnrollment());
             }
         });
     }
 
-    private void subjectDataChanged(Subject newSubject, Subject oldSubject, Subject subject) {
+    private void subjectDataChanged(Subject newSubject, Subject oldSubject, Subject subject) { //NO CHECKSTYLE CyclomaticComplexity
         if (oldSubject != null) {
+            if (oldSubject.getTransferSubjectId() == null && newSubject.getTransferSubjectId() != null) {
+                Visit booster = null;
+
+                for (Visit visit : subject.getVisits()) {
+                    if (VisitType.BOOST_VACCINATION_DAY.equals(visit.getType())) {
+                        booster = visit;
+                    }
+                }
+
+                if (booster != null) {
+                    umurinziEnrollmentService.unenrollAndRemoveEnrollment(booster);
+                    visitService.delete(booster);
+                }
+            }
+
             if (oldSubject.getPrimeVaccinationDate() != null && newSubject.getPrimeVaccinationDate() == null) {
                 subject.setPrimeVaccinationDate(newSubject.getPrimeVaccinationDate());
                 visitService.removeVisitsPlannedDates(subject);
+                umurinziEnrollmentService.unenrollAndRemoveEnrollment(subject);
             } else if (!Objects.equals(oldSubject.getPrimeVaccinationDate(), newSubject.getPrimeVaccinationDate())) {
                 subject.setPrimeVaccinationDate(newSubject.getPrimeVaccinationDate());
                 visitService.calculateVisitsPlannedDates(subject);
@@ -91,8 +110,7 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     private void updateEnrollmentsAfterUpdate(Subject newSubject, Subject oldSubject, Subject subject) {
-        if ((StringUtils.isBlank(oldSubject.getPhoneNumber()) || StringUtils.isNotBlank(oldSubject.getTransferSubjectId()))
-            && StringUtils.isNotBlank(newSubject.getPhoneNumber()) && StringUtils.isBlank(newSubject.getTransferSubjectId())) {
+        if (StringUtils.isBlank(oldSubject.getPhoneNumber()) && StringUtils.isNotBlank(newSubject.getPhoneNumber())) {
             subject.setPrimeVaccinationDate(newSubject.getPrimeVaccinationDate());
             subject.setBoostVaccinationDate(newSubject.getBoostVaccinationDate());
 
@@ -101,8 +119,7 @@ public class SubjectServiceImpl implements SubjectService {
             if (subject.getBoostVaccinationDate() != null) {
                 umurinziEnrollmentService.enrollOrReenrollCampaignCompletedCampaign(subject);
             }
-        } else if (StringUtils.isNotBlank(oldSubject.getPhoneNumber()) && StringUtils.isBlank(oldSubject.getTransferSubjectId())
-            && (StringUtils.isBlank(newSubject.getPhoneNumber()) || StringUtils.isNotBlank(newSubject.getTransferSubjectId()))) {
+        } else if (StringUtils.isNotBlank(oldSubject.getPhoneNumber()) && StringUtils.isBlank(newSubject.getPhoneNumber())) {
             umurinziEnrollmentService.unenrollAndRemoveEnrollment(subject);
         }
     }

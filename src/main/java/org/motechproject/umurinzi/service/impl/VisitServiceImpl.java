@@ -2,6 +2,7 @@ package org.motechproject.umurinzi.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.motechproject.umurinzi.domain.Holiday;
@@ -57,8 +58,10 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public void createVisitsForSubject(Subject subject) {
-        for (VisitType visitType : VisitType.values()) {
-            subject.addVisit(visitDataService.create(new Visit(subject, visitType)));
+        subject.addVisit(visitDataService.create(new Visit(subject, VisitType.PRIME_VACCINATION_DAY)));
+
+        if (StringUtils.isBlank(subject.getTransferSubjectId())) {
+            subject.addVisit(visitDataService.create(new Visit(subject, VisitType.BOOST_VACCINATION_DAY)));
         }
 
         calculateVisitsPlannedDates(subject);
