@@ -105,7 +105,7 @@ public class Subject {
     @NonEditable(display = false)
     @Field
     @Persistent(mappedBy = "subject", defaultFetchGroup = "false")
-    @Cascade(delete = true)
+    @Cascade(persist = false, update = false, delete = true)
     @Getter
     @Setter
     private List<Visit> visits = new ArrayList<>();
