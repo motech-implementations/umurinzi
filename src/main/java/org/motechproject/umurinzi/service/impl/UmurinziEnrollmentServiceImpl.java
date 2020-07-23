@@ -161,6 +161,8 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
         try {
             if (enrollment == null) {
                 enrollment = new Enrollment(subject.getSubjectId(), campaignName, referenceDate, EnrollmentStatus.ENROLLED);
+                enrollmentDataService.create(enrollment);
+
                 subjectEnrollments.addEnrolment(enrollment);
 
                 scheduleJobsForEnrollment(enrollment, false);
@@ -343,6 +345,8 @@ public class UmurinziEnrollmentServiceImpl implements UmurinziEnrollmentService 
         }
 
         enrollment = new Enrollment(subject.getSubjectId(), campaignName, referenceDate, deliverTime);
+
+        enrollmentDataService.create(enrollment);
 
         subjectEnrollments.addEnrolment(enrollment);
 

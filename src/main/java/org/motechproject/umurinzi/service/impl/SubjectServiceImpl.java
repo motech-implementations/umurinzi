@@ -68,6 +68,7 @@ public class SubjectServiceImpl implements SubjectService {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 Subject oldSubject = subjectDataService.findBySubjectId(subject.getSubjectId());
                 subjectDataChanged(subject, oldSubject, oldSubject);
+                subject.setEnrollment(oldSubject.getEnrollment());
             }
         });
     }
