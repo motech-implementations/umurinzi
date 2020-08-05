@@ -112,6 +112,13 @@
                 </div>
 
                 <div class="form-group">
+                    <label class="col-md-2 control-label" for="ivrUrl">{{msg('umurinzi.settings.calls.ivrUrl')}}</label>
+                    <div class="col-md-4">
+                        <input class="form-control" id="ivrUrl" type="text" ng-model="config.ivrUrl" ng-required="config.sendIvrCalls">
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label class="col-md-2 control-label" for="apiKey">{{msg('umurinzi.settings.calls.apiKey')}}</label>
                     <div class="col-md-4">
                         <input class="form-control" id="apiKey" type="text" ng-model="config.apiKey" ng-required="config.sendIvrCalls">
@@ -163,14 +170,14 @@
                 <div class="form-group">
                     <label class="col-md-2 control-label" for="voiceSenderId">{{msg('umurinzi.settings.calls.voiceSenderId')}}</label>
                     <div class="col-md-2">
-                        <input class="form-control" id="voiceSenderId" type="text" ng-model="config.voiceSenderId" ng-required="config.sendIvrCalls">
+                        <input class="form-control" id="voiceSenderId" type="text" ng-model="config.voiceSenderId">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-md-2 control-label" for="smsSenderId">{{msg('umurinzi.settings.calls.smsSenderId')}}</label>
                     <div class="col-md-2">
-                        <input class="form-control" id="smsSenderId" type="text" ng-model="config.smsSenderId" ng-required="config.sendIvrCalls">
+                        <input class="form-control" id="smsSenderId" type="text" ng-model="config.smsSenderId">
                     </div>
                 </div>
             </div>

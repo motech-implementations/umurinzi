@@ -53,9 +53,9 @@ public class SubjectServiceIT extends BasePaxIT {
     }
 
     private void resetSubjects() {
-        firstSubject = SubjectUtil.createSubject("1000000161", "Michal", "729402018364");
+        firstSubject = SubjectUtil.createSubject("1000000161", "Michal", null);
 
-        secondSubject = SubjectUtil.createSubject("1000000162", "Rafal", "44443333222");
+        secondSubject = SubjectUtil.createSubject("1000000162", "Rafal", null);
     }
 
     @Test

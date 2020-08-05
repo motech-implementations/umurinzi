@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.domain.Visit;
 import org.motechproject.umurinzi.domain.enums.VisitType;
+import org.motechproject.umurinzi.helper.IvrHelper;
 import org.motechproject.umurinzi.repository.SubjectDataService;
 import org.motechproject.umurinzi.service.SubjectService;
 import org.motechproject.umurinzi.service.UmurinziEnrollmentService;
@@ -34,6 +35,9 @@ public class SubjectServiceImpl implements SubjectService {
     @Autowired
     private UmurinziEnrollmentService umurinziEnrollmentService;
 
+    @Autowired
+    private IvrHelper ivrHelper;
+
     @Override
     public Subject findSubjectBySubjectId(String subjectId) {
         return subjectDataService.findBySubjectId(subjectId);
@@ -41,6 +45,10 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject create(Subject subject) {
+        String ivrId = ivrHelper.createSubscriber(subject);
+
+        subject.setIvrId(ivrId);
+
         subjectDataService.create(subject);
         visitService.createVisitsForSubject(subject);
 
@@ -106,6 +114,7 @@ public class SubjectServiceImpl implements SubjectService {
             }
 
             updateEnrollmentsAfterUpdate(newSubject, oldSubject, subject);
+            updateSubscriber(newSubject, oldSubject);
         }
     }
 
@@ -121,6 +130,14 @@ public class SubjectServiceImpl implements SubjectService {
             }
         } else if (StringUtils.isNotBlank(oldSubject.getPhoneNumber()) && StringUtils.isBlank(newSubject.getPhoneNumber())) {
             umurinziEnrollmentService.unenrollAndRemoveEnrollment(subject);
+        }
+    }
+
+    private void updateSubscriber(Subject newSubject, Subject oldSubject) {
+        if (!StringUtils.equals(oldSubject.getPhoneNumber(), newSubject.getPhoneNumber())
+            || !StringUtils.equals(oldSubject.getName(), newSubject.getName())) {
+            String ivrId = ivrHelper.updateSubscriber(newSubject);
+            newSubject.setIvrId(ivrId);
         }
     }
 }

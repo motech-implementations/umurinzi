@@ -14,6 +14,7 @@
   "ivrAndSmsStatisticReportsToUpdate": [],
   "sendIvrCalls": false,
   "ivrSettingsName": "Voto",
+  "ivrUrl": null,
   "apiKey": null,
   "statusCallbackUrl": null,
   "sendSmsIfVoiceFails": false,
