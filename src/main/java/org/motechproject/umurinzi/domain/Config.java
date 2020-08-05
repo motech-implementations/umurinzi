@@ -70,6 +70,10 @@ public class Config {
 
     @Getter
     @Setter
+    private String ivrUrl;
+
+    @Getter
+    @Setter
     private String apiKey;
 
     @Getter

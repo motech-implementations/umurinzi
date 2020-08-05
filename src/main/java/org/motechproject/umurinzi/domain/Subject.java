@@ -116,6 +116,12 @@ public class Subject {
     @Setter
     private String name;
 
+    @NonEditable(display = false)
+    @Field
+    @Getter
+    @Setter
+    private String ivrId;
+
     /**
      * Motech internal fields
      */

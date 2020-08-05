@@ -1,8 +1,5 @@
 package org.motechproject.umurinzi.helper;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
@@ -45,28 +42,10 @@ public class IvrCallHelper {
         Config config = configService.getConfig();
 
         if (config.getSendIvrCalls() != null && config.getSendIvrCalls()
-            && StringUtils.isNotBlank(config.getIvrLanguageId())
-            && StringUtils.isNotBlank(subject.getPhoneNumber())) {
+            && StringUtils.isNotBlank(subject.getIvrId())) {
 
             boolean hasHelpLine = StringUtils.isNotBlank(subject.getHelpLine());
             String votoMessageId = getVotoMessageId(messageKey, hasHelpLine, subject.getSubjectId());
-
-            JsonObject subscriberData = new JsonObject();
-            subscriberData.addProperty(UmurinziConstants.PREFERRED_LANGUAGE, config.getIvrLanguageId());
-            subscriberData.addProperty(UmurinziConstants.RECEIVE_VOICE, "1");
-            subscriberData.addProperty(UmurinziConstants.RECEIVE_SMS, "1");
-
-            JsonObject subscriberProperties = new JsonObject();
-
-            subscriberProperties.addProperty(UmurinziConstants.SUBJECT_ID, subject.getSubjectId());
-            if (hasHelpLine) {
-                subscriberProperties.addProperty(UmurinziConstants.HELP_LINE, subject.getHelpLine());
-            }
-
-            subscriberData.add(UmurinziConstants.PROPERTY, subscriberProperties);
-
-            Gson gson = new GsonBuilder().serializeNulls().create();
-            String subscriber = gson.toJson(subscriberData);
 
             Map<String, String> callParams = new HashMap<>();
             if (StringUtils.isNotBlank(config.getVoiceSenderId())) {
@@ -77,13 +56,10 @@ public class IvrCallHelper {
             }
             callParams.put(UmurinziConstants.API_KEY, config.getApiKey());
             callParams.put(UmurinziConstants.MESSAGE_ID, votoMessageId);
-            callParams.put(UmurinziConstants.SEND_TO_PHONES, subject.getPhoneNumber());
+            callParams.put(UmurinziConstants.SEND_TO_SUBSCRIBERS, subject.getIvrId());
             callParams.put(UmurinziConstants.WEBHOOK_URL, config.getStatusCallbackUrl());
-            callParams.put(UmurinziConstants.SUBSCRIBER_DATA, subscriber);
-            callParams.put(
-                UmurinziConstants.SEND_SMS_IF_VOICE_FAILS, config.getSendSmsIfVoiceFails() ? "1" : "0");
-            callParams.put(
-                UmurinziConstants.DETECT_VOICEMAIL, config.getDetectVoiceMail() ? "1" : "0");
+            callParams.put(UmurinziConstants.SEND_SMS_IF_VOICE_FAILS, config.getSendSmsIfVoiceFails() ? "1" : "0");
+            callParams.put(UmurinziConstants.DETECT_VOICEMAIL, config.getDetectVoiceMail() ? "1" : "0");
             callParams.put(UmurinziConstants.RETRY_ATTEMPTS_SHORT, config.getRetryAttempts().toString());
             callParams.put(UmurinziConstants.RETRY_DELAY_SHORT, config.getRetryDelay().toString());
             callParams.put(UmurinziConstants.RETRY_ATTEMPTS_LONG, UmurinziConstants.RETRY_ATTEMPTS_LONG_DEFAULT);

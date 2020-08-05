@@ -84,7 +84,11 @@ public class ZetesHelper {
     List<ZetesSubjectDto> zetesSubjects = fetchSubjectsFromZetes(lastUpdate);
 
     for (ZetesSubjectDto zetesSubject : zetesSubjects) {
-      createOrUpdateSubject(zetesSubject);
+      try {
+        createOrUpdateSubject(zetesSubject);
+      } catch (Exception e) {
+        LOGGER.error(e.getMessage(), e);
+      }
     }
   }
 

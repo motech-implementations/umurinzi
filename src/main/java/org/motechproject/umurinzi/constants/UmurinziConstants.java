@@ -45,7 +45,7 @@ public final class UmurinziConstants {
     public static final String API_KEY = "api_key";
     public static final String MESSAGE_ID = "message_id";
     public static final String WEBHOOK_URL = "webhook_url";
-    public static final String SEND_TO_PHONES = "send_to_phones";
+    public static final String SEND_TO_SUBSCRIBERS = "send_to_subscribers";
     public static final String SEND_SMS_IF_VOICE_FAILS = "send_sms_if_voice_fails";
     public static final String DETECT_VOICEMAIL = "detect_voicemail_action";
     public static final String RETRY_ATTEMPTS_SHORT = "retry_attempts_short";
@@ -54,14 +54,16 @@ public final class UmurinziConstants {
     public static final String RETRY_ATTEMPTS_LONG_DEFAULT = "1";
     public static final String SUBJECT_ID = "participant_id";
     public static final String SUBJECT_PHONE_NUMBER = "subscriber_phone";
-    public static final String SUBSCRIBER_DATA = "subscriber_data";
     public static final String PREFERRED_LANGUAGE = "preferred_language";
-    public static final String PROPERTY = "property";
     public static final String RECEIVE_VOICE = "receive_voice";
     public static final String RECEIVE_SMS = "receive_sms";
-    public static final String HELP_LINE = "help_line";
     public static final String VOICE_SENDER_ID = "voice_sender_id";
     public static final String SMS_SENDER_ID = "sms_sender_id";
+    public static final String PHONE = "phone";
+    public static final String NAME_PROPERTY = "property[name]";
+    public static final String HELP_LINE_PROPERTY = "property[help_line]";
+    public static final String SUBJECT_ID_PROPERTY = "property[participant_id]";
+    public static final String SUBSCRIBERS_URL = "/subscribers";
 
     public static final String WITH_HELPLINE = "-with-helpline";
 
