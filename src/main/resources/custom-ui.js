@@ -22,6 +22,7 @@ $scope.showImportButton = false;
 $scope.showFieldSelect = true;
 
 $scope.exportTaskId = null;
+$scope.exportFetchInProgress = false;
 $scope.exportProgress = 0;
 $scope.exportData = [];
 $scope.exportStatusTimer = null;
@@ -140,6 +141,7 @@ $scope.finishExport = function() {
     $scope.exportProgress = 0;
     $scope.exportData = [];
     $scope.exportTaskId = null;
+    $scope.exportFetchInProgress = false;
 
     if ($scope.exportStatusTimer) {
         clearInterval($scope.exportStatusTimer);
@@ -157,6 +159,12 @@ $scope.cancelExport = function() {
 };
 
 $scope.checkExportStatus = function() {
+    if ($scope.exportFetchInProgress) {
+        return;
+    }
+
+    $scope.exportFetchInProgress = true;
+
     $http.get("../umurinzi/export/" + $scope.exportTaskId + "/status")
       .success(function (data) {
           $scope.exportProgress = Math.floor(data.progress * 100);
@@ -179,6 +187,8 @@ $scope.checkExportStatus = function() {
           } else if (data.status === 'FINISHED') {
               $scope.saveFile($scope.exportData, $scope.selectedEntity.name, $scope.exportFormat);
               $scope.finishExport();
+          } else {
+              $scope.exportFetchInProgress = false;
           }
       })
       .error(function (response) {
