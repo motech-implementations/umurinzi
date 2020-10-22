@@ -37,9 +37,12 @@ public class ZetesController {
         date = LocalDate.parse(startDate, SIMPLE_DATE_FORMATTER);
       }
 
+      LOGGER.info("Zetes data transfer started by custom request from date: {}",
+          date == null ? null : date.toString(SIMPLE_DATE_FORMATTER));
+
       zetesHelper.fetchZetesData(date);
 
-      LOGGER.info("Zetes date transfer started by custom request from date: {}", date == null ? null : date.toString(SIMPLE_DATE_FORMATTER));
+      LOGGER.info("Zetes data transfer finished");
     } catch (IllegalArgumentException e) {
       LOGGER.error("Invalid date format", e);
       return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
