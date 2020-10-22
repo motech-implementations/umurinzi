@@ -13,7 +13,6 @@ import org.joda.time.LocalDate;
 import org.motechproject.umurinzi.domain.Config;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.dto.ZetesSubjectDto;
-import org.motechproject.umurinzi.exception.UmurinziInitiateCallException;
 import org.motechproject.umurinzi.exception.UmurinziReportException;
 import org.motechproject.umurinzi.mapper.ZetesMapper;
 import org.motechproject.umurinzi.service.ConfigService;
@@ -72,16 +71,20 @@ public class ZetesHelper {
         fetchZetesData(null);
       }
 
+      LOGGER.debug("Updating Zetes import last date");
       config = configService.getConfig();
       config.setLastZetesImportDate(LocalDate.now().toString(SIMPLE_DATE_FORMATTER));
       configService.updateConfig(config);
+      LOGGER.debug("Zetes last import date updated");
     } catch (UmurinziReportException e) {
       LOGGER.error("Error occurred while importing data from Zetes", e);
     }
   }
 
   public void fetchZetesData(LocalDate lastUpdate) {
+    LOGGER.debug("Fetching data from Zetes");
     List<ZetesSubjectDto> zetesSubjects = fetchSubjectsFromZetes(lastUpdate);
+    LOGGER.debug("Fetched data of {} subjects from Zetes", zetesSubjects.size());
 
     for (ZetesSubjectDto zetesSubject : zetesSubjects) {
       try {
@@ -219,15 +222,19 @@ public class ZetesHelper {
     if (subject != null) {
       MAPPER.updateFromDto(zetesSubject, subject);
 
+      LOGGER.debug("Updating subject with id: {}", subject.getSubjectId());
       subjectService.update(subject);
+      LOGGER.debug("Subject with id: {} updated", subject.getSubjectId());
     } else {
       subject = MAPPER.fromDto(zetesSubject);
 
       subjectService.create(subject);
 
       try {
+        LOGGER.debug("Sending welcome message for subject with id {}", subject.getSubjectId());
         ivrCallHelper.initiateIvrCall(WELCOME_MESSAGE, subject);
-      } catch (UmurinziInitiateCallException e) {
+        LOGGER.debug("Welcome message sent for subject with id: {}", subject.getSubjectId());
+      } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);
       }
     }
@@ -246,7 +253,7 @@ public class ZetesHelper {
 
       try {
         ivrCallHelper.initiateIvrCall(TRANSFER_MESSAGE, subject);
-      } catch (UmurinziInitiateCallException e) {
+      } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);
       }
     } else {

@@ -45,12 +45,17 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public Subject create(Subject subject) {
-        String ivrId = ivrHelper.createSubscriber(subject);
+        LOGGER.debug("Creating IVR subscriber for subject with id: {} ", subject.getSubjectId());
 
+        String ivrId = ivrHelper.createSubscriber(subject);
         subject.setIvrId(ivrId);
+        LOGGER.debug("IVR subscriber with id: {} created for subject {}", ivrId, subject.getSubjectId());
 
         subjectDataService.create(subject);
+        LOGGER.debug("Subject with id: {} created", subject.getSubjectId());
+
         visitService.createVisitsForSubject(subject);
+        LOGGER.debug("Visits for subject with id: {} created", subject.getSubjectId());
 
         return subject;
     }
@@ -136,8 +141,10 @@ public class SubjectServiceImpl implements SubjectService {
     private void updateSubscriber(Subject newSubject, Subject oldSubject) {
         if (!StringUtils.equals(oldSubject.getPhoneNumber(), newSubject.getPhoneNumber())
             || !StringUtils.equals(oldSubject.getName(), newSubject.getName())) {
+            LOGGER.debug("Updating IVR subscriber for subject with id: {}", newSubject.getSubjectId());
             String ivrId = ivrHelper.updateSubscriber(newSubject);
             newSubject.setIvrId(ivrId);
+            LOGGER.debug("IVR subscriber updated for subject with id: {}", newSubject.getSubjectId());
         }
     }
 }
