@@ -216,7 +216,7 @@ public class ZetesHelper {
     }
   }
 
-  private void createOrUpdateSubject(ZetesSubjectDto zetesSubject) {
+  private boolean createOrUpdateSubject(ZetesSubjectDto zetesSubject) {
     Subject subject = subjectService.findSubjectBySubjectId(zetesSubject.getSubjectId());
 
     if (subject != null) {
@@ -225,11 +225,17 @@ public class ZetesHelper {
       LOGGER.debug("Updating subject with id: {}", subject.getSubjectId());
       subjectService.update(subject);
       LOGGER.debug("Subject with id: {} updated", subject.getSubjectId());
-    } else {
-      subject = MAPPER.fromDto(zetesSubject);
 
-      subjectService.create(subject);
+      return false;
+    }
 
+    subject = MAPPER.fromDto(zetesSubject);
+
+    subjectService.create(subject);
+
+    Config config = configService.getConfig();
+
+    if (config.getEnableWelcomeMessage()) {
       try {
         LOGGER.debug("Sending welcome message for subject with id {}", subject.getSubjectId());
         ivrCallHelper.initiateIvrCall(WELCOME_MESSAGE, subject);
@@ -238,6 +244,8 @@ public class ZetesHelper {
         LOGGER.error(e.getMessage(), e);
       }
     }
+
+    return true;
   }
 
   private void transferSubject(String subjectId, String transferSubjectId) {
@@ -251,10 +259,14 @@ public class ZetesHelper {
 
       subjectService.update(subject);
 
-      try {
-        ivrCallHelper.initiateIvrCall(TRANSFER_MESSAGE, subject);
-      } catch (Exception e) {
-        LOGGER.error(e.getMessage(), e);
+      Config config = configService.getConfig();
+
+      if (config.getEnableTransferMessage()) {
+        try {
+          ivrCallHelper.initiateIvrCall(TRANSFER_MESSAGE, subject);
+        } catch (Exception e) {
+          LOGGER.error(e.getMessage(), e);
+        }
       }
     } else {
       subject.setTransferSubjectId(transferSubjectId);

@@ -46,6 +46,14 @@ public class Config {
 
     @Getter
     @Setter
+    private Boolean enableWelcomeMessage = true;
+
+    @Getter
+    @Setter
+    private Boolean enableTransferMessage = true;
+
+    @Getter
+    @Setter
     private Boolean enableReportJob = false;
 
     @Getter
