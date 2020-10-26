@@ -8,6 +8,8 @@
   "zetesDbDriver": "org.postgresql.Driver",
   "zetesDbUsername": null,
   "zetesDbPassword": null,
+  "enableWelcomeMessage": true,
+  "enableTransferMessage": true,
   "enableReportJob": false,
   "reportCalculationStartTime": "00:01",
   "lastCalculationDateForIvrReports": null,

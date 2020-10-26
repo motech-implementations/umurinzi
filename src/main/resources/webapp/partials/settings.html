@@ -74,6 +74,20 @@
                         <input class="form-control" id="zetesDbPassword" type="password" ng-model="config.zetesDbPassword" ng-required="config.enableZetesImportJob">
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="enableWelcomeMessage">{{msg('umurinzi.settings.zetes.welcomeMessage.enable')}}</label>
+                    <div class="col-md-4">
+                        <input class="form-control" id="enableWelcomeMessage" type="checkbox" checked="unchecked" ng-model="config.enableWelcomeMessage">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="enableTransferMessage">{{msg('umurinzi.settings.zetes.transferMessage.enable')}}</label>
+                    <div class="col-md-4">
+                        <input class="form-control" id="enableTransferMessage" type="checkbox" checked="unchecked" ng-model="config.enableTransferMessage">
+                    </div>
+                </div>
             </div>
 
             <h5 class="margin-before2">{{msg('umurinzi.settings.report')}}</h5>
