@@ -1,6 +1,7 @@
 package org.motechproject.umurinzi.helper;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.motechproject.ivr.service.OutboundCallService;
@@ -33,19 +34,33 @@ public class IvrCallHelper {
 
     private OutboundCallService outboundCallService;
 
+    public void sendCallsInBulk(String messageKey, List<String> ivrIds) {
+        VotoMessage votoMessage = votoMessageDataService.findByMessageKey(messageKey);
+
+        if (votoMessage == null) {
+            throw new UmurinziInitiateCallException("Cannot initiate call, because Voto Message with key: %s not found", messageKey);
+        }
+
+        sendIvrCall(votoMessage.getVotoIvrId(), StringUtils.join(ivrIds, ","));
+    }
+
     public void initiateIvrCall(String messageKey, String externalId) {
         Subject subject = getSubject(externalId);
         initiateIvrCall(messageKey, subject);
     }
 
     public void initiateIvrCall(String messageKey, Subject subject) {
+        boolean hasHelpLine = StringUtils.isNotBlank(subject.getHelpLine());
+        String votoMessageId = getVotoMessageId(messageKey, hasHelpLine, subject.getSubjectId());
+
+        sendIvrCall(votoMessageId, subject.getIvrId());
+    }
+
+    private void sendIvrCall(String votoMessageId, String subscriberId) {
         Config config = configService.getConfig();
 
         if (config.getSendIvrCalls() != null && config.getSendIvrCalls()
-            && StringUtils.isNotBlank(subject.getIvrId())) {
-
-            boolean hasHelpLine = StringUtils.isNotBlank(subject.getHelpLine());
-            String votoMessageId = getVotoMessageId(messageKey, hasHelpLine, subject.getSubjectId());
+            && StringUtils.isNotBlank(subscriberId)) {
 
             Map<String, String> callParams = new HashMap<>();
             if (StringUtils.isNotBlank(config.getVoiceSenderId())) {
@@ -56,15 +71,13 @@ public class IvrCallHelper {
             }
             callParams.put(UmurinziConstants.API_KEY, config.getApiKey());
             callParams.put(UmurinziConstants.MESSAGE_ID, votoMessageId);
-            callParams.put(UmurinziConstants.SEND_TO_SUBSCRIBERS, subject.getIvrId());
+            callParams.put(UmurinziConstants.SEND_TO_SUBSCRIBERS, subscriberId);
             callParams.put(UmurinziConstants.WEBHOOK_URL, config.getStatusCallbackUrl());
             callParams.put(UmurinziConstants.SEND_SMS_IF_VOICE_FAILS, config.getSendSmsIfVoiceFails() ? "1" : "0");
             callParams.put(UmurinziConstants.DETECT_VOICEMAIL, config.getDetectVoiceMail() ? "1" : "0");
             callParams.put(UmurinziConstants.RETRY_ATTEMPTS_SHORT, config.getRetryAttempts().toString());
             callParams.put(UmurinziConstants.RETRY_DELAY_SHORT, config.getRetryDelay().toString());
             callParams.put(UmurinziConstants.RETRY_ATTEMPTS_LONG, UmurinziConstants.RETRY_ATTEMPTS_LONG_DEFAULT);
-            callParams.put(UmurinziConstants.SUBJECT_ID, subject.getSubjectId());
-            callParams.put(UmurinziConstants.SUBJECT_PHONE_NUMBER, subject.getPhoneNumber());
 
             LOGGER.info("Initiating call: {}", callParams.toString());
 

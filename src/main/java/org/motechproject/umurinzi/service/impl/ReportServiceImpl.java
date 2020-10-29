@@ -3,6 +3,7 @@ package org.motechproject.umurinzi.service.impl;
 import static org.motechproject.umurinzi.constants.UmurinziConstants.SIMPLE_DATE_FORMATTER;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,9 +23,9 @@ import org.motechproject.umurinzi.domain.IvrAndSmsStatisticReport;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.exception.UmurinziReportException;
 import org.motechproject.umurinzi.repository.IvrAndSmsStatisticReportDataService;
+import org.motechproject.umurinzi.repository.SubjectDataService;
 import org.motechproject.umurinzi.service.ConfigService;
 import org.motechproject.umurinzi.service.ReportService;
-import org.motechproject.umurinzi.service.SubjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,13 @@ public class ReportServiceImpl implements ReportService {
     private static final int HUNDRED_PERCENT = 100;
     private static final int DAYS_WAIT_FOR_SMS = 4;
 
+    private static final DateTimeFormatter MOTECH_TIMESTAMP_FORMATTER = DateTimeFormat.forPattern(
+        UmurinziConstants.IVR_CALL_DETAIL_RECORD_TIME_FORMAT);
+    private static final DateTimeFormatter VOTO_TIMESTAMP_FORMATTER = DateTimeFormat.forPattern(
+        UmurinziConstants.VOTO_TIMESTAMP_FORMAT).withZoneUTC();
+
     @Autowired
-    private SubjectService subjectService;
+    private SubjectDataService subjectDataService;
 
     @Autowired
     private ConfigService configService;
@@ -106,47 +112,84 @@ public class ReportServiceImpl implements ReportService {
         configService.updateConfig(config);
     }
 
-    private void createIvrAndSmsStatisticReport(CallDetailRecord initialRecord) { //NO CHECKSTYLE CyclomaticComplexity
-        DateTimeFormatter motechTimestampFormatter = DateTimeFormat.forPattern(
-            UmurinziConstants.IVR_CALL_DETAIL_RECORD_TIME_FORMAT);
-        DateTimeFormatter votoTimestampFormatter = DateTimeFormat.forPattern(
-            UmurinziConstants.VOTO_TIMESTAMP_FORMAT).withZoneUTC();
-
+    private void createIvrAndSmsStatisticReport(CallDetailRecord initialRecord) {
         String providerCallId = initialRecord.getProviderCallId();
         Map<String, String> providerExtraData = initialRecord.getProviderExtraData();
+        String motechCallId = initialRecord.getMotechCallId();
 
         if (StringUtils.isBlank(providerCallId)) {
-            throw new UmurinziReportException("Cannot generate report for Call Detail Record with Motech Call Id: %s, because Provider Call Id is empty",
-                initialRecord.getMotechCallId());
+            throw new UmurinziReportException(
+                "Cannot generate report for Call Detail Record with Motech Call Id: %s, because Provider Call Id is empty",
+                motechCallId);
         }
         if (providerExtraData == null || providerExtraData.isEmpty()) {
-            throw new UmurinziReportException("Cannot generate report for Call Detail Record with Motech Call Id: %s, because Provider Extra Data Map is empty",
-                initialRecord.getMotechCallId());
+            throw new UmurinziReportException(
+                "Cannot generate report for Call Detail Record with Motech Call Id: %s, because Provider Extra Data Map is empty",
+                motechCallId);
         }
 
-        String subjectId = providerExtraData.get(UmurinziConstants.SUBJECT_ID);
+        String subscriberIds = providerExtraData.get(UmurinziConstants.SEND_TO_SUBSCRIBERS);
+        String messageId = providerExtraData.get(UmurinziConstants.MESSAGE_ID);
+        DateTime sendDate = DateTime.parse(initialRecord.getMotechTimestamp(), MOTECH_TIMESTAMP_FORMATTER);
 
-        if (StringUtils.isBlank(subjectId)) {
-            throw new UmurinziReportException("Cannot generate report for Call Detail Record with Motech Call Id: %s, because no ParticipantId found In Provider Extra Data Map",
-                initialRecord.getMotechCallId());
+        if (StringUtils.isBlank(subscriberIds)) {
+            throw new UmurinziReportException(
+                "Cannot generate report for Call Detail Record with Motech Call Id: %s, because no ParticipantId found In Provider Extra Data Map",
+                motechCallId);
         }
 
-        Subject subject = subjectService.findSubjectBySubjectId(subjectId.trim());
-
-        if (subject == null) {
-            throw new UmurinziReportException("Cannot generate report for Call Detail Record with Motech Call Id: %s, because No Participant found with Id: %s",
-                initialRecord.getMotechCallId(), subjectId);
-        }
-
+        String[] ivrIds = subscriberIds.split(",");
         List<CallDetailRecord> callDetailRecords = callDetailRecordDataService.findByExactProviderCallId(providerCallId,
             QueryParams.ascOrder(UmurinziConstants.IVR_CALL_DETAIL_RECORD_MOTECH_TIMESTAMP_FIELD));
+
+        Map<String, List<CallDetailRecord>> recordsMap = groupCallDetailRecords(ivrIds, callDetailRecords);
+
+        for (String subscriberId : ivrIds) {
+            try {
+                createIvrAndSmsStatisticReport(providerCallId, motechCallId, subscriberId,
+                    messageId, sendDate, recordsMap.get(subscriberId));
+            } catch (Exception e) {
+                LOGGER.warn(e.getMessage());
+            }
+        }
+    }
+
+    private Map<String, List<CallDetailRecord>> groupCallDetailRecords(String[] ivrIds, List<CallDetailRecord> callDetailRecords) {
+        Map<String, List<CallDetailRecord>> recordsMap = new HashMap<>();
+
+        for (String subscriberId : ivrIds) {
+            recordsMap.put(subscriberId, new ArrayList<CallDetailRecord>());
+        }
+
+        for (CallDetailRecord record : callDetailRecords) {
+            String subscriberId = record.getProviderExtraData().get(UmurinziConstants.SUBSCRIBER_ID);
+
+            if (StringUtils.isBlank(subscriberId)) {
+                LOGGER.debug("No subscriber id in call detail record with id: {}", record.getId());
+                continue;
+            }
+
+            recordsMap.get(subscriberId).add(record);
+        }
+
+        return recordsMap;
+    }
+
+    private void createIvrAndSmsStatisticReport(String providerCallId, String motechCallId, //NO CHECKSTYLE CyclomaticComplexity
+        String subscriberId, String messageId, DateTime sendDate, List<CallDetailRecord> callDetailRecords) {
+        Subject subject = subjectDataService.findByIvrId(subscriberId.trim());
+
+        if (subject == null) {
+            throw new UmurinziReportException("Cannot generate report for Call Detail Record with Motech Call Id: %s, because No Participant found with IVR Id: %s",
+                motechCallId, subscriberId);
+        }
+
+        String subjectId = subject.getSubjectId();
 
         List<CallDetailRecord> endRecords = new ArrayList<>();
 
         boolean sms = false;
         boolean smsFailed = false;
-        String messageId = providerExtraData.get(UmurinziConstants.MESSAGE_ID);
-        DateTime sendDate = DateTime.parse(initialRecord.getMotechTimestamp(), motechTimestampFormatter);
         int attempts = 0;
         DateTime receivedDate = null;
         DateTime smsReceivedDate = null;
@@ -237,14 +280,14 @@ public class ReportServiceImpl implements ReportService {
                         providerCallId, subjectId);
                 }
 
-                smsReceivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter)
+                smsReceivedDate = DateTime.parse(providerTimestamp, VOTO_TIMESTAMP_FORMATTER)
                     .toDateTime(DateTimeZone.getDefault());
             }
         } else if (maxSmsWaitDate.isAfterNow()) {
             LOGGER.warn("SMS is sent but not yet received for Call Detail Record with Provider Call Id: {} for Providers with Ids {}", providerCallId, subjectId);
 
             Config config = configService.getConfig();
-            config.getIvrAndSmsStatisticReportsToUpdate().add(initialRecord.getMotechCallId());
+            config.getIvrAndSmsStatisticReportsToUpdate().add(motechCallId);
             configService.updateConfig(config);
         } else {
             smsFailed = true;
@@ -260,7 +303,7 @@ public class ReportServiceImpl implements ReportService {
                         providerCallId, subjectId);
                 }
 
-                receivedDate = DateTime.parse(providerTimestamp, votoTimestampFormatter)
+                receivedDate = DateTime.parse(providerTimestamp, VOTO_TIMESTAMP_FORMATTER)
                     .toDateTime(DateTimeZone.getDefault());
 
                 if (StringUtils.isNotBlank(callRecord.getCallDuration())) {
