@@ -14,18 +14,29 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class IvrHelper {
 
+  private static final int HTTP_CONNECT_TIMEOUT = 15000;
+  private static final int HTTP_READ_TIMEOUT = 10000;
+
   @Autowired
   private ConfigService configService;
 
-  private final RestTemplate restTemplate = new RestTemplate();
+  private final RestTemplate restTemplate = new RestTemplate(getClientHttpRequestFactory());
+
+  private static ClientHttpRequestFactory getClientHttpRequestFactory() {
+    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+    clientHttpRequestFactory.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
+    clientHttpRequestFactory.setReadTimeout(HTTP_READ_TIMEOUT);
+    return clientHttpRequestFactory;
+  }
 
   public String createSubscriber(Subject subject) {
     if (StringUtils.isBlank(subject.getPhoneNumber())) {
@@ -100,7 +111,7 @@ public class IvrHelper {
       }
 
       return responseEntity.getBody().getData();
-    } catch (RestClientException ex) {
+    } catch (Exception ex) {
       String message = "Error occurred when sending request to IVR service: " + ex.getMessage();
       throw new IvrException(message, ex);
     }

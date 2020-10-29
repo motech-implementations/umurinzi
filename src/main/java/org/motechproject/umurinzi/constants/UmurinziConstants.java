@@ -52,8 +52,7 @@ public final class UmurinziConstants {
     public static final String RETRY_DELAY_SHORT = "retry_delay_short";
     public static final String RETRY_ATTEMPTS_LONG = "retry_attempts_long";
     public static final String RETRY_ATTEMPTS_LONG_DEFAULT = "1";
-    public static final String SUBJECT_ID = "participant_id";
-    public static final String SUBJECT_PHONE_NUMBER = "subscriber_phone";
+    public static final String SUBSCRIBER_ID = "subscriber_id";
     public static final String PREFERRED_LANGUAGE = "preferred_language";
     public static final String RECEIVE_VOICE = "receive_voice";
     public static final String RECEIVE_SMS = "receive_sms";

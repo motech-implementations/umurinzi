@@ -13,6 +13,7 @@ import org.joda.time.LocalDate;
 import org.motechproject.umurinzi.domain.Config;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.dto.ZetesSubjectDto;
+import org.motechproject.umurinzi.exception.IvrException;
 import org.motechproject.umurinzi.exception.UmurinziReportException;
 import org.motechproject.umurinzi.mapper.ZetesMapper;
 import org.motechproject.umurinzi.service.ConfigService;
@@ -50,6 +51,9 @@ public class ZetesHelper {
   private static final String WELCOME_MESSAGE = "welcome-message";
   private static final String TRANSFER_MESSAGE = "transfer-message";
 
+  private static final int MAX_NUMBER_OF_ATTEMPTS = 3;
+  private static final int MAX_SUBJECTS_IN_CALL = 50;
+
   @Autowired
   private SubjectService subjectService;
 
@@ -86,13 +90,27 @@ public class ZetesHelper {
     List<ZetesSubjectDto> zetesSubjects = fetchSubjectsFromZetes(lastUpdate);
     LOGGER.debug("Fetched data of {} subjects from Zetes", zetesSubjects.size());
 
+    List<String> ivrIds = new ArrayList<>();
+    Subject subject;
+
     for (ZetesSubjectDto zetesSubject : zetesSubjects) {
       try {
-        createOrUpdateSubject(zetesSubject);
+        subject = createOrUpdateSubject(zetesSubject);
+
+        if (subject != null && StringUtils.isNotBlank(subject.getIvrId())) {
+          ivrIds.add(subject.getIvrId());
+        }
+
+        if (ivrIds.size() > MAX_SUBJECTS_IN_CALL) {
+          tryToSendWelcomeMessage(ivrIds);
+          ivrIds.clear();
+        }
       } catch (Exception e) {
         LOGGER.error(e.getMessage(), e);
       }
     }
+
+    tryToSendWelcomeMessage(ivrIds);
   }
 
   public void transferSubjects() {
@@ -216,7 +234,7 @@ public class ZetesHelper {
     }
   }
 
-  private boolean createOrUpdateSubject(ZetesSubjectDto zetesSubject) {
+  private Subject createOrUpdateSubject(ZetesSubjectDto zetesSubject) {
     Subject subject = subjectService.findSubjectBySubjectId(zetesSubject.getSubjectId());
 
     if (subject != null) {
@@ -226,26 +244,64 @@ public class ZetesHelper {
       subjectService.update(subject);
       LOGGER.debug("Subject with id: {} updated", subject.getSubjectId());
 
-      return false;
+      return null;
     }
 
     subject = MAPPER.fromDto(zetesSubject);
 
-    subjectService.create(subject);
+    tryToCreateSubject(subject);
 
+    return subject;
+  }
+
+  private void tryToSendWelcomeMessage(List<String> ivrIds) {
+    boolean messageSent = false;
+    int numberOfAttempts = 1;
+
+    while (!messageSent && numberOfAttempts < MAX_NUMBER_OF_ATTEMPTS) {
+      messageSent = sendWelcomeMessage(ivrIds);
+      numberOfAttempts++;
+    }
+  }
+
+  private boolean sendWelcomeMessage(List<String> ivrIds) {
     Config config = configService.getConfig();
 
-    if (config.getEnableWelcomeMessage()) {
-      try {
-        LOGGER.debug("Sending welcome message for subject with id {}", subject.getSubjectId());
-        ivrCallHelper.initiateIvrCall(WELCOME_MESSAGE, subject);
-        LOGGER.debug("Welcome message sent for subject with id: {}", subject.getSubjectId());
-      } catch (Exception e) {
-        LOGGER.error(e.getMessage(), e);
+    try {
+      if (config.getEnableWelcomeMessage()) {
+        LOGGER.debug("Sending welcome message");
+        ivrCallHelper.sendCallsInBulk(WELCOME_MESSAGE, ivrIds);
+        LOGGER.debug("Welcome message sent");
       }
+
+      return true;
+    } catch (Exception e) {
+      LOGGER.warn("Error occurred when sending welcome message", e);
     }
 
-    return true;
+    return false;
+  }
+
+  private void tryToCreateSubject(Subject subject) {
+    boolean subjectCreated = false;
+    int numberOfAttempts = 0;
+
+    while (!subjectCreated && numberOfAttempts < MAX_NUMBER_OF_ATTEMPTS) {
+      subjectCreated = createSubject(subject);
+      numberOfAttempts++;
+    }
+  }
+
+  private boolean createSubject(Subject subject) {
+    try {
+      subjectService.create(subject);
+
+      return true;
+    } catch (IvrException e) {
+      LOGGER.warn("Could not create subscriber for subject with id: {}", subject.getSubjectId());
+    }
+
+    return false;
   }
 
   private void transferSubject(String subjectId, String transferSubjectId) {

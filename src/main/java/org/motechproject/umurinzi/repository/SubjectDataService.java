@@ -19,6 +19,9 @@ import java.util.List;
  */
 public interface SubjectDataService extends MotechDataService<Subject> {
 
+    @Lookup
+    Subject findByIvrId(@LookupField(name = "ivrId") String ivrId);
+
     @Lookup(name = "Find unique By Participant Id")
     Subject findBySubjectId(@LookupField(name = "subjectId") String subjectId);
 
