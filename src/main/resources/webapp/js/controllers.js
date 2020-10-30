@@ -886,4 +886,64 @@
         };
     });
 
+    /*
+     *
+     * Email Reports
+     *
+     */
+    controllers.controller('UmurinziEmailReportsCtrl', function ($scope, $http, $timeout) {
+
+        $scope.schedulePeriods = ['DAILY', 'WEEKLY', 'MONTHLY'];
+
+        $scope.selectPeriod = function(config, value) {
+            config.emailSchedulePeriod = $scope.schedulePeriods[value];
+        };
+
+        $scope.saveReport = function () {
+            $http.get("../umurinzi/fetchVaccinationSummaryReport", { responseType: 'blob' })
+              .success(function (data) {
+                  $scope.saveFile([data], 'VaccinationSummaryReport', 'pdf');
+              })
+              .error(function (response) {
+                  handleResponse('mds.error', 'mds.error.exportData', response);
+              });
+        };
+
+        $scope.errors = [];
+        $scope.messages = [];
+
+        $http.get('../umurinzi/emailReportConfig')
+          .success(function(response){
+              $scope.config = response;
+              $scope.originalConfig = angular.copy($scope.config);
+          })
+          .error(function(response) {
+              $scope.errors.push($scope.msg('umurinzi.error.header', response));
+          });
+
+        $scope.reset = function () {
+            $scope.config = angular.copy($scope.originalConfig);
+        };
+
+        function hideMsgLater(index) {
+            return $timeout(function() {
+                $scope.messages.splice(index, 1);
+            }, 5000);
+        }
+
+        $scope.submit = function () {
+            $http.post('../umurinzi/emailReportConfig', $scope.config)
+              .success(function (response) {
+                  $scope.config = response;
+                  $scope.originalConfig = angular.copy($scope.config);
+                  var index = $scope.messages.push($scope.msg('umurinzi.settings.saved'));
+                  hideMsgLater(index-1);
+              })
+              .error (function (response) {
+                  //todo: better than that!
+                  handleWithStackTrace('umurinzi.error.header', 'umurinzi.error.body', response);
+              });
+        };
+    });
+
 }());

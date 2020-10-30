@@ -8,6 +8,7 @@ import org.motechproject.umurinzi.exception.UmurinziInitiateCallException;
 import org.motechproject.umurinzi.helper.IvrCallHelper;
 import org.motechproject.umurinzi.helper.ZetesHelper;
 import org.motechproject.umurinzi.service.ExportService;
+import org.motechproject.umurinzi.service.JasperReportsService;
 import org.motechproject.umurinzi.service.ReportService;
 import org.motechproject.umurinzi.service.UmurinziEnrollmentService;
 import org.slf4j.Logger;
@@ -34,6 +35,9 @@ public class UmurinziEventListener {
 
     @Autowired
     private ExportService exportService;
+
+    @Autowired
+    private JasperReportsService jasperReportsService;
 
     @MotechListener(subjects = { UmurinziConstants.DAILY_REPORT_EVENT })
     public void generateDailyReport(MotechEvent event) {
@@ -75,5 +79,12 @@ public class UmurinziEventListener {
     @MotechListener(subjects = { UmurinziConstants.CLEAR_EXPORT_TASKS_EVENT })
     public void clearExportTasks(MotechEvent event) {
         exportService.cancelAllExportTasks();
+    }
+
+    @MotechListener(subjects = { UmurinziConstants.SEND_EMAIL_REPORT_EVENT })
+    public void sendEmailReport(MotechEvent event) {
+        LOGGER.info("Sending email report...");
+        jasperReportsService.sendVaccinationSummaryReport();
+        LOGGER.info("Email report sent");
     }
 }

@@ -1,0 +1,1453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.10.0-unknown  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="VaccinationSummaryReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="35ae922c-87e9-41ad-a8c8-537203102128">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MotechDataAdapter.xml"/>
+	<import value="org.apache.commons.lang.StringUtils"/>
+	<subDataset name="MessagesSent" uuid="4a0ca594-a8fe-4a64-91ad-b4b97e6f0682">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MotechDataAdapter.xml"/>
+		<parameter name="startDate" class="java.lang.String"/>
+		<parameter name="endDate" class="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT
+ sum(total) as messageSent,
+ count(*) as participants,
+ sum(messageSuccessful) as messageSuccessful,
+ (sum(messageSuccessful) * 100 / sum(total)) as messageSuccessfulPercent,
+ sum(case when (messageSuccessful > 0) then 1 else 0 end) as messageSuccessfulPP,
+ (sum(case when (messageSuccessful > 0) then 1 else 0 end) * 100 / count(*)) as messageSuccessfulPercentPP,
+ sum(case when (mostOfMessageListened > 0) then 1 else 0 end) as mostOfMessageListenedPP,
+ (sum(case when (mostOfMessageListened > 0) then 1 else 0 end) * 100 / count(*)) as mostOfMessageListenedPercentPP,
+ sum(messageFailed) as messageFailed,
+ (sum(messageFailed) * 100 / sum(total)) as messageFailedPercent,
+ sum(case when (messageFailed > 0) then 1 else 0 end) as messageFailedPP,
+ (sum(case when (messageFailed > 0) then 1 else 0 end) * 100 / count(*)) as messageFailedPercentPP,
+ sum(smsSuccessful) as smsSuccessful,
+ (sum(smsSuccessful) * 100 / sum(total)) as smsSuccessfulPercent,
+ sum(case when (smsSuccessful > 0) then 1 else 0 end) as smsSuccessfulPP,
+ (sum(case when (smsSuccessful > 0) then 1 else 0 end) * 100 / count(*)) as smsSuccessfulPercentPP,
+ sum(smsFailed) as smsFailed,
+ (sum(smsFailed) * 100 / sum(total)) as smsFailedPercent,
+ sum(case when (smsFailed > 0) then 1 else 0 end) as smsFailedPP,
+ (sum(case when (smsFailed > 0) then 1 else 0 end) * 100 / count(*)) as smsFailedPercentPP
+FROM (
+ SELECT
+  sum(case when (timeListenedTo > 0) then 1 else 0 end) as messageSuccessful,
+  sum(case when (timeListenedTo = 0) then 1 else 0 end) as messageFailed,
+  sum(case when (messagePercentListened >= 90) then 1 else 0 end) as mostOfMessageListened,
+  sum(case when (smsStatus = 'YES') then 1 else 0 end) as smsSuccessful,
+  sum(case when (smsStatus = 'FAIL') then 1 else 0 end) as smsFailed,
+  count(*) as total
+  FROM motech_data_services.UMURINZI_IVRANDSMSSTATISTICREPORT
+  where ($P{startDate} IS NULL OR sendDate > $P{startDate})
+  and ($P{endDate} IS NULL OR sendDate < $P{endDate})
+  group by subject_id_OID) messageCount]]>
+		</queryString>
+		<field name="messageSent" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageSent"/>
+		</field>
+		<field name="participants" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="participants"/>
+		</field>
+		<field name="messageSuccessful" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageSuccessful"/>
+		</field>
+		<field name="messageSuccessfulPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageSuccessfulPP"/>
+		</field>
+		<field name="messageSuccessfulPercent" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageSuccessfulPercent"/>
+		</field>
+		<field name="messageSuccessfulPercentPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageSuccessfulPercentPP"/>
+		</field>
+		<field name="mostOfMessageListenedPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="mostOfMessageListenedPP"/>
+		</field>
+		<field name="mostOfMessageListenedPercentPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="mostOfMessageListenedPercentPP"/>
+		</field>
+		<field name="messageFailed" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageFailed"/>
+		</field>
+		<field name="messageFailedPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageFailedPP"/>
+		</field>
+		<field name="messageFailedPercent" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageFailedPercent"/>
+		</field>
+		<field name="messageFailedPercentPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageFailedPercentPP"/>
+		</field>
+		<field name="smsSuccessful" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsSuccessful"/>
+		</field>
+		<field name="smsSuccessfulPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsSuccessfulPP"/>
+		</field>
+		<field name="smsSuccessfulPercent" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsSuccessfulPercent"/>
+		</field>
+		<field name="smsSuccessfulPercentPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsSuccessfulPercentPP"/>
+		</field>
+		<field name="smsFailed" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsFailed"/>
+		</field>
+		<field name="smsFailedPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsFailedPP"/>
+		</field>
+		<field name="smsFailedPercent" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsFailedPercent"/>
+		</field>
+		<field name="smsFailedPercentPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsFailedPercentPP"/>
+		</field>
+	</subDataset>
+	<subDataset name="MessagesById" uuid="e85a6ac5-03ac-4108-a645-1366a23ff437">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MotechDataAdapter.xml"/>
+		<parameter name="startDate" class="java.lang.String"/>
+		<parameter name="endDate" class="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT
+ messageId,
+ messageKey,
+ count(*) as total,
+ sum(case when (messageSuccessful > 0) then 1 else 0 end) as messageSuccessfulPP,
+ (sum(case when (messageSuccessful > 0) then 1 else 0 end) * 100 / count(*)) as messageSuccessfulPercentPP,
+ sum(case when (smsSuccessful > 0) then 1 else 0 end) as smsSuccessfulPP
+FROM (
+ SELECT
+  messageId,
+  subject_id_OID,
+  sum(case when (timeListenedTo > 0) then 1 else 0 end) as messageSuccessful,
+  sum(case when (smsStatus = 'YES') then 1 else 0 end) as smsSuccessful
+  FROM motech_data_services.UMURINZI_IVRANDSMSSTATISTICREPORT
+  where ($P{startDate} IS NULL OR sendDate > $P{startDate})
+  and ($P{endDate} IS NULL OR sendDate < $P{endDate})
+  group by messageId, subject_id_OID) messageCount
+ join motech_data_services.UMURINZI_VOTOMESSAGE on votoIvrId = messageId
+ group by messageId, messageKey]]>
+		</queryString>
+		<field name="messageId" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="messageId"/>
+		</field>
+		<field name="messageKey" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="messageKey"/>
+		</field>
+		<field name="total" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="total"/>
+		</field>
+		<field name="messageSuccessfulPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageSuccessfulPP"/>
+		</field>
+		<field name="messageSuccessfulPercentPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageSuccessfulPercentPP"/>
+		</field>
+		<field name="smsSuccessfulPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsSuccessfulPP"/>
+		</field>
+	</subDataset>
+	<subDataset name="MissedBooster" uuid="0833b259-6a40-4a53-b498-5f2cc630d5ea">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MotechDataAdapter.xml"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT count(*) as missedVisits FROM motech_data_services.UMURINZI_SUBJECT
+ join motech_data_services.UMURINZI_VISIT on subjectId = subject_id_OID and type = 'BOOST_VACCINATION_DAY'
+ where boostVaccinationDate is null and dateProjected < now()]]>
+		</queryString>
+		<field name="missedVisits" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.label" value="missedVisits"/>
+		</field>
+	</subDataset>
+	<subDataset name="MessageSentByDate" uuid="5d908532-2989-42f1-bf33-2ed614e66006">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MotechDataAdapter.xml"/>
+		<parameter name="chartStartDate" class="java.lang.String"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT
+ dateSend,
+ dateFormatted,
+ sum(messageSuccessful) as messageSuccessful,
+ (sum(messageSuccessful) * 100 / sum(total)) as messageSuccessfulPercent,
+ sum(case when (messageSuccessful > 0) then 1 else 0 end) as messageSuccessfulPP,
+ (sum(case when (messageSuccessful > 0) then 1 else 0 end) * 100 / count(*)) as messageSuccessfulPercentPP,
+ sum(messageFailed) as messageFailed,
+ (sum(messageFailed) * 100 / sum(total)) as messageFailedPercent,
+ sum(case when (messageSuccessful = 0) then 1 else 0 end) as messageFailedPP,
+ (sum(case when (messageSuccessful = 0) then 1 else 0 end) * 100 / count(*)) as messageFailedPercentPP,
+ sum(smsSuccessful) as smsSuccessful,
+ (sum(smsSuccessful) * 100 / sum(total)) as smsSuccessfulPercent,
+ sum(case when (smsSuccessful > 0) then 1 else 0 end) as smsSuccessfulPP,
+ (sum(case when (smsSuccessful > 0) then 1 else 0 end) * 100 / count(*)) as smsSuccessfulPercentPP,
+ sum(smsFailed) as smsFailed,
+ (sum(smsFailed) * 100 / sum(total)) as smsFailedPercent,
+ sum(case when (smsSuccessful = 0) then 1 else 0 end) as smsFailedPP,
+ (sum(case when (smsSuccessful = 0) then 1 else 0 end) * 100 / count(*)) as smsFailedPercentPP
+FROM (
+ SELECT
+  DATE_FORMAT(sendDate, "%Y-%m") as dateSend,
+  DATE_FORMAT(sendDate, "%M(%Y)") as dateFormatted,
+  sum(case when (timeListenedTo > 0) then 1 else 0 end) as messageSuccessful,
+  sum(case when (timeListenedTo = 0) then 1 else 0 end) as messageFailed,
+  sum(case when (messagePercentListened >= 90) then 1 else 0 end) as mostOfMessageListened,
+  sum(case when (smsStatus = 'YES') then 1 else 0 end) as smsSuccessful,
+  sum(case when (smsStatus = 'FAIL') then 1 else 0 end) as smsFailed,
+  count(*) as total
+  FROM motech_data_services.UMURINZI_IVRANDSMSSTATISTICREPORT
+  where ($P{chartStartDate} IS NULL OR sendDate > $P{chartStartDate})
+  group by dateSend, dateFormatted, subject_id_OID) messageCount
+ group by dateSend, dateFormatted
+ order by dateSend]]>
+		</queryString>
+		<field name="dateFormatted" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.label" value="dateFormatted"/>
+		</field>
+		<field name="messageSuccessful" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageSuccessful"/>
+		</field>
+		<field name="messageSuccessfulPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageSuccessfulPP"/>
+		</field>
+		<field name="messageSuccessfulPercent" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageSuccessfulPercent"/>
+		</field>
+		<field name="messageSuccessfulPercentPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageSuccessfulPercentPP"/>
+		</field>
+		<field name="messageFailed" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageFailed"/>
+		</field>
+		<field name="messageFailedPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageFailedPP"/>
+		</field>
+		<field name="messageFailedPercent" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageFailedPercent"/>
+		</field>
+		<field name="messageFailedPercentPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="messageFailedPercentPP"/>
+		</field>
+		<field name="smsSuccessful" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsSuccessful"/>
+		</field>
+		<field name="smsSuccessfulPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsSuccessfulPP"/>
+		</field>
+		<field name="smsSuccessfulPercent" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsSuccessfulPercent"/>
+		</field>
+		<field name="smsSuccessfulPercentPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsSuccessfulPercentPP"/>
+		</field>
+		<field name="smsFailed" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsFailed"/>
+		</field>
+		<field name="smsFailedPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsFailedPP"/>
+		</field>
+		<field name="smsFailedPercent" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsFailedPercent"/>
+		</field>
+		<field name="smsFailedPercentPP" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.label" value="smsFailedPercentPP"/>
+		</field>
+	</subDataset>
+	<parameter name="generationDate" class="org.joda.time.LocalDate">
+		<property name="displayName" value="Date of Report Generation"/>
+		<property name="required" value="false"/>
+	</parameter>
+	<parameter name="startDate" class="org.joda.time.LocalDate">
+		<property name="displayName" value="Start Date"/>
+		<property name="required" value="false"/>
+	</parameter>
+	<parameter name="endDate" class="org.joda.time.LocalDate">
+		<property name="displayName" value="End Date"/>
+		<property name="required" value="false"/>
+	</parameter>
+	<parameter name="chartStartDate" class="org.joda.time.LocalDate">
+		<property name="displayName" value="End Date"/>
+		<property name="required" value="false"/>
+	</parameter>
+	<parameter name="logo" class="java.io.InputStream"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
+ count(*) as total,
+ sum(case when (phoneNumber is not null) then 1 else 0 end) as enrolled,
+ (count(enrollments.id) * 100 / count(*)) as percentEnrolled,
+ sum(case when (status = 'COMPLETED') then 1 else 0 end) as completed,
+ count(enrollments.id) as inCampaign,
+ sum(case when (boostVaccinationDate is not null) then 1 else 0 end) as secondDose
+ FROM motech_data_services.UMURINZI_SUBJECT
+ left join motech_data_services.UMURINZI_SUBJECTENROLLMENTS enrollments on subject_id_OID = UMURINZI_SUBJECT.id]]>
+	</queryString>
+	<field name="total" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="total"/>
+	</field>
+	<field name="enrolled" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="enrolled"/>
+	</field>
+	<field name="percentEnrolled" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="percentEnrolled"/>
+	</field>
+	<field name="completed" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="completed"/>
+	</field>
+	<field name="inCampaign" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="inCampaign"/>
+	</field>
+	<field name="secondDose" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="secondDose"/>
+	</field>
+	<title>
+		<band height="80">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<image>
+				<reportElement x="410" y="10" width="145" height="70" uuid="513eb890-ceb6-46c7-a4d1-f040b6530246"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="50" width="400" height="15" forecolor="#FFFFFF" backcolor="#A6A6A6" uuid="5877d71b-a11d-4623-bc60-e352bc3a23b6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOTECH Uptake]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="420" height="30" uuid="2ff546c8-14e0-47b9-96e3-34fb568448c6"/>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[UMURINZI EBODAC Weekly Data Summary Report]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="35" width="145" height="15" forecolor="#00B050" uuid="72e59a9e-b152-4033-bf16-72e255ad62c3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Date of Report Generation:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="145" y="35" width="75" height="15" forecolor="#00B050" uuid="6eab8e71-6d3b-48ed-bc00-74a1faa5a3ef">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{generationDate}.toDate()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="110" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="90" width="430" height="15" backcolor="#F2F2F2" uuid="569e8222-6348-47ef-8361-3de2fd4ec15c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Participants in MOTECH who have completed Dose 2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="30" width="430" height="15" backcolor="#F2F2F2" uuid="d6c5976e-16e5-4268-a639-b0e19efc5a1a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Total Number of Participants Enrolled in MOTECH]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="75" width="430" height="15" backcolor="#F2F2F2" uuid="ece0c460-477b-42cc-9b0c-598dfe66001e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Participants still in MOTECH campaign]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="45" width="430" height="15" backcolor="#F2F2F2" uuid="6055a4e9-76e2-438a-8a9c-ed08a14c9f8c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[% UMURINZI Participants who have enrolled in MOTECH]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="430" y="60" width="125" height="15" backcolor="#F2F2F2" uuid="d20aff70-3a8f-4e67-9741-ae830325a4a8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{completed}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="430" y="75" width="125" height="15" backcolor="#F2F2F2" uuid="dbb1e45e-b9d5-4197-946d-5787f9eb2b71">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{inCampaign}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="430" y="30" width="125" height="15" backcolor="#F2F2F2" uuid="c45c5838-eb45-4eb8-9974-6a4ee36ed268">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{enrolled}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="430" y="0" width="125" height="15" forecolor="#00B050" backcolor="#F2F2F2" uuid="34e6543d-3da9-4ca6-ae7a-16bb3b78fab4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="430" y="15" width="125" height="15" backcolor="#F2F2F2" uuid="10f25695-4b78-491a-bff0-39c736d57f83">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="430" height="15" forecolor="#00B050" backcolor="#F2F2F2" uuid="6e311ef2-53e3-42b0-ae20-43102882e661">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="0.0" lineColor="#FFFFFF"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Definition]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="430" y="45" width="125" height="15" backcolor="#F2F2F2" uuid="f336fdf7-5ca1-4b4b-8f25-dfef42f23275">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[String.format("%.2f%%", $F{percentEnrolled})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="15" width="430" height="15" backcolor="#F2F2F2" uuid="1fb4c7f8-cc75-4553-ab83-8c28b4de8876">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Total Number of Participants Received in UMURINZI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="60" width="430" height="15" backcolor="#F2F2F2" uuid="9468e978-7967-423a-84de-a867b01af740">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Participants who have completed the MOTECH Message Campaign]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Opaque" x="430" y="90" width="125" height="15" backcolor="#F2F2F2" uuid="027558b8-9d42-4a34-ba69-b99691384a07">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{secondDose}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="170">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="15" forecolor="#FFFFFF" backcolor="#A6A6A6" uuid="4a39b006-01a5-4d6b-a467-75a541715c10">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOTECH Utilization]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="15" width="315" height="15" uuid="dd6d8641-aaa9-4801-a544-263ddd0e7d38">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Summary of Total number of messages sent last week]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="320" y="15" width="65" height="15" uuid="c62c5826-38e8-43d8-84b0-f8624e18aebd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{startDate}.toDate()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="385" y="15" width="15" height="15" uuid="cf5b4e1b-1f9e-4887-a430-d7356362715d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[to]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="400" y="15" width="65" height="15" uuid="46186c42-efe3-4f52-8e52-67632c117931">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{endDate}.toDate()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="30" width="355" height="15" backcolor="#D9D9D9" uuid="6265e86a-6fa4-463e-8c43-862b4bb7da9a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="355" y="30" width="100" height="15" backcolor="#D9D9D9" uuid="b02bfd02-2d3d-4da0-ba62-84e0f25a7703">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="455" y="30" width="100" height="15" backcolor="#D9D9D9" uuid="f3df66cd-c4df-4dae-a46a-b3a43d422fcf">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[%]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement mode="Opaque" x="355" y="45" width="200" height="15" backcolor="#D9D9D9" uuid="4c0024d3-d9b6-476a-8e22-7bb8222945ab">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="MessagesSent" uuid="a5a31bf7-cde0-44a4-85e7-9e6c0ca5d8fd">
+						<datasetParameter name="startDate">
+							<datasetParameterExpression><![CDATA[$P{startDate} == null ? null : $P{startDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="endDate">
+							<datasetParameterExpression><![CDATA[$P{endDate} == null ? null : $P{endDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="15" width="200">
+						<textField>
+							<reportElement x="0" y="0" width="100" height="15" uuid="8f30886b-249f-41e8-9c26-b33b33a646a5"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{messageSuccessful}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="100" y="0" width="100" height="15" uuid="7dab7c4e-93d0-40f8-910a-d160b1a3a7e4"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageSuccessfulPercent})]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="45" width="355" height="15" backcolor="#D9D9D9" uuid="6af1f0dd-47f7-46b8-a20e-56050c8b5d31">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Successful IVR Messages sent]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="60" width="355" height="15" backcolor="#D9D9D9" uuid="d109adc2-d631-4d2f-b1be-b1b81b5c01bf">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[# PP who received IVR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="75" width="355" height="15" backcolor="#D9D9D9" uuid="cf712713-9914-4487-a93c-f280ede5ed2e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Failed IVR messages]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="90" width="355" height="15" backcolor="#D9D9D9" uuid="d50dece3-0c6e-4d49-8f84-ba338cca13e8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[# PP failed to receive IVR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="105" width="355" height="15" backcolor="#D9D9D9" uuid="fab76b13-775a-43ec-a681-f08fec8366c9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[successful SMS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="120" width="355" height="15" backcolor="#D9D9D9" uuid="cb7fedcd-0eb1-4a69-b9f8-302ecfbc358e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[# of PP SMS sent]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="135" width="355" height="15" backcolor="#D9D9D9" uuid="55901675-a8fb-45d1-adef-64bc92342e8b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Failed SMS]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement mode="Opaque" x="355" y="60" width="200" height="15" backcolor="#D9D9D9" uuid="a24e7615-a285-491a-a399-e64390ce11ba">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="MessagesSent" uuid="90839a51-b971-48df-95fd-6596f1051b5b">
+						<datasetParameter name="startDate">
+							<datasetParameterExpression><![CDATA[$P{startDate} == null ? null : $P{startDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="endDate">
+							<datasetParameterExpression><![CDATA[$P{endDate} == null ? null : $P{endDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="15" width="200">
+						<textField>
+							<reportElement x="0" y="0" width="100" height="15" uuid="478b5480-c253-4d9b-91f8-9d663c3500b5"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{messageSuccessfulPP}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="100" y="0" width="100" height="15" uuid="2232d0d9-2291-4f64-9d34-b2237c18e436"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageSuccessfulPercentPP})]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement mode="Opaque" x="355" y="75" width="200" height="15" backcolor="#D9D9D9" uuid="48e1911d-d547-4923-876b-086ec4a418a1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="MessagesSent" uuid="82684d61-63b5-484a-8aad-5089f2eab977">
+						<datasetParameter name="startDate">
+							<datasetParameterExpression><![CDATA[$P{startDate} == null ? null : $P{startDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="endDate">
+							<datasetParameterExpression><![CDATA[$P{endDate} == null ? null : $P{endDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="15" width="200">
+						<textField>
+							<reportElement x="0" y="0" width="100" height="15" uuid="088bc03c-10ab-4943-ba41-1efe4e633a82"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{messageFailed}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="100" y="0" width="100" height="15" uuid="7913f385-30ee-4b22-a219-57a06089cafa"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageFailedPercent})]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement mode="Opaque" x="355" y="90" width="200" height="15" backcolor="#D9D9D9" uuid="77d13104-0d35-4ba7-be0d-d78b96a3dc82">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="MessagesSent" uuid="7ad7e5fc-419e-4378-b89e-73d8d9671717">
+						<datasetParameter name="startDate">
+							<datasetParameterExpression><![CDATA[$P{startDate} == null ? null : $P{startDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="endDate">
+							<datasetParameterExpression><![CDATA[$P{endDate} == null ? null : $P{endDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="15" width="200">
+						<textField>
+							<reportElement x="0" y="0" width="100" height="15" uuid="f817a70e-0fbb-4004-8c0d-9c965f83972c"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{messageFailedPP}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="100" y="0" width="100" height="15" uuid="3c6c8575-050c-433b-b24d-56b59d2f68ef"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageFailedPercentPP})]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement mode="Opaque" x="355" y="105" width="200" height="15" backcolor="#D9D9D9" uuid="80f5338c-56dc-4f5b-a608-271ef1d43ba2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="MessagesSent" uuid="6c1c9f08-7154-4304-a713-ef90ab47776b">
+						<datasetParameter name="startDate">
+							<datasetParameterExpression><![CDATA[$P{startDate} == null ? null : $P{startDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="endDate">
+							<datasetParameterExpression><![CDATA[$P{endDate} == null ? null : $P{endDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="15" width="200">
+						<textField>
+							<reportElement x="0" y="0" width="100" height="15" uuid="6df6a55e-881b-42f6-a317-98ac1aa2e823"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{smsSuccessful}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="100" y="0" width="100" height="15" uuid="94b1c147-0427-44f6-9c06-b639544354ae"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsSuccessfulPercent})]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement mode="Opaque" x="355" y="120" width="200" height="15" backcolor="#D9D9D9" uuid="fcc7cc3e-36bd-4c2b-a04e-b400d65cc11b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="MessagesSent" uuid="a2aee8c8-4770-4fcc-8ca2-ccd91f1773a9">
+						<datasetParameter name="startDate">
+							<datasetParameterExpression><![CDATA[$P{startDate} == null ? null : $P{startDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="endDate">
+							<datasetParameterExpression><![CDATA[$P{endDate} == null ? null : $P{endDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="15" width="200">
+						<textField>
+							<reportElement x="0" y="0" width="100" height="15" uuid="d45fdda3-4f49-482e-8451-36be5251cfc0"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{smsSuccessfulPP}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="100" y="0" width="100" height="15" uuid="54cc23fa-2407-43e0-96f8-1ed61b9babbd"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsSuccessfulPercentPP})]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<componentElement>
+				<reportElement mode="Opaque" x="355" y="135" width="200" height="15" backcolor="#D9D9D9" uuid="08d63be9-b861-437a-aa4c-5298369ee564">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="MessagesSent" uuid="362c9803-1ce1-4c5a-903b-16dd1caa95d9">
+						<datasetParameter name="startDate">
+							<datasetParameterExpression><![CDATA[$P{startDate} == null ? null : $P{startDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="endDate">
+							<datasetParameterExpression><![CDATA[$P{endDate} == null ? null : $P{endDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="15" width="200">
+						<textField>
+							<reportElement x="0" y="0" width="100" height="15" uuid="85d18a94-7d7a-4eaa-b861-048245e5748f"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{smsFailed}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="100" y="0" width="100" height="15" uuid="4f52053e-f396-418a-8cb9-71738d4c8509"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsFailedPercent})]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="150" width="355" height="15" backcolor="#D9D9D9" uuid="b17efa40-1006-41f8-8050-5b335939e8a5">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[# of PP with failed SMS]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement mode="Opaque" x="355" y="150" width="200" height="15" backcolor="#D9D9D9" uuid="69ffab60-166c-4602-8e1a-039ff12c0de0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.HorizontalRowLayout"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="MessagesSent" uuid="ad72e6ad-76d5-4cd6-9c99-e7b03cbf3724">
+						<datasetParameter name="startDate">
+							<datasetParameterExpression><![CDATA[$P{startDate} == null ? null : $P{startDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="endDate">
+							<datasetParameterExpression><![CDATA[$P{endDate} == null ? null : $P{endDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="15" width="200">
+						<textField>
+							<reportElement x="0" y="0" width="100" height="15" uuid="9171276c-c233-46fb-8e14-75457306c0b4"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{smsFailedPP}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="100" y="0" width="100" height="15" uuid="1d254cf7-eda4-466a-99a4-917480053587"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsFailedPercentPP})]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<staticText>
+				<reportElement x="465" y="15" width="30" height="15" uuid="c74105c5-2a56-478b-8f36-d926cc17d42b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="15" width="5" height="15" uuid="8aed3595-8e04-4d10-abb1-ac641327b58b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[(]]></text>
+			</staticText>
+		</band>
+		<band height="280">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<barChart>
+				<chart evaluationTime="Report">
+					<reportElement x="0" y="0" width="555" height="275" uuid="6b058f16-e48a-4f0f-9483-dfdc6e6ad7cb">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="MessageSentByDate" uuid="3b8ab8f4-29e2-4002-9a55-699c872aecbc">
+							<datasetParameter name="chartStartDate">
+								<datasetParameterExpression><![CDATA[$P{chartStartDate} == null ? null : $P{chartStartDate}.toString()]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Successful IVR Messages sent"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{messageSuccessful}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["# PP who received IVR"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{messageSuccessfulPP}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Failed IVR messages"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{messageFailed}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["# PP failed to receive IVR"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{messageFailedPP}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Successful SMS"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{smsSuccessful}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["# of PP SMS sent"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{smsSuccessfulPP}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Failed SMS"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{smsFailed}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["# of PP with failed SMS"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{smsFailedPP}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+		</band>
+		<band height="165">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="10" y="0" width="510" height="15" uuid="8920ba74-c145-478e-bb61-6d8ec636a0a1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[IVR message failure can be due to one of the following main reasons:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="15" width="510" height="15" uuid="3ab7395c-de92-4465-a0df-bd51ca696c73">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[a. Participant's phone being off at the time the system tried to call]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="30" width="510" height="15" uuid="fe2f21f6-6767-4ba7-8573-f82498016937">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[b. Participant's phone was reached but did not pick the call]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="45" width="510" height="15" uuid="c4b5387c-ed5c-4121-b06e-4e32f52d72ad">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[c. Invalid phone number]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="60" width="545" height="15" uuid="74115119-18a9-412a-a76c-1c344d3b843d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[For each of the above cases, the system tries a maximum of 3 times to reach the phone number provided.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="83" width="510" height="15" uuid="f7e5fd47-ed5a-427f-9674-2ac4539a22ec">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SMS message failure can be due to one of the following:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="98" width="510" height="15" uuid="6a506132-98ef-4356-8f17-931e24188d75">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[a. Participant's phone was off for more than 48 hours]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="113" width="510" height="15" uuid="006f5ff2-9def-46f4-bc3d-f5755d4662de">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[b. Participant's phone was out of coverage area]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="128" width="510" height="15" uuid="12b8b309-fedf-4a5b-9dce-a6d7ae8fb6b0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[c. Participant's SMS inbox is full, so cannot receive new messages]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="143" width="510" height="15" uuid="07909f3b-09a0-430e-af02-a851dc05db30">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[d. Invalid phone number]]></text>
+			</staticText>
+		</band>
+		<band height="85">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="15" forecolor="#FFFFFF" backcolor="#A6A6A6" uuid="353c63f4-41a8-409c-a510-4ac80e56dded">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[MOTECH Efficiency]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="15" width="220" height="15" uuid="7ec15c63-747f-4eff-be3e-8fc6db1589a8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[A breakdown of messages sent last week, ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="220" y="15" width="5" height="15" uuid="27d3f828-72cd-40f8-948f-7cffb6bbd8c9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[(]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="15" width="15" height="15" uuid="42b59d7c-ecd9-448f-9bfc-4bd3cbd21ae2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[to]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="370" y="15" width="15" height="15" uuid="3bf5ea68-02b1-41b8-a3fe-69e90c725e48">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[)]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="225" y="15" width="65" height="15" uuid="b7d90f95-e824-4643-b590-88d68bbbeab9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{startDate}.toDate()]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="305" y="15" width="65" height="15" uuid="ddfe43d1-fe6b-4e73-a94a-ad5d264453ce">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{endDate}.toDate()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="30" width="65" height="40" forecolor="#00B050" backcolor="#D9D9D9" uuid="397e9dcd-ba91-49fd-b69b-5127e04a9c9b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Top"/>
+				<text><![CDATA[Message ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="65" y="30" width="155" height="40" forecolor="#00B050" backcolor="#D9D9D9" uuid="23eeef2f-ce69-419c-93f9-8a572f3dae98">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Top"/>
+				<text><![CDATA[Message Title]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="220" y="30" width="75" height="40" forecolor="#00B050" backcolor="#D9D9D9" uuid="ab254acc-f1de-46ef-bd51-0b086f02b9bd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Top"/>
+				<text><![CDATA[Total # of participants/ beneficiaries]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="295" y="30" width="100" height="40" forecolor="#00B050" backcolor="#D9D9D9" uuid="ee4f69f5-7d39-466f-bf05-2f74586ef030">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Top"/>
+				<text><![CDATA[# of participants/ beneficiaries listened to the IVR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="395" y="30" width="100" height="40" forecolor="#00B050" backcolor="#D9D9D9" uuid="0720005c-c4f8-44ba-afca-6234c5e5c579">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Top"/>
+				<text><![CDATA[% of participants/ beneficiaries listened to the IVR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="495" y="30" width="60" height="40" forecolor="#00B050" backcolor="#D9D9D9" uuid="ce464459-5d63-4f4c-ac4f-5576ec12e45d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5">
+					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+				</box>
+				<textElement verticalAlignment="Top"/>
+				<text><![CDATA[Successful SMS sent]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement mode="Opaque" x="0" y="70" width="555" height="15" backcolor="#D9D9D9" uuid="f9dbfdbb-5094-415f-ad22-76d669d615c7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.layout"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="MessagesById" uuid="dec6355d-0dea-4139-a70a-008cbfa28a90">
+						<datasetParameter name="startDate">
+							<datasetParameterExpression><![CDATA[$P{startDate} == null ? null : $P{startDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="endDate">
+							<datasetParameterExpression><![CDATA[$P{endDate} == null ? null : $P{endDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="15" width="555">
+						<textField isStretchWithOverflow="true">
+							<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="65" height="15" uuid="e1d9621b-edcd-4307-bf31-326558771c3d"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{messageId}]]></textFieldExpression>
+						</textField>
+						<textField isStretchWithOverflow="true">
+							<reportElement stretchType="RelativeToTallestObject" x="65" y="0" width="155" height="15" uuid="8937d3dc-67e3-4ac1-8ac2-05bbd2714e32"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[StringUtils.capitalize(StringUtils.replace($F{messageKey}, "-", " "))]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement stretchType="RelativeToTallestObject" x="220" y="0" width="75" height="15" uuid="21c50427-8ab0-4805-b487-74ff0b4734a3"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement stretchType="RelativeToTallestObject" x="295" y="0" width="100" height="15" uuid="b114f48a-e6cc-42d4-b74c-f58a24e70db6"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{messageSuccessfulPP}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement stretchType="RelativeToTallestObject" x="395" y="0" width="100" height="15" uuid="2c5775b2-57f5-45d4-bba4-3be2ae59cfae"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageSuccessfulPercentPP})]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement stretchType="RelativeToTallestObject" x="495" y="0" width="60" height="15" uuid="e744d7d4-ced8-4a0d-bfc3-9b0853b91821"/>
+							<box leftPadding="5">
+								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
+							</box>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{smsSuccessfulPP}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+		</band>
+		<band height="30">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<componentElement>
+				<reportElement x="0" y="0" width="555" height="15" uuid="cb0df1bf-13f8-4c3d-aa73-34052f5a24f3">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="MissedBooster" uuid="6dce9b13-e177-4336-bbfc-c850a499849c">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="15" width="555">
+						<textField>
+							<reportElement x="0" y="0" width="555" height="15" uuid="a4a3626a-32d2-42e8-9e10-1ff4c8d20e1c"/>
+							<box leftPadding="5"/>
+							<textElement verticalAlignment="Middle"/>
+							<textFieldExpression><![CDATA[$F{missedVisits} + " participants missed their booster vaccination appointment"]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+		</band>
+		<band height="110">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="0" y="0" width="70" height="15" uuid="abadd7fe-0fdf-40ce-8ae9-95542238b1fa">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Last week,]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="75" y="0" width="65" height="15" uuid="6773b7e7-2280-4fec-b69f-2c9534df13e0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{startDate}.toDate()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="140" y="0" width="15" height="15" uuid="e75532dc-7ffa-4111-a75a-59f2e948796e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[to]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="155" y="0" width="65" height="15" uuid="eef26cf4-40ba-4af0-937d-f7a983f0f109">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{endDate}.toDate()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="220" y="0" width="30" height="15" uuid="479bb69e-3fa8-4f2d-90bf-ca27af36de94">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[)]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement x="10" y="15" width="545" height="75" uuid="efa0f2ad-9310-4714-9900-c1e8fa1cf1b1">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="MessagesSent" uuid="1cd45d4c-e117-4d98-b1cd-e770cb08143e">
+						<datasetParameter name="startDate">
+							<datasetParameterExpression><![CDATA[$P{startDate} == null ? null : $P{startDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="endDate">
+							<datasetParameterExpression><![CDATA[$P{endDate} == null ? null : $P{endDate}.toString()]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:listContents height="75" width="545">
+						<textField>
+							<reportElement x="0" y="0" width="545" height="15" uuid="8863ea98-b3ec-469d-a3a9-931f3e549f0a"/>
+							<textFieldExpression><![CDATA[$F{messageSuccessful} + " IVR messages were sent to " + $F{messageSuccessfulPP} + " participants"]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="0" y="15" width="545" height="15" uuid="b71e96f9-d8a2-4f57-8ee5-c6ef16ae9b89"/>
+							<textFieldExpression><![CDATA[$F{messageFailed} + " IVR messages sent to " + $F{messageFailedPP} + " participants failed"]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="0" y="30" width="545" height="15" uuid="91bdd365-8d0b-483b-9955-3fcecc72dcca"/>
+							<textFieldExpression><![CDATA["A total of " + $F{messageSuccessfulPP} + " participants listened to IVR, " + String.format("%.2f%%", $F{mostOfMessageListenedPercentPP}) + " (n=" + $F{mostOfMessageListenedPP} + ") listened to atleast 90% of the message received"]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="0" y="45" width="545" height="30" uuid="1811794d-606f-417d-9586-1cda6a1384e8"/>
+							<textFieldExpression><![CDATA[$F{smsSuccessful} + " SMS messages sent to " + $F{smsSuccessfulPP} + " participants were successfully received while " + $F{smsFailed} + " SMS(es) sent to " + $F{smsFailedPP} + " participants failed"]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<staticText>
+				<reportElement x="70" y="0" width="5" height="15" uuid="5683c00a-8a6b-4a46-b284-6522016b6e36">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[(]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

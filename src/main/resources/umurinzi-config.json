@@ -25,5 +25,15 @@
   "retryDelay": 15,
   "ivrLanguageId": null,
   "voiceSenderId": null,
-  "smsSenderId": null
+  "smsSenderId": null,
+  "emailReportHost": null,
+  "emailReportPort": null,
+  "emailReportAddress": null,
+  "emailReportPassword": null,
+  "enableEmailReportJob": false,
+  "emailReportStartDate": null,
+  "emailSchedulePeriod": "WEEKLY",
+  "emailRecipients": null,
+  "emailSubject": null,
+  "emailBody": null
 }
