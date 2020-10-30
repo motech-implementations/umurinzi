@@ -42,6 +42,8 @@ public final class UmurinziConstants {
     public static final String DAILY_REPORT_EVENT_START_DATE = "daily_report_event_start_date";
     public static final String DAILY_REPORT_EVENT_START_HOUR = "00:01";
 
+    public static final String SEND_EMAIL_REPORT_EVENT = "send_email_report_event";
+
     public static final String API_KEY = "api_key";
     public static final String MESSAGE_ID = "message_id";
     public static final String WEBHOOK_URL = "webhook_url";

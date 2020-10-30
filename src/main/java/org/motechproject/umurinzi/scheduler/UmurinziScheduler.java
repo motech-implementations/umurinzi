@@ -63,4 +63,20 @@ public class UmurinziScheduler {
         RepeatingPeriodSchedulableJob job = new RepeatingPeriodSchedulableJob(event, startDate.toDate(), null, period, true);
         motechSchedulerService.safeScheduleRepeatingPeriodJob(job);
     }
+
+    public void scheduleEmailReportJob(DateTime startDate, Period period) {
+        MotechEvent event = new MotechEvent(UmurinziConstants.SEND_EMAIL_REPORT_EVENT);
+
+        RepeatingPeriodSchedulableJob job = new RepeatingPeriodSchedulableJob(event, startDate.toDate(), null, period, true);
+        motechSchedulerService.safeScheduleRepeatingPeriodJob(job);
+    }
+
+    public void unscheduleEmailReportJob() {
+        motechSchedulerService.safeUnscheduleAllJobs(UmurinziConstants.SEND_EMAIL_REPORT_EVENT);
+    }
+
+    public void rescheduleEmailReportJob(DateTime startDate, Period period) {
+        unscheduleEmailReportJob();
+        scheduleEmailReportJob(startDate, period);
+    }
 }

@@ -5,6 +5,7 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
+import org.motechproject.umurinzi.domain.enums.EmailSchedulePeriod;
 
 public class Config {
 
@@ -115,4 +116,44 @@ public class Config {
     @Getter
     @Setter
     private String smsSenderId;
+
+    @Getter
+    @Setter
+    private String emailReportHost;
+
+    @Getter
+    @Setter
+    private Integer emailReportPort;
+
+    @Getter
+    @Setter
+    private String emailReportAddress;
+
+    @Getter
+    @Setter
+    private String emailReportPassword;
+
+    @Getter
+    @Setter
+    private Boolean enableEmailReportJob = false;
+
+    @Getter
+    @Setter
+    private String emailReportStartDate;
+
+    @Getter
+    @Setter
+    private EmailSchedulePeriod emailSchedulePeriod;
+
+    @Getter
+    @Setter
+    private String emailRecipients;
+
+    @Getter
+    @Setter
+    private String emailSubject;
+
+    @Getter
+    @Setter
+    private String emailBody;
 }

@@ -35,6 +35,7 @@ public class TabAccessController {
 
         if (auth.getAuthorities().contains(new SimpleGrantedAuthority(REPORTS_TAB_PERMISSION))) {
             availableTabs.add("reports");
+            availableTabs.add("emailReports");
         }
 
         if (auth.getAuthorities().contains(new SimpleGrantedAuthority(MANAGE_HOLIDAYS_PERMISSION))) {
