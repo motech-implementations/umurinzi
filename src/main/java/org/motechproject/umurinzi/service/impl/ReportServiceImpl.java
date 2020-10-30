@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -128,40 +129,33 @@ public class ReportServiceImpl implements ReportService {
                 motechCallId);
         }
 
-        String subscriberIds = providerExtraData.get(UmurinziConstants.SEND_TO_SUBSCRIBERS);
         String messageId = providerExtraData.get(UmurinziConstants.MESSAGE_ID);
         DateTime sendDate = DateTime.parse(initialRecord.getMotechTimestamp(), MOTECH_TIMESTAMP_FORMATTER);
 
-        if (StringUtils.isBlank(subscriberIds)) {
-            throw new UmurinziReportException(
-                "Cannot generate report for Call Detail Record with Motech Call Id: %s, because no ParticipantId found In Provider Extra Data Map",
-                motechCallId);
-        }
-
-        String[] ivrIds = subscriberIds.split(",");
         List<CallDetailRecord> callDetailRecords = callDetailRecordDataService.findByExactProviderCallId(providerCallId,
             QueryParams.ascOrder(UmurinziConstants.IVR_CALL_DETAIL_RECORD_MOTECH_TIMESTAMP_FIELD));
 
-        Map<String, List<CallDetailRecord>> recordsMap = groupCallDetailRecords(ivrIds, callDetailRecords);
+        Map<String, List<CallDetailRecord>> recordsMap = groupCallDetailRecords(callDetailRecords);
+        LOGGER.debug("Created group with {} subscribers", recordsMap.size());
 
-        for (String subscriberId : ivrIds) {
+        for (Entry<String, List<CallDetailRecord>> entry : recordsMap.entrySet()) {
             try {
-                createIvrAndSmsStatisticReport(providerCallId, motechCallId, subscriberId,
-                    messageId, sendDate, recordsMap.get(subscriberId));
+                createIvrAndSmsStatisticReport(providerCallId, motechCallId, entry.getKey(),
+                    messageId, sendDate, entry.getValue());
             } catch (Exception e) {
                 LOGGER.warn(e.getMessage());
             }
         }
     }
 
-    private Map<String, List<CallDetailRecord>> groupCallDetailRecords(String[] ivrIds, List<CallDetailRecord> callDetailRecords) {
+    private Map<String, List<CallDetailRecord>> groupCallDetailRecords(List<CallDetailRecord> callDetailRecords) {
         Map<String, List<CallDetailRecord>> recordsMap = new HashMap<>();
 
-        for (String subscriberId : ivrIds) {
-            recordsMap.put(subscriberId, new ArrayList<CallDetailRecord>());
-        }
-
         for (CallDetailRecord record : callDetailRecords) {
+            if (UmurinziConstants.IVR_CALL_DETAIL_RECORD_STATUS_INITIATED.equals(record.getCallStatus())) {
+                continue;
+            }
+
             String subscriberId = record.getProviderExtraData().get(UmurinziConstants.SUBSCRIBER_ID);
 
             if (StringUtils.isBlank(subscriberId)) {
@@ -171,8 +165,6 @@ public class ReportServiceImpl implements ReportService {
 
             if (!recordsMap.containsKey(subscriberId)) {
                 recordsMap.put(subscriberId, new ArrayList<CallDetailRecord>());
-                LOGGER.debug("Adding new record group for subscriber with id: {} for record with provider id: {}",
-                    subscriberId, record.getProviderCallId());
             }
 
             recordsMap.get(subscriberId).add(record);
