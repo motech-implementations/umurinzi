@@ -169,6 +169,12 @@ public class ReportServiceImpl implements ReportService {
                 continue;
             }
 
+            if (!recordsMap.containsKey(subscriberId)) {
+                recordsMap.put(subscriberId, new ArrayList<CallDetailRecord>());
+                LOGGER.debug("Adding new record group for subscriber with id: {} for record with provider id: {}",
+                    subscriberId, record.getProviderCallId());
+            }
+
             recordsMap.get(subscriberId).add(record);
         }
 
