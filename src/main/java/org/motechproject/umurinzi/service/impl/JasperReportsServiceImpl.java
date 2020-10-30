@@ -152,8 +152,8 @@ public class JasperReportsServiceImpl implements JasperReportsService {
     params.put(LOGO_PARAM, getClass().getResourceAsStream(LOGO_PATH));
 
     LocalDate date = new LocalDate();
-    LocalDate startDate = date.withDayOfWeek(DateTimeConstants.MONDAY).minusWeeks(1);
-    LocalDate endDate = startDate.minusWeeks(1);
+    LocalDate endDate = date.withDayOfWeek(DateTimeConstants.MONDAY).minusWeeks(1);
+    LocalDate startDate = endDate.minusWeeks(1);
     LocalDate chartStartDate = date.withDayOfMonth(1).minusMonths(2);
 
     params.put(GENERATION_DATE_PARAM, date);

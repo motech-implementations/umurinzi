@@ -395,7 +395,7 @@ FROM (
 					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{completed}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{completed} == null ? 0 : $F{completed}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="430" y="75" width="125" height="15" backcolor="#F2F2F2" uuid="dbb1e45e-b9d5-4197-946d-5787f9eb2b71">
@@ -406,7 +406,7 @@ FROM (
 					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{inCampaign}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{inCampaign} == null ? 0 : $F{inCampaign}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="430" y="30" width="125" height="15" backcolor="#F2F2F2" uuid="c45c5838-eb45-4eb8-9974-6a4ee36ed268">
@@ -417,7 +417,7 @@ FROM (
 					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{enrolled}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{enrolled} == null ? 0 : $F{enrolled}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="430" y="0" width="125" height="15" forecolor="#00B050" backcolor="#F2F2F2" uuid="34e6543d-3da9-4ca6-ae7a-16bb3b78fab4">
@@ -443,7 +443,7 @@ FROM (
 					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{total} == null ? 0 : $F{total}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="0" width="430" height="15" forecolor="#00B050" backcolor="#F2F2F2" uuid="6e311ef2-53e3-42b0-ae20-43102882e661">
@@ -468,7 +468,7 @@ FROM (
 					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[String.format("%.2f%%", $F{percentEnrolled})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[String.format("%.2f%%", $F{percentEnrolled} == null ? 0.0f : $F{percentEnrolled})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="15" width="430" height="15" backcolor="#F2F2F2" uuid="1fb4c7f8-cc75-4553-ab83-8c28b4de8876">
@@ -499,7 +499,7 @@ FROM (
 					<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{secondDose}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{secondDose} == null ? 0 : $F{secondDose}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="170">
@@ -613,7 +613,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{messageSuccessful}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{messageSuccessful} == null ? 0 : $F{messageSuccessful}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="100" y="0" width="100" height="15" uuid="7dab7c4e-93d0-40f8-910a-d160b1a3a7e4"/>
@@ -621,7 +621,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageSuccessfulPercent})]]></textFieldExpression>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageSuccessfulPercent} == null ? 0.0f : $F{messageSuccessfulPercent})]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -718,7 +718,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{messageSuccessfulPP}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{messageSuccessfulPP} == null ? 0 : $F{messageSuccessfulPP}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="100" y="0" width="100" height="15" uuid="2232d0d9-2291-4f64-9d34-b2237c18e436"/>
@@ -726,7 +726,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageSuccessfulPercentPP})]]></textFieldExpression>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageSuccessfulPercentPP} == null ? 0.0f : $F{messageSuccessfulPercentPP})]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -753,7 +753,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{messageFailed}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{messageFailed} == null ? 0 : $F{messageFailed}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="100" y="0" width="100" height="15" uuid="7913f385-30ee-4b22-a219-57a06089cafa"/>
@@ -761,7 +761,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageFailedPercent})]]></textFieldExpression>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageFailedPercent} == null ? 0.0f : $F{messageFailedPercent})]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -788,7 +788,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{messageFailedPP}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{messageFailedPP} == null ? 0 : $F{messageFailedPP}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="100" y="0" width="100" height="15" uuid="3c6c8575-050c-433b-b24d-56b59d2f68ef"/>
@@ -796,7 +796,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageFailedPercentPP})]]></textFieldExpression>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageFailedPercentPP} == null ? 0.0f : $F{messageFailedPercentPP})]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -823,7 +823,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{smsSuccessful}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{smsSuccessful} == null ? 0 : $F{smsSuccessful}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="100" y="0" width="100" height="15" uuid="94b1c147-0427-44f6-9c06-b639544354ae"/>
@@ -831,7 +831,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsSuccessfulPercent})]]></textFieldExpression>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsSuccessfulPercent} == null ? 0.0f : $F{smsSuccessfulPercent})]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -858,7 +858,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{smsSuccessfulPP}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{smsSuccessfulPP} == null ? 0 : $F{smsSuccessfulPP}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="100" y="0" width="100" height="15" uuid="54cc23fa-2407-43e0-96f8-1ed61b9babbd"/>
@@ -866,7 +866,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsSuccessfulPercentPP})]]></textFieldExpression>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsSuccessfulPercentPP} == null ? 0.0f : $F{smsSuccessfulPercentPP})]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -893,7 +893,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{smsFailed}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{smsFailed} == null ? 0 : $F{smsFailed}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="100" y="0" width="100" height="15" uuid="4f52053e-f396-418a-8cb9-71738d4c8509"/>
@@ -901,7 +901,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsFailedPercent})]]></textFieldExpression>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsFailedPercent} == null ? 0.0f : $F{smsFailedPercent})]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -938,7 +938,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{smsFailedPP}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{smsFailedPP} == null ? 0 : $F{smsFailedPP}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="100" y="0" width="100" height="15" uuid="1d254cf7-eda4-466a-99a4-917480053587"/>
@@ -946,7 +946,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsFailedPercentPP})]]></textFieldExpression>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{smsFailedPercentPP} == null ? 0.0f : $F{smsFailedPercentPP})]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -995,42 +995,42 @@ FROM (
 					<categorySeries>
 						<seriesExpression><![CDATA["Successful IVR Messages sent"]]></seriesExpression>
 						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{messageSuccessful}]]></valueExpression>
+						<valueExpression><![CDATA[$F{messageSuccessful} == null ? 0 : $F{messageSuccessful}]]></valueExpression>
 					</categorySeries>
 					<categorySeries>
 						<seriesExpression><![CDATA["# PP who received IVR"]]></seriesExpression>
 						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{messageSuccessfulPP}]]></valueExpression>
+						<valueExpression><![CDATA[$F{messageSuccessfulPP} == null ? 0 : $F{messageSuccessfulPP}]]></valueExpression>
 					</categorySeries>
 					<categorySeries>
 						<seriesExpression><![CDATA["Failed IVR messages"]]></seriesExpression>
 						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{messageFailed}]]></valueExpression>
+						<valueExpression><![CDATA[$F{messageFailed} == null ? 0 : $F{messageFailed}]]></valueExpression>
 					</categorySeries>
 					<categorySeries>
 						<seriesExpression><![CDATA["# PP failed to receive IVR"]]></seriesExpression>
 						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{messageFailedPP}]]></valueExpression>
+						<valueExpression><![CDATA[$F{messageFailedPP} == null ? 0 : $F{messageFailedPP}]]></valueExpression>
 					</categorySeries>
 					<categorySeries>
 						<seriesExpression><![CDATA["Successful SMS"]]></seriesExpression>
 						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{smsSuccessful}]]></valueExpression>
+						<valueExpression><![CDATA[$F{smsSuccessful} == null ? 0 : $F{smsSuccessful}]]></valueExpression>
 					</categorySeries>
 					<categorySeries>
 						<seriesExpression><![CDATA["# of PP SMS sent"]]></seriesExpression>
 						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{smsSuccessfulPP}]]></valueExpression>
+						<valueExpression><![CDATA[$F{smsSuccessfulPP} == null ? 0 : $F{smsSuccessfulPP}]]></valueExpression>
 					</categorySeries>
 					<categorySeries>
 						<seriesExpression><![CDATA["Failed SMS"]]></seriesExpression>
 						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{smsFailed}]]></valueExpression>
+						<valueExpression><![CDATA[$F{smsFailed} == null ? 0 : $F{smsFailed}]]></valueExpression>
 					</categorySeries>
 					<categorySeries>
 						<seriesExpression><![CDATA["# of PP with failed SMS"]]></seriesExpression>
 						<categoryExpression><![CDATA[$F{dateFormatted}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{smsFailedPP}]]></valueExpression>
+						<valueExpression><![CDATA[$F{smsFailedPP} == null ? 0 : $F{smsFailedPP}]]></valueExpression>
 					</categorySeries>
 				</categoryDataset>
 				<barPlot>
@@ -1298,7 +1298,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{total} == null ? 0 : $F{total}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement stretchType="RelativeToTallestObject" x="295" y="0" width="100" height="15" uuid="b114f48a-e6cc-42d4-b74c-f58a24e70db6"/>
@@ -1306,7 +1306,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{messageSuccessfulPP}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{messageSuccessfulPP} == null ? 0 : $F{messageSuccessfulPP}]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement stretchType="RelativeToTallestObject" x="395" y="0" width="100" height="15" uuid="2c5775b2-57f5-45d4-bba4-3be2ae59cfae"/>
@@ -1314,7 +1314,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageSuccessfulPercentPP})]]></textFieldExpression>
+							<textFieldExpression><![CDATA[String.format("%.2f%%", $F{messageSuccessfulPercentPP} == null ? 0.0f : $F{messageSuccessfulPercentPP})]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement stretchType="RelativeToTallestObject" x="495" y="0" width="60" height="15" uuid="e744d7d4-ced8-4a0d-bfc3-9b0853b91821"/>
@@ -1322,7 +1322,7 @@ FROM (
 								<pen lineWidth="1.0" lineColor="#FFFFFF"/>
 							</box>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{smsSuccessfulPP}]]></textFieldExpression>
+							<textFieldExpression><![CDATA[$F{smsSuccessfulPP} == null ? 0 : $F{smsSuccessfulPP}]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -1343,7 +1343,7 @@ FROM (
 							<reportElement x="0" y="0" width="555" height="15" uuid="a4a3626a-32d2-42e8-9e10-1ff4c8d20e1c"/>
 							<box leftPadding="5"/>
 							<textElement verticalAlignment="Middle"/>
-							<textFieldExpression><![CDATA[$F{missedVisits} + " participants missed their booster vaccination appointment"]]></textFieldExpression>
+							<textFieldExpression><![CDATA[($F{missedVisits} == null ? 0 : $F{missedVisits}) + " participants missed their booster vaccination appointment"]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -1421,19 +1421,19 @@ FROM (
 					<jr:listContents height="75" width="545">
 						<textField>
 							<reportElement x="0" y="0" width="545" height="15" uuid="8863ea98-b3ec-469d-a3a9-931f3e549f0a"/>
-							<textFieldExpression><![CDATA[$F{messageSuccessful} + " IVR messages were sent to " + $F{messageSuccessfulPP} + " participants"]]></textFieldExpression>
+							<textFieldExpression><![CDATA[($F{messageSuccessful} == null ? 0 : $F{messageSuccessful}) + " IVR messages were sent to " + ($F{messageSuccessfulPP} == null ? 0 : $F{messageSuccessfulPP}) + " participants"]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="0" y="15" width="545" height="15" uuid="b71e96f9-d8a2-4f57-8ee5-c6ef16ae9b89"/>
-							<textFieldExpression><![CDATA[$F{messageFailed} + " IVR messages sent to " + $F{messageFailedPP} + " participants failed"]]></textFieldExpression>
+							<textFieldExpression><![CDATA[($F{messageFailed} == null ? 0 : $F{messageFailed}) + " IVR messages sent to " + ($F{messageFailedPP} == null ? 0 : $F{messageFailedPP}) + " participants failed"]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="0" y="30" width="545" height="15" uuid="91bdd365-8d0b-483b-9955-3fcecc72dcca"/>
-							<textFieldExpression><![CDATA["A total of " + $F{messageSuccessfulPP} + " participants listened to IVR, " + String.format("%.2f%%", $F{mostOfMessageListenedPercentPP}) + " (n=" + $F{mostOfMessageListenedPP} + ") listened to atleast 90% of the message received"]]></textFieldExpression>
+							<textFieldExpression><![CDATA["A total of " + ($F{messageSuccessfulPP} == null ? 0 : $F{messageSuccessfulPP}) + " participants listened to IVR, " + String.format("%.2f%%", $F{mostOfMessageListenedPercentPP} == null ? 0.0f : $F{mostOfMessageListenedPercentPP}) + " (n=" + ($F{mostOfMessageListenedPP} == null ? 0 : $F{mostOfMessageListenedPP}) + ") listened to atleast 90% of the message received"]]></textFieldExpression>
 						</textField>
 						<textField>
 							<reportElement x="0" y="45" width="545" height="30" uuid="1811794d-606f-417d-9586-1cda6a1384e8"/>
-							<textFieldExpression><![CDATA[$F{smsSuccessful} + " SMS messages sent to " + $F{smsSuccessfulPP} + " participants were successfully received while " + $F{smsFailed} + " SMS(es) sent to " + $F{smsFailedPP} + " participants failed"]]></textFieldExpression>
+							<textFieldExpression><![CDATA[($F{smsSuccessful} == null ? 0 : $F{smsSuccessful}) + " SMS messages sent to " + ($F{smsSuccessfulPP} == null ? 0 : $F{smsSuccessfulPP}) + " participants were successfully received while " + ($F{smsFailed} == null ? 0 : $F{smsFailed}) + " SMS(es) sent to " + ($F{smsFailedPP} == null ? 0 : $F{smsFailedPP}) + " participants failed"]]></textFieldExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
