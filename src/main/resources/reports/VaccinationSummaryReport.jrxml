@@ -153,9 +153,8 @@ FROM (
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="MotechDataAdapter.xml"/>
 		<queryString language="SQL">
-			<![CDATA[SELECT count(*) as missedVisits FROM motech_data_services.UMURINZI_SUBJECT
- join motech_data_services.UMURINZI_VISIT on subjectId = subject_id_OID and type = 'BOOST_VACCINATION_DAY'
- where boostVaccinationDate is null and dateProjected < now()]]>
+			<![CDATA[SELECT count(*) as missedVisits FROM motech_data_services.UMURINZI_VISIT
+ where type = 'BOOST_VACCINATION_DAY' and date is null and dateProjected < now()]]>
 		</queryString>
 		<field name="missedVisits" class="java.lang.Long">
 			<property name="com.jaspersoft.studio.field.label" value="missedVisits"/>
