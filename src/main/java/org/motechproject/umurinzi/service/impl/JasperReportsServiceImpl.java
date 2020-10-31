@@ -32,6 +32,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.motechproject.config.core.domain.SQLDBConfig;
 import org.motechproject.config.core.service.CoreConfigurationService;
 import org.motechproject.umurinzi.domain.Config;
+import org.motechproject.umurinzi.domain.enums.EmailSchedulePeriod;
 import org.motechproject.umurinzi.dto.EmailReportConfigDto;
 import org.motechproject.umurinzi.helper.EmailHelper;
 import org.motechproject.umurinzi.mapper.EmailConfigMapper;
@@ -148,12 +149,19 @@ public class JasperReportsServiceImpl implements JasperReportsService {
 
   private void generateVaccinationSummaryReport(OutputStream outputStream)
       throws SQLException, JRException {
+    Config config = configService.getConfig();
+    EmailSchedulePeriod period = config.getEmailSchedulePeriod();
+
+    if (period == null) {
+      period = EmailSchedulePeriod.WEEKLY;
+    }
+
     Map<String, Object> params = new HashMap<>();
     params.put(LOGO_PARAM, getClass().getResourceAsStream(LOGO_PATH));
 
     LocalDate date = new LocalDate();
-    LocalDate endDate = date.withDayOfWeek(DateTimeConstants.MONDAY).minusWeeks(1);
-    LocalDate startDate = endDate.minusWeeks(1);
+    LocalDate endDate = calculateEndDate(period);
+    LocalDate startDate = endDate.minus(period.getPeriod());
     LocalDate chartStartDate = date.withDayOfMonth(1).minusMonths(2);
 
     params.put(GENERATION_DATE_PARAM, date);
@@ -162,6 +170,18 @@ public class JasperReportsServiceImpl implements JasperReportsService {
     params.put(CHART_START_DATE, chartStartDate);
 
     generateReport(REPORT_PATH, params, outputStream);
+  }
+
+  private LocalDate calculateEndDate(EmailSchedulePeriod period) {
+    if (EmailSchedulePeriod.MONTHLY.equals(period)) {
+      return LocalDate.now().withDayOfMonth(1);
+    }
+
+    if (EmailSchedulePeriod.WEEKLY.equals(period)) {
+      return LocalDate.now().withDayOfWeek(DateTimeConstants.MONDAY);
+    }
+
+    return LocalDate.now();
   }
 
   private void generateReport(String reportName, Map<String, Object> params, OutputStream outputStream)
