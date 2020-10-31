@@ -554,7 +554,7 @@ FROM (
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{endDate}.toDate()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{endDate}.minusDays(1).toDate()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="30" width="355" height="15" backcolor="#D9D9D9" uuid="6265e86a-6fa4-463e-8c43-862b4bb7da9a">
@@ -1191,7 +1191,7 @@ FROM (
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{endDate}.toDate()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{endDate}.minusDays(1).toDate()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="30" width="65" height="40" forecolor="#00B050" backcolor="#D9D9D9" uuid="397e9dcd-ba91-49fd-b69b-5127e04a9c9b">
@@ -1390,7 +1390,7 @@ FROM (
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{endDate}.toDate()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{endDate}.minusDays(1).toDate()]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="220" y="0" width="30" height="15" uuid="479bb69e-3fa8-4f2d-90bf-ca27af36de94">
