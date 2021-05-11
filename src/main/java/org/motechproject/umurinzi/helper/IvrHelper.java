@@ -2,11 +2,19 @@ package org.motechproject.umurinzi.helper;
 
 import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
 import org.motechproject.umurinzi.constants.UmurinziConstants;
 import org.motechproject.umurinzi.domain.Config;
 import org.motechproject.umurinzi.domain.Subject;
 import org.motechproject.umurinzi.exception.IvrException;
 import org.motechproject.umurinzi.service.ConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,6 +34,8 @@ public class IvrHelper {
 
   private static final int HTTP_CONNECT_TIMEOUT = 15000;
   private static final int HTTP_READ_TIMEOUT = 10000;
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(IvrHelper.class);
 
   @Autowired
   private ConfigService configService;
@@ -35,6 +46,18 @@ public class IvrHelper {
     HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
     clientHttpRequestFactory.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
     clientHttpRequestFactory.setReadTimeout(HTTP_READ_TIMEOUT);
+
+    try {
+      SSLConnectionSocketFactory scsf = new SSLConnectionSocketFactory(
+          SSLContexts.custom().loadTrustMaterial(null, new TrustSelfSignedStrategy()).build(),
+          NoopHostnameVerifier.INSTANCE);
+      HttpClient httpClient = HttpClients.custom().setSSLSocketFactory(scsf).build();
+
+      clientHttpRequestFactory.setHttpClient(httpClient);
+    } catch (Exception e) {
+      LOGGER.error("Error occurred when creating SSLConnectionSocketFactory", e);
+    }
+
     return clientHttpRequestFactory;
   }
 
@@ -111,6 +134,10 @@ public class IvrHelper {
       }
 
       return responseEntity.getBody().getData();
+    } catch (HttpClientErrorException ex) {
+      String message = "Error occurred when sending request to IVR service: " + ex.getMessage()
+          + "\n Response: " + ex.getResponseBodyAsString();
+      throw new IvrException(message, ex);
     } catch (Exception ex) {
       String message = "Error occurred when sending request to IVR service: " + ex.getMessage();
       throw new IvrException(message, ex);
