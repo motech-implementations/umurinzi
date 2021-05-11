@@ -1,5 +1,6 @@
 package org.motechproject.umurinzi.helper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class IvrCallHelper {
 
+    private static final Integer MAX_BULK_SIZE = 200;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(IvrCallHelper.class);
 
     @Autowired
@@ -34,6 +37,21 @@ public class IvrCallHelper {
 
     private OutboundCallService outboundCallService;
 
+    public void sendCallsToParticipants(String messageKey, List<String> participantIds) {
+        List<String> ivrIds = new ArrayList<>();
+
+        for (String participantId : participantIds) {
+            if (StringUtils.isNotBlank(participantId)) {
+                Subject subject = subjectService.findSubjectBySubjectId(participantId.trim());
+                if (subject != null && StringUtils.isNotBlank(subject.getIvrId())) {
+                    ivrIds.add(subject.getIvrId());
+                }
+            }
+        }
+
+        sendCallsInBulk(messageKey, ivrIds);
+    }
+
     public void sendCallsInBulk(String messageKey, List<String> ivrIds) {
         VotoMessage votoMessage = votoMessageDataService.findByMessageKey(messageKey);
 
@@ -41,7 +59,14 @@ public class IvrCallHelper {
             throw new UmurinziInitiateCallException("Cannot initiate call, because Voto Message with key: %s not found", messageKey);
         }
 
-        sendIvrCall(votoMessage.getVotoIvrId(), StringUtils.join(ivrIds, ","));
+        if (!ivrIds.isEmpty()) {
+            for (int index = 0; index * MAX_BULK_SIZE < ivrIds.size(); index++) {
+                int start = index * MAX_BULK_SIZE;
+                int end = Math.min(start + MAX_BULK_SIZE, ivrIds.size());
+
+                sendIvrCall(votoMessage.getVotoIvrId(), StringUtils.join(ivrIds.subList(start, end), ","));
+            }
+        }
     }
 
     public void initiateIvrCall(String messageKey, String externalId) {
