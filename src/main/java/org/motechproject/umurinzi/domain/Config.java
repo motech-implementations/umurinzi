@@ -119,6 +119,10 @@ public class Config {
 
     @Getter
     @Setter
+    private String suspendedMessages;
+
+    @Getter
+    @Setter
     private String emailReportHost;
 
     @Getter

@@ -64,7 +64,8 @@ public class IvrCallHelper {
                 int start = index * MAX_BULK_SIZE;
                 int end = Math.min(start + MAX_BULK_SIZE, ivrIds.size());
 
-                sendIvrCall(votoMessage.getVotoIvrId(), StringUtils.join(ivrIds.subList(start, end), ","));
+                sendIvrCall(messageKey, votoMessage.getVotoIvrId(),
+                    StringUtils.join(ivrIds.subList(start, end), ","));
             }
         }
     }
@@ -78,14 +79,22 @@ public class IvrCallHelper {
         boolean hasHelpLine = StringUtils.isNotBlank(subject.getHelpLine());
         String votoMessageId = getVotoMessageId(messageKey, hasHelpLine, subject.getSubjectId());
 
-        sendIvrCall(votoMessageId, subject.getIvrId());
+        sendIvrCall(messageKey, votoMessageId, subject.getIvrId());
     }
 
-    private void sendIvrCall(String votoMessageId, String subscriberId) {
+    private void sendIvrCall(String messageKey, String votoMessageId, String subscriberId) {
         Config config = configService.getConfig();
 
         if (config.getSendIvrCalls() != null && config.getSendIvrCalls()
             && StringUtils.isNotBlank(subscriberId)) {
+
+            if (StringUtils.isNotBlank(config.getSuspendedMessages())
+                && config.getSuspendedMessages().contains(messageKey)) {
+
+                LOGGER.info("Message: {} suspended, call for subscriber: {} will not be send",
+                    messageKey, subscriberId);
+                return;
+            }
 
             Map<String, String> callParams = new HashMap<>();
             if (StringUtils.isNotBlank(config.getVoiceSenderId())) {
@@ -104,7 +113,7 @@ public class IvrCallHelper {
             callParams.put(UmurinziConstants.RETRY_DELAY_SHORT, config.getRetryDelay().toString());
             callParams.put(UmurinziConstants.RETRY_ATTEMPTS_LONG, UmurinziConstants.RETRY_ATTEMPTS_LONG_DEFAULT);
 
-            LOGGER.info("Initiating call: {}", callParams.toString());
+            LOGGER.debug("Initiating call: {}", callParams.toString());
 
             outboundCallService.initiateCall(config.getIvrSettingsName(), callParams);
         }
