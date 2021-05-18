@@ -26,6 +26,7 @@
   "ivrLanguageId": null,
   "voiceSenderId": null,
   "smsSenderId": null,
+  "suspendedMessages": null,
   "emailReportHost": null,
   "emailReportPort": null,
   "emailReportAddress": null,

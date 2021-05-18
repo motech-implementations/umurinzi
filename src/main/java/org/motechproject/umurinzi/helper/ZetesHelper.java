@@ -86,9 +86,9 @@ public class ZetesHelper {
   }
 
   public void fetchZetesData(LocalDate lastUpdate) {
-    LOGGER.debug("Fetching data from Zetes");
+    LOGGER.info("Fetching data from Zetes");
     List<ZetesSubjectDto> zetesSubjects = fetchSubjectsFromZetes(lastUpdate);
-    LOGGER.debug("Fetched data of {} subjects from Zetes", zetesSubjects.size());
+    LOGGER.info("Fetched data of {} subjects from Zetes", zetesSubjects.size());
 
     List<String> ivrIds = new ArrayList<>();
     Subject subject;
